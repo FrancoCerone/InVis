@@ -8,6 +8,13 @@ from kivy.graphics import Color, Rectangle
 
 from kivy.lib.osc import oscAPI
 from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.metrics import MetricsBase
+from kivy.config import Config
+
+
+
+
 
 
 class MyPaintWidget(Widget):
@@ -15,28 +22,15 @@ class MyPaintWidget(Widget):
     def add_rectangele(self):
         with self.canvas:
             Color(1., 0, 0)
-            Rectangle(pos=(10, 10), size=(500, 500))
+            Rectangle(pos=(0, 0), size=(13660, 7680))
 
-    def on_touch_down(self, touch):
-        self.add_rectangele()
-        
-        color = (random(), 1, 1)
-        with self.canvas:
-            Color(*color, mode='hsv')
-            d = 30.
-            Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
-            touch.ud['line'] = Line(points=(touch.x, touch.y))
-
-    def on_touch_move(self, touch):
-        touch.ud['line'].points += [touch.x, touch.y]
-
+   
 
 class MyPaintApp(App):
-    _i = 1;
     
-      
-        
     def build(self):
+        
+        Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr='192.168.0.5', port=57110) # here I put my internal IP
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toDialog')
@@ -53,11 +47,6 @@ class MyPaintApp(App):
         self.painter.add_rectangele()
         Clock.schedule_once(self.clear_canvas1, 0.1)
         print("Messaggio: %s" % message)
-        #self._i += 1  
-        #print("Contatore: %s" % self._i )
-        
-
-
 
 
 if __name__ == '__main__':

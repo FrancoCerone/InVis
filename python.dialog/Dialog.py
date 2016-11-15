@@ -21,7 +21,7 @@ class MyPaintWidget(Widget):
     
     def add_rectangele(self):
         with self.canvas:
-            Color(1., 0, 0)
+            Color(1., 1., 1.)
             Rectangle(pos=(0, 0), size=(13660, 7680))
 
    
@@ -30,20 +30,23 @@ class MyPaintApp(App):
     
     def build(self):
         
-        Window.size = (1366, 768)
+        # Window.size = (1366, 768)
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr='192.168.0.5', port=57110) # here I put my internal IP
+        oscid = oscAPI.listen(ipAddr='localhost', port=57110) # here I put my internal IP
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toDialog')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         parent = Widget()
         self.painter = MyPaintWidget()
         parent.add_widget(self.painter)
         return parent
+    
 
     def clear_canvas1(self, obj):
         self.painter.canvas.clear()
     
     def elaborate_osculator_message(self, message, *args):
+        
+        
         self.painter.add_rectangele()
         Clock.schedule_once(self.clear_canvas1, 0.1)
         print("Messaggio: %s" % message)

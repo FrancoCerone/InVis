@@ -30,7 +30,7 @@ class MyPaintApp(App):
         
         # Window.size = (1366, 768)
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr='localhost', port=57110) # here I put my internal IP
+        oscid = oscAPI.listen(ipAddr='192.168.0.12', port=57110) # here I put my internal IP
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         

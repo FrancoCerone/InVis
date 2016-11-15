@@ -13,28 +13,30 @@ from kivy.metrics import MetricsBase
 from kivy.config import Config
 
 
-
-
-
-
 class MyPaintWidget(Widget):
     
-    def add_rectangele(self):
+    
+    def add_rectangele(self, color):
+        #self.color = Color(1., 1., 1.)
+        color
         with self.canvas:
-            Color(1., 1., 1.)
             Rectangle(pos=(0, 0), size=(13660, 7680))
 
    
 
 class MyPaintApp(App):
-    
+    _color = None
     def build(self):
         
         # Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr='localhost', port=57110) # here I put my internal IP
-        oscAPI.bind(oscid, self.elaborate_osculator_message, '/toDialog')
+        oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.elaborate_osculator_message, '/toSelectColor')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
         parent = Widget()
         self.painter = MyPaintWidget()
         parent.add_widget(self.painter)
@@ -45,9 +47,10 @@ class MyPaintApp(App):
         self.painter.canvas.clear()
     
     def elaborate_osculator_message(self, message, *args):
-        
-        
-        self.painter.add_rectangele()
+        if MyPaintApp._color is None:
+            self.painter.add_rectangele(Color(1., 1., 1.))
+        else:
+            self.painter.add_rectangele(MyPaintApp._color)
         Clock.schedule_once(self.clear_canvas1, 0.1)
         print("Messaggio: %s" % message)
 

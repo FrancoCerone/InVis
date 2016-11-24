@@ -14,24 +14,23 @@ from kivy.config import Config
 from kivy.uix.image import Image
 
 
-class MyPaintWidget(Widget):
-    
+class FlashWidget(Widget):
     def add_rectangele(self, color):
-        
         with self.canvas:
             blue = InstructionGroup()
             blue.add(color)
             Rectangle(pos=(0, 0), size=(13660, 7680))
-   
+            
+
 
 class MyPaintApp(App):
     _color = Color(1, 1, 1)
     _isRunning = True
+    im = Image()
+    im=Image(source="a.gif", anim_delay=0.1, pos=(0, 0),size=(800, 600))
     
-    im = Image(source='3.gif', anim_delay=0.05, pos=(0, 0),size=(400, 400) )
     def build(self):
-        #im = setImage('3.gif')
-        # Window.size = (1366, 768)
+        #Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr='localhost', port=57110) # per elektroWave WiFi: 192.168.0.12
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
@@ -43,22 +42,33 @@ class MyPaintApp(App):
         #oscAPI.bind(oscid, self.set_runnable, '/setRunnable')
         #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        parent = Widget()
-        self.painter = MyPaintWidget()
-        parent.add_widget(self.painter)
+        oscAPI.bind(oscid, self.set_Image, '/toSetImage')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        self._parent = Widget()
+        self.painter = FlashWidget()
+        
+        self._parent.add_widget(self.painter)
         self.im.keep_ratio= False
         self.im.allow_stretch = True
-        parent.add_widget(self.im)
-        return parent
+        self._parent.add_widget(self.im)
+        #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
+        return self._parent
     
 
     def clear_canvas1(self, obj):
         self.painter.canvas.clear()
     
     
-    #def setImage(imageName):
-     #   im=Image(source='3.gif', anim_delay=0.05, pos=(0, 0),size=(400, 400) )
-     #   return im
+    def set_Image(self, message, *args):
+        print "setting image:" + message[2]
+        im=Image(source=message[2]+ ".gif", anim_delay=0.05, pos=(0, 0),size=(800, 600) )
+        self._parent.remove_widget(self.im)
+        #self.remove_widget(self.im)
+        #self.im.keep_ratio= False
+        #self.im.allow_stretch = True
+        #_parent.add_widget(im)
+
     
     def elaborate_osculator_message(self, message, *args):
         if MyPaintApp._isRunning == True:

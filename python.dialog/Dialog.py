@@ -20,14 +20,35 @@ class FlashWidget(Widget):
             blue = InstructionGroup()
             blue.add(color)
             Rectangle(pos=(0, 0), size=(13660, 7680))
-            
+
+class ImageWidget(Widget):
+    print "Start Gif Loading"
+    gifMap = { 
+        "a.gif" : Image(source="a.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        #"b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        #"c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        }
+    print "Gif Loaded"
+
+    _im = Image()
+    def add_Image(self, imageFileName):
+        print self.gifMap.get(imageFileName)
+        with self.canvas:
+            _im = Image(source=imageFileName, anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True)
+            _im.keep_ratio= False
+            _im.allow_stretch = True
+    
+    def remove_Image(self):
+        print self.__class__
+        self.canvas.clear()
+             
+             
 
 
 class MyPaintApp(App):
     _color = Color(1, 1, 1)
     _isRunning = True
-    im = Image()
-    im=Image(source="a.gif", anim_delay=0.1, pos=(0, 0),size=(800, 600))
+    
     
     def build(self):
         #Window.size = (1366, 768)
@@ -36,8 +57,8 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_color, '/toSelectColor')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        #oscAPI.bind(oscid, self.set_color, '/toSelectColor')
+        #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         #oscAPI.bind(oscid, self.set_runnable, '/setRunnable')
         #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
@@ -45,39 +66,42 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.set_Image, '/toSetImage')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        self._parent = Widget()
-        self.painter = FlashWidget()
+        oscAPI.bind(oscid, self.remove_Image, '/toClearImage')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        self._parent.add_widget(self.painter)
-        self.im.keep_ratio= False
-        self.im.allow_stretch = True
-        self._parent.add_widget(self.im)
+        self._parent = Widget()
+        
+        self.flashWidget = FlashWidget()
+        self._parent.add_widget(self.flashWidget)
+        
+        self.imageWidget = ImageWidget()
+        self._parent.add_widget(self.imageWidget)
+        
         #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
         return self._parent
     
 
     def clear_canvas1(self, obj):
-        self.painter.canvas.clear()
+        self.flashWidget.canvas.clear()
     
     
     def set_Image(self, message, *args):
         print "setting image:" + message[2]
-        im=Image(source=message[2]+ ".gif", anim_delay=0.05, pos=(0, 0),size=(800, 600) )
-        self._parent.remove_widget(self.im)
-        #self.remove_widget(self.im)
-        #self.im.keep_ratio= False
-        #self.im.allow_stretch = True
-        #_parent.add_widget(im)
+        self.imageWidget.add_Image( message[2])
+    
+    def remove_Image(self, message, *args):
+        print "removing image"
+        self.imageWidget.remove_Image()
+        
 
     
     def elaborate_osculator_message(self, message, *args):
         if MyPaintApp._isRunning == True:
             if MyPaintApp._color is None:
-                self.painter.add_rectangele(Color(1., 1., 1.))
+                self.flashWidget.add_rectangele(Color(1., 1., 1.))
             else:
-                print "da elaborate"
-                print MyPaintApp._color
-                self.painter.add_rectangele(MyPaintApp._color)
+                self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
+                self.flashWidget.add_rectangele(MyPaintApp._color)
             Clock.schedule_once(self.clear_canvas1, 0.1)
             print("Messaggio: %s" % message)
 

@@ -5,7 +5,7 @@
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: 1, 1, 1
+            rgb: 1, 1, 0
         Rectangle:
             source: 'data/images/background.jpg'
             size: self.size
@@ -28,25 +28,18 @@
             valign: 'middle'
 
     Label:
-        text: 'Audio example'
-        font_size: 32
+        text: 'Controller'
+        font_size: 16
         size_hint_y: None
 
     BoxLayout:
-        Slider:
-            min: 0.0
-            max: 1.0
-            value: 1.0
-            on_value: app.set_volume(self.value)
-            orientation: "vertical"
-            size_hint_x: None
-            width: "48dp"
+        
 
         StackLayout:
             id: sl
 
     Button:
-        text: 'Stop and release all audio'
+        text: 'Ferma Tutto'
         size_hint_y: None
         height: '50sp'
         on_press: app.release_audio()

@@ -5,12 +5,13 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
-from glob import glob
-from os.path import dirname, join, basename
 from kivy.lib.osc import oscAPI
+from os.path import basename
 import os
 from kivy.uix.slider import Slider
 
+class Network():
+    ip = "localhost"
 
 class AudioButton(Button):
     filename = StringProperty(None)
@@ -19,7 +20,7 @@ class AudioButton(Button):
     def on_press(self):
         print os.path.basename(self.filename)
         oscAPI.init()
-        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr='localhost', port=57110)
+        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr="localhost", port=57110)
 
 
 class FlashButton(Button):
@@ -28,49 +29,50 @@ class FlashButton(Button):
         
 class ColorSlider(Slider):
     def on_touch_up(self, touch):
-        print "Change color value"
-      
-
-
+        if touch.grab_current == self:
+            print "Change color value"
+        
 class AudioBackground(BoxLayout):
+    pass
+
+class AudioBackground2(BoxLayout):
     pass
 
 
 class AudioApp(App):
+    gifMap = { 
+        "a.gif" : "a.gif",
+        "b.gif" : "b.gif",
+        "c.gif" : "c.gif",
+        }
 
     def build(self):
 
         root = AudioBackground(spacing=5)
         
-        path = os.path.dirname(__file__) + "/resources/"
-        for fn in glob(join(dirname(path ), '*.*')):
+        for fn in self.gifMap:
             btn = AudioButton(
                 text=basename(fn[:-4]).replace('_', ' '), filename=fn,
                 size_hint=(None, None), halign='center',
                 size=(128, 128), text_size=(118, None))
             root.ids.sl.add_widget(btn)
-
+            
         flashBt = FlashButton(
                 text="Flash On Off",
                 size_hint=(None, None), halign='center',
                 size=(128, 128), text_size=(118, None))
         
-        root.ids.sl.add_widget(flashBt)
         
+        root.ids.sl.add_widget(flashBt)
         
         s = ColorSlider(min=-100, max=100, value=25)
         root.ids.sl.add_widget(s)
+        
+        
+   
         return root
 
 
-    #def release_audio(self):
-     #   for audiobutton in self.root.ids.sl.children:
-      #      audiobutton.release_audio()
-
-    def set_volume(self, value):
-        print "Set Volume"
-     #   for audiobutton in self.root.ids.sl.children:
-      #      audiobutton.set_volume(value)
 
 if __name__ == '__main__':
     AudioApp().run()

@@ -63,10 +63,14 @@ class AudioApp(App):
                 size=(128, 128), text_size=(118, None))
         
         
-        root.ids.sl.add_widget(flashBt)
+        root.ids.sl2.add_widget(flashBt)
         
-        s = ColorSlider(min=-100, max=100, value=25)
-        root.ids.sl.add_widget(s)
+        s = ColorSlider(
+            halign='center',
+            min=-100, 
+            max=100, 
+            value=25)
+        root.ids.sl2.add_widget(s)
         
         
    

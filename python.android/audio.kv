@@ -27,15 +27,13 @@
             text: 'Controller'
             valign: 'middle'
 
-    Label:
-        text: 'Controller'
-        font_size: 16
-        size_hint_y: None
-
     BoxLayout:
         StackLayout:
             id: sl
-            
+    
+    BoxLayout:
+        BoxLayout:
+            id: sl2
 
     Button:
         text: 'Ferma Tutto'
@@ -43,9 +41,4 @@
         height: '50sp'
         on_press: app.release_audio()
 
-<FlashButton>:
-    size_hint: None,0.333
-    width: self.height
-    text_size: self.size
-    font_size: '12sp'
-    valign: 'middle'
+

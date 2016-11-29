@@ -25,8 +25,8 @@ class ImageWidget(Widget):
     print "Start Gif Loading"
     gifMap = { 
         "a.gif" : Image(source="a.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
-        #"b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
-        #"c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        "b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        "c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
         }
     print "Gif Loaded"
 
@@ -47,7 +47,7 @@ class ImageWidget(Widget):
 
 class MyPaintApp(App):
     _color = Color(1, 1, 1)
-    _isRunning = True
+    _isFlashRunning = True
     
     
     def build(self):
@@ -57,16 +57,16 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        #oscAPI.bind(oscid, self.set_color, '/toSelectColor')
-        #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
-        #oscAPI.bind(oscid, self.set_runnable, '/setRunnable')
-        #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        oscAPI.bind(oscid, self.set_color, '/toSelectColor')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_Image, '/toSetImage')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.remove_Image, '/toClearImage')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.set_Runnuble, '/toSetFlashRunnable')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
@@ -86,9 +86,18 @@ class MyPaintApp(App):
     
     
     def set_Image(self, message, *args):
+        MyPaintApp._isFlashRunning = False
         print "setting image:" + message[2]
         self.imageWidget.add_Image( message[2])
-    
+        
+    def set_Runnuble(self, message, *args):
+        print message
+        print message[2]
+        if message[2] == 1:
+            MyPaintApp._isFlashRunning = True
+        else:
+            MyPaintApp._isFlashRunning = False
+                
     def remove_Image(self, message, *args):
         print "removing image"
         self.imageWidget.remove_Image()
@@ -96,7 +105,7 @@ class MyPaintApp(App):
 
     
     def elaborate_osculator_message(self, message, *args):
-        if MyPaintApp._isRunning == True:
+        if MyPaintApp._isFlashRunning == True:
             if MyPaintApp._color is None:
                 self.flashWidget.add_rectangele(Color(1., 1., 1.))
             else:
@@ -110,9 +119,9 @@ class MyPaintApp(App):
     
     def set_runnable(self, message, *args):
         if message[2] == True:
-            MyPaintApp._isRunning = True
+            MyPaintApp._isFlashRunning = True
         else:
-            MyPaintApp._isRunning = False
+            MyPaintApp._isFlashRunning = False
 
 if __name__ == '__main__':
     MyPaintApp().run()

@@ -9,9 +9,15 @@ from kivy.lib.osc import oscAPI
 from os.path import basename
 import os
 from kivy.uix.slider import Slider
+oscAPI.init()
 
 class Network():
     ip = "localhost"
+    flashOnLabel = "Flash On"
+    flashOffLabel = "Flash Off"
+
+class FlashHandler():
+    _isFlashRunning = True
 
 class AudioButton(Button):
     filename = StringProperty(None)
@@ -19,13 +25,21 @@ class AudioButton(Button):
     volume = NumericProperty(1.0)
     def on_press(self):
         print os.path.basename(self.filename)
-        oscAPI.init()
-        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr="localhost", port=57110)
+        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Network.ip, port=57110)
+        FlashHandler._isFlashRunning = False
 
 
 class FlashButton(Button):
     def on_press(self):
-        print "Flash Button pressed"
+        if FlashHandler._isFlashRunning == True:
+            runFlash = False
+            self.text = "Flash on"
+        else:
+            runFlash = True
+            self.text = "Flash off"
+        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Network.ip, port=57110)
+        FlashHandler._isFlashRunning = runFlash
+        
         
 class ColorSlider(Slider):
     def on_touch_up(self, touch):
@@ -39,7 +53,7 @@ class AudioBackground2(BoxLayout):
     pass
 
 
-class AudioApp(App):
+class ControllerApp(App):
     gifMap = { 
         "a.gif" : "a.gif",
         "b.gif" : "b.gif",
@@ -58,18 +72,16 @@ class AudioApp(App):
             root.ids.sl.add_widget(btn)
             
         flashBt = FlashButton(
-                text="Flash On Off",
-                size_hint=(None, None), halign='center',
-                size=(128, 128), text_size=(118, None))
-        
-        
+            text=Network.flashOffLabel,
+            size_hint=(0, 1), 
+            size=(128, 128), 
+            text_size=(118, None))
         root.ids.sl2.add_widget(flashBt)
         
         s = ColorSlider(
-            halign='center',
             min=-100, 
             max=100, 
-            value=25)
+            value=0)
         root.ids.sl2.add_widget(s)
         
         
@@ -79,4 +91,4 @@ class AudioApp(App):
 
 
 if __name__ == '__main__':
-    AudioApp().run()
+    ControllerApp().run()

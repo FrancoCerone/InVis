@@ -8,13 +8,17 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
 from os.path import basename
 import os
-from kivy.uix.slider import Slider
+from kivy.uix.slider import Slider 
+from kivy.graphics import Rectangle, Color
+
 oscAPI.init()
 
 class Network():
     ip = "localhost"
     flashOnLabel = "Flash On"
     flashOffLabel = "Flash Off"
+class ColorHelper():
+    slider_colors = [1, 1, 1]    
 
 class FlashHandler():
     _isFlashRunning = True
@@ -40,11 +44,40 @@ class FlashButton(Button):
         oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Network.ip, port=57110)
         FlashHandler._isFlashRunning = runFlash
         
-        
-class ColorSlider(Slider):
+class ColorSlider3(Slider):
     def on_touch_up(self, touch):
         if touch.grab_current == self:
-            print "Change color value"
+            ColorHelper.slider_colors[2] = self.value/100
+            with self.canvas.before:
+                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
+                Rectangle(pos=(0, 0), size=(self.size))
+    def on_touch_move(self, touch):
+        if touch.grab_current == self:
+            ColorHelper.slider_colors[2] = self.value/100
+            with self.canvas.before:
+                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
+                Rectangle(pos=(0, 0), size=(self.size))
+            print "on touch move"
+            return Slider.on_touch_move(self, touch)
+                      
+class ColorSlider1(Slider):
+    def on_touch_up(self, touch):
+        if touch.grab_current == self:
+            ColorHelper.slider_colors[0] = self.value/100
+            with self.canvas.before:
+                print ColorHelper.slider_colors[0]
+                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
+                Rectangle(pos=(0, 0), size=(self.size))
+                 
+class ColorSlider2(Slider):
+    def on_touch_up(self, touch):
+        if touch.grab_current == self:
+            ColorHelper.slider_colors[1] = self.value/100
+            with self.canvas.before:
+                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
+                Rectangle(pos=(0, 0), size=(self.size))
+    
+
         
 class AudioBackground(BoxLayout):
     pass
@@ -54,6 +87,7 @@ class AudioBackground2(BoxLayout):
 
 
 class ControllerApp(App):
+    
     gifMap = { 
         "a.gif" : "a.gif",
         "b.gif" : "b.gif",
@@ -63,6 +97,7 @@ class ControllerApp(App):
     def build(self):
 
         root = AudioBackground(spacing=5)
+      
         
         for fn in self.gifMap:
             btn = AudioButton(
@@ -73,16 +108,28 @@ class ControllerApp(App):
             
         flashBt = FlashButton(
             text=Network.flashOffLabel,
-            size_hint=(0, 1), 
-            size=(128, 128), 
-            text_size=(118, None))
-        root.ids.sl2.add_widget(flashBt)
+            size_hint=(.0, 1), 
+             
+            )
+        root.ids.flashButton.add_widget(flashBt)
         
-        s = ColorSlider(
-            min=-100, 
+        s1 = ColorSlider1(
+            size_hint=(1, 1), 
+            min=0, 
             max=100, 
-            value=0)
-        root.ids.sl2.add_widget(s)
+            value=ColorHelper.slider_colors[0]*100)
+        s2 = ColorSlider2(
+            min=0, 
+            max=100, 
+            value=ColorHelper.slider_colors[1]*100)
+        s3 = ColorSlider3(
+            min=0, 
+            max=100, 
+            value=ColorHelper.slider_colors[2]*100)
+        root.ids.sl2.add_widget(s1)
+        root.ids.sl2.add_widget(s2)
+        root.ids.sl2.add_widget(s3)
+        print root.ids.sl2.size
         
         
    

@@ -13,6 +13,9 @@ from kivy.metrics import MetricsBase
 from kivy.config import Config
 from kivy.uix.image import Image
 
+class ScreenResolution():
+    width = 1280
+    height = 720
 
 class FlashWidget(Widget):
     def add_rectangele(self, color):
@@ -24,9 +27,9 @@ class FlashWidget(Widget):
 class ImageWidget(Widget):
     print "Start Gif Loading"
     gifMap = { 
-        "a.gif" : Image(source="a.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
-        "b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
-        "c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True),
+        "a.gif" : Image(source="a.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
+        "b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
+        "c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
         }
     print "Gif Loaded"
 
@@ -53,7 +56,7 @@ class MyPaintApp(App):
     def build(self):
         #Window.size = (1366, 768)
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr='localhost', port=57110) # per elektroWave WiFi: 192.168.0.12
+        oscid = oscAPI.listen(ipAddr='192.168.1.101', port=57110) # per elektroWave WiFi: 192.168.0.12
         oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         

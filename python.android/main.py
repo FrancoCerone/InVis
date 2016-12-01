@@ -13,7 +13,8 @@ import os
 oscAPI.init()
 
 class Network():
-    ip = "localhost"
+    #ip = "localhost"
+    ip = "192.168.1.101" #ElektroWave Wifi
     flashOnLabel = "Flash On"
     flashOffLabel = "Flash Off"
  

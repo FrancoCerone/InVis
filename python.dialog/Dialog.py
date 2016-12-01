@@ -54,7 +54,10 @@ class MyPaintApp(App):
         #Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr='localhost', port=57110) # per elektroWave WiFi: 192.168.0.12
-        oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
+        oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_color, '/toSetColor')
@@ -102,9 +105,16 @@ class MyPaintApp(App):
         print "removing image"
         self.imageWidget.remove_Image()
         
-
+        
+        
+    def one_shot_flash(self, message, *args):
+            self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
+            self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
+            Clock.schedule_once(self.clear_canvas1, 0.1)
+            print("Messaggio: %s" % message)    
+        
     
-    def elaborate_osculator_message(self, message, *args):
+    def automatic_flash(self, message, *args):
         if MyPaintApp._isFlashRunning == True:
             if MyPaintApp._color is None:
                 self.flashWidget.add_rectangele(Color(1., 1., 1.))

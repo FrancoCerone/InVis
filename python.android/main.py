@@ -22,13 +22,15 @@ class FlashHandler():
     _isFlashRunning = True
 
 class AudioButton(Button):
+    flashBt = ObjectProperty(None, allownone=True)
     filename = StringProperty(None)
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
-        print os.path.basename(self.filename)
         oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Network.ip, port=57110)
         FlashHandler._isFlashRunning = False
+        self.flashBt.text = "Flash On"
+        
 
 class ColorButton(Button):
     btncolor = StringProperty(None)
@@ -36,9 +38,11 @@ class ColorButton(Button):
         r = self.btncolor[0:2]
         g = self.btncolor[2:4]
         b = self.btncolor[4:6]
-        print [r,g,b]
-        oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
-        print "premuto"
+        if FlashHandler._isFlashRunning == True:
+            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
+        else:
+            oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
+            
 
         
 
@@ -77,26 +81,28 @@ class ControllerApp(App):
         "blue" :  " 0 0 1",
         "red" :   " 1 0 0",
         "green" : " 0 1 0",
-        "white" :" 1 1 1",
+        "white" :"999999",
           
         }
 
     def build(self):
 
         root = AudioBackground(spacing=5)
-      
+        
+        flashBt = FlashButton(
+            text=Network.flashOffLabel,
+            size_hint=(1, 1), 
+            )
+        
         
         for fn in self.gifMap:
             btn = AudioButton(
+                flashBt = flashBt,
                 text=basename(fn[:-4]).replace('_', ' '), filename=fn,
                 size_hint=(None, None), halign='center',
                 size=(128, 128), text_size=(118, None))
             root.ids.sl.add_widget(btn)
-            
-        flashBt = FlashButton(
-            text=Network.flashOffLabel,
-            size_hint=(.0, 1), 
-            )
+
         
         
         for color in self.colorMap:

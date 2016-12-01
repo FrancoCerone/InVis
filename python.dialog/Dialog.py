@@ -57,7 +57,7 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.elaborate_osculator_message, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_color, '/toSelectColor')
+        oscAPI.bind(oscid, self.set_color, '/toSetColor')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_Image, '/toSetImage')

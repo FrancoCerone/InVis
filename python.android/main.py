@@ -1,8 +1,6 @@
 import kivy
-from lib2to3.fixer_util import String
 kivy.require('1.0.8')
 
-from kivy.graphics import Color
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
@@ -10,8 +8,6 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
 from os.path import basename
 import os
-from kivy.properties import  ListProperty
-
 
 
 oscAPI.init()

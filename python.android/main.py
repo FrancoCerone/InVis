@@ -1,6 +1,8 @@
 import kivy
+from lib2to3.fixer_util import String
 kivy.require('1.0.8')
 
+from kivy.graphics import Color
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
@@ -8,8 +10,9 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
 from os.path import basename
 import os
-from kivy.uix.slider import Slider 
-from kivy.graphics import Rectangle, Color
+from kivy.properties import  ListProperty
+
+
 
 oscAPI.init()
 
@@ -17,8 +20,7 @@ class Network():
     ip = "localhost"
     flashOnLabel = "Flash On"
     flashOffLabel = "Flash Off"
-class ColorHelper():
-    slider_colors = [1, 1, 1]    
+ 
 
 class FlashHandler():
     _isFlashRunning = True
@@ -32,6 +34,17 @@ class AudioButton(Button):
         oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Network.ip, port=57110)
         FlashHandler._isFlashRunning = False
 
+class ColorButton(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        r = self.btncolor[0:2]
+        g = self.btncolor[2:4]
+        b = self.btncolor[4:6]
+        print [r,g,b]
+        oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
+        print "premuto"
+
+        
 
 class FlashButton(Button):
     def on_press(self):
@@ -44,39 +57,9 @@ class FlashButton(Button):
         oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Network.ip, port=57110)
         FlashHandler._isFlashRunning = runFlash
         
-class ColorSlider3(Slider):
-    def on_touch_up(self, touch):
-        if touch.grab_current == self:
-            ColorHelper.slider_colors[2] = self.value/100
-            with self.canvas.before:
-                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
-                Rectangle(pos=(0, 0), size=(self.size))
-    def on_touch_move(self, touch):
-        if touch.grab_current == self:
-            ColorHelper.slider_colors[2] = self.value/100
-            with self.canvas.before:
-                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
-                Rectangle(pos=(0, 0), size=(self.size))
-            print "on touch move"
-            return Slider.on_touch_move(self, touch)
-                      
-class ColorSlider1(Slider):
-    def on_touch_up(self, touch):
-        if touch.grab_current == self:
-            ColorHelper.slider_colors[0] = self.value/100
-            with self.canvas.before:
-                print ColorHelper.slider_colors[0]
-                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
-                Rectangle(pos=(0, 0), size=(self.size))
+
                  
-class ColorSlider2(Slider):
-    def on_touch_up(self, touch):
-        if touch.grab_current == self:
-            ColorHelper.slider_colors[1] = self.value/100
-            with self.canvas.before:
-                Color(ColorHelper.slider_colors[0],ColorHelper.slider_colors[1],ColorHelper.slider_colors[2])
-                Rectangle(pos=(0, 0), size=(self.size))
-    
+
 
         
 class AudioBackground(BoxLayout):
@@ -92,6 +75,14 @@ class ControllerApp(App):
         "a.gif" : "a.gif",
         "b.gif" : "b.gif",
         "c.gif" : "c.gif",
+        }
+    
+    colorMap = {
+        "blue" :  " 0 0 1",
+        "red" :   " 1 0 0",
+        "green" : " 0 1 0",
+        "white" :" 1 1 1",
+          
         }
 
     def build(self):
@@ -109,26 +100,25 @@ class ControllerApp(App):
         flashBt = FlashButton(
             text=Network.flashOffLabel,
             size_hint=(.0, 1), 
-             
             )
-        root.ids.flashButton.add_widget(flashBt)
         
-        s1 = ColorSlider1(
-            size_hint=(1, 1), 
-            min=0, 
-            max=100, 
-            value=ColorHelper.slider_colors[0]*100)
-        s2 = ColorSlider2(
-            min=0, 
-            max=100, 
-            value=ColorHelper.slider_colors[1]*100)
-        s3 = ColorSlider3(
-            min=0, 
-            max=100, 
-            value=ColorHelper.slider_colors[2]*100)
-        root.ids.sl2.add_widget(s1)
-        root.ids.sl2.add_widget(s2)
-        root.ids.sl2.add_widget(s3)
+        
+        for color in self.colorMap:
+            color2= self.colorMap.get(color)
+            r = color2[0:2]
+            g = color2[2:4]
+            b = color2[4:6]
+            btn = ColorButton(
+                btncolor = self.colorMap.get(color),
+                background_color=(r, g, b, 1),
+                size_hint=(None, None), halign='center',
+                size=(128, 128), text_size=(118, None)
+                )
+            root.ids.sl2.add_widget(btn)
+        
+        root.ids.flashButton.add_widget(flashBt)
+
+
         print root.ids.sl2.size
         
         

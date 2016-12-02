@@ -12,10 +12,26 @@ from kivy.core.window import Window
 from kivy.metrics import MetricsBase
 from kivy.config import Config
 from kivy.uix.image import Image
+from kivy.properties import ObjectProperty
 
 class ScreenResolution():
     width = 1280
     height = 720
+
+class Network():
+    #ip = '192.168.1.101' #ElektroWave WiFi
+    ip = 'localhost'
+    
+#class Helper():
+   # print "Start Gif Loading"
+   # gifMap = { 
+   #     "a.gif" : Image(source="resources/a.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
+   #     "b.gif" : Image(source="resources/b.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
+   #     "c.gif" : Image(source="resources/c.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
+   #     }
+   # print "Gif Loaded"
+    
+    
 
 class FlashWidget(Widget):
     def add_rectangele(self, color):
@@ -25,19 +41,14 @@ class FlashWidget(Widget):
             Rectangle(pos=(0, 0), size=(13660, 7680))
 
 class ImageWidget(Widget):
-    print "Start Gif Loading"
-    gifMap = { 
-        "a.gif" : Image(source="a.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-        "b.gif" : Image(source="b.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-        "c.gif" : Image(source="c.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-        }
-    print "Gif Loaded"
+    
 
-    _im = Image()
+  
     def add_Image(self, imageFileName):
-        print self.gifMap.get(imageFileName)
         with self.canvas:
-            _im = Image(source=imageFileName, anim_delay=0.1, pos=(0, 0), size=(1200, 800), keep_data = True)
+            print Helper.gifMap.get(imageFileName) 
+            self.canvas.clear()
+            Image(source="resources/"+ imageFileName, anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
     
@@ -56,7 +67,7 @@ class MyPaintApp(App):
     def build(self):
         #Window.size = (1366, 768)
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr='192.168.1.101', port=57110) # per elektroWave WiFi: 192.168.0.12
+        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
         oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
@@ -101,6 +112,7 @@ class MyPaintApp(App):
         print message[2]
         if message[2] == 1:
             MyPaintApp._isFlashRunning = True
+            self.imageWidget.remove_Image()
         else:
             MyPaintApp._isFlashRunning = False
                 

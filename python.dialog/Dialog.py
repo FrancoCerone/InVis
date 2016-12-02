@@ -38,7 +38,7 @@ class FlashWidget(Widget):
         with self.canvas:
             blue = InstructionGroup()
             blue.add(color)
-            Rectangle(pos=(0, 0), size=(13660, 7680))
+            Rectangle(pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height))
 
 class ImageWidget(Widget):
     
@@ -46,14 +46,12 @@ class ImageWidget(Widget):
   
     def add_Image(self, imageFileName):
         with self.canvas:
-            print Helper.gifMap.get(imageFileName) 
             self.canvas.clear()
-            Image(source="resources/"+ imageFileName, anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True)
+            _im = Image(source="resources/"+ imageFileName, anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
     
     def remove_Image(self):
-        print self.__class__
         self.canvas.clear()
              
              
@@ -104,12 +102,9 @@ class MyPaintApp(App):
     
     def set_Image(self, message, *args):
         MyPaintApp._isFlashRunning = False
-        print "setting image:" + message[2]
         self.imageWidget.add_Image( message[2])
         
     def set_Runnuble(self, message, *args):
-        print message
-        print message[2]
         if message[2] == 1:
             MyPaintApp._isFlashRunning = True
             self.imageWidget.remove_Image()
@@ -117,7 +112,6 @@ class MyPaintApp(App):
             MyPaintApp._isFlashRunning = False
                 
     def remove_Image(self, message, *args):
-        print "removing image"
         self.imageWidget.remove_Image()
         
         
@@ -126,7 +120,6 @@ class MyPaintApp(App):
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
             self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
             Clock.schedule_once(self.clear_canvas1, 0.1)
-            print("Messaggio: %s" % message)    
         
     
     def automatic_flash(self, message, *args):
@@ -137,7 +130,6 @@ class MyPaintApp(App):
                 self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
                 self.flashWidget.add_rectangele(MyPaintApp._color)
             Clock.schedule_once(self.clear_canvas1, 0.1)
-            print("Messaggio: %s" % message)
 
     def set_color(self, message, *args):
         MyPaintApp._color = Color( message[2], message[3], message[4])

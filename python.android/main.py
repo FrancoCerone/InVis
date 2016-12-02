@@ -12,9 +12,9 @@ import os
 
 oscAPI.init()
 
-class Network():
-    #ip = "localhost"
-    ip = "192.168.1.101" #ElektroWave Wifi
+class Constants():
+    ip = "localhost"
+    #ip = "192.168.1.101" #ElektroWave Wifi
     flashOnLabel = "Flash On"
     flashOffLabel = "Flash Off"
  
@@ -28,9 +28,9 @@ class AudioButton(Button):
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
-        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Network.ip, port=57110)
+        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Constants.ip, port=57110)
         FlashHandler._isFlashRunning = False
-        self.flashBt.text = "Flash On"
+        self.flashBt.text = Constants.flashOnLabel
         
 
 class ColorButton(Button):
@@ -40,9 +40,9 @@ class ColorButton(Button):
         g = self.btncolor[2:4]
         b = self.btncolor[4:6]
         if FlashHandler._isFlashRunning == True:
-            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
+            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Constants.ip, port=57110)
         else:
-            oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=Network.ip, port=57110)
+            oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=Constants.ip, port=57110)
             
 
         
@@ -55,7 +55,7 @@ class FlashButton(Button):
         else:
             runFlash = True
             self.text = "Flash off"
-        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Network.ip, port=57110)
+        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Constants.ip, port=57110)
         FlashHandler._isFlashRunning = runFlash
         
 
@@ -91,7 +91,7 @@ class ControllerApp(App):
         root = AudioBackground(spacing=5)
         
         flashBt = FlashButton(
-            text=Network.flashOffLabel,
+            text=Constants.flashOffLabel,
             size_hint=(1, 1), 
             )
         

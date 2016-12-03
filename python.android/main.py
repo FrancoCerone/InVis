@@ -35,9 +35,10 @@ class AudioButton(Button):
 class ColorButton(Button):
     btncolor = StringProperty(None)
     def on_press(self):
-        r = self.btncolor[0:2]
-        g = self.btncolor[2:4]
-        b = self.btncolor[4:6]
+        r = ControllerApp.get_Red(self.btncolor)
+        g = ControllerApp.get_Green(self.btncolor)
+        b = ControllerApp.get_Blue(self.btncolor)
+        print r,g,b
         if FlashHandler._isFlashRunning == True:
             oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Constants.ip, port=57110)
         else:
@@ -59,8 +60,6 @@ class FlashButton(Button):
         
 
                  
-
-
         
 class AudioBackground(BoxLayout):
     pass
@@ -71,6 +70,16 @@ class AudioBackground2(BoxLayout):
 
 class ControllerApp(App):
     
+    @staticmethod 
+    def get_Red(rgbString):
+        return rgbString[0:3]
+    @staticmethod 
+    def get_Green(rgbString):
+        return rgbString[3:6]
+    @staticmethod 
+    def get_Blue(rgbString):
+        return rgbString[6:9]
+    
     gifMap = { 
         "a.gif" : "a.gif",
         "b.gif" : "b.gif",
@@ -78,10 +87,12 @@ class ControllerApp(App):
         }
     
     colorMap = {
-        "blue" :  " 0 0 1",
-        "red" :   " 1 0 0",
-        "green" : " 0 1 0",
-        "white" :"999999",
+        "blue" :  "  0  0  1",
+        "red" :   "  1  0  0",
+        "green" : "  0  1  0",
+        "white" : ".99.99.99",
+        "yellow" :".93.99.09",
+        "purple" :".99  0.83",
         }
 
     def build(self):
@@ -95,7 +106,6 @@ class ControllerApp(App):
         
         
         for fn in self.gifMap:
-            print fn[:-4]
             btn = AudioButton(
                 flashBt = flashBt,
                 filename=fn,
@@ -108,9 +118,9 @@ class ControllerApp(App):
         
         for color in self.colorMap:
             color2= self.colorMap.get(color)
-            r = color2[0:2]
-            g = color2[2:4]
-            b = color2[4:6]
+            r = ControllerApp.get_Red( color2)
+            g = ControllerApp.get_Green(color2)
+            b = ControllerApp.get_Blue(color2)
             btn = ColorButton(
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),

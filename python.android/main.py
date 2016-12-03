@@ -84,6 +84,7 @@ class ControllerApp(App):
         "a.gif" : "a.gif",
         "b.gif" : "b.gif",
         "c.gif" : "c.gif",
+        "d.gif" : "d.gif",
         }
     
     colorMap = {

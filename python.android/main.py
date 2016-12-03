@@ -6,7 +6,6 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
-from os.path import basename
 import os
 
 
@@ -83,7 +82,6 @@ class ControllerApp(App):
         "red" :   " 1 0 0",
         "green" : " 0 1 0",
         "white" :"999999",
-          
         }
 
     def build(self):
@@ -97,11 +95,13 @@ class ControllerApp(App):
         
         
         for fn in self.gifMap:
+            print fn[:-4]
             btn = AudioButton(
                 flashBt = flashBt,
-                text=basename(fn[:-4]).replace('_', ' '), filename=fn,
+                filename=fn,
+                background_normal = "resources/" + fn[:-4] + ".png",
                 size_hint=(None, None), halign='center',
-                size=(128, 128), text_size=(118, None))
+                size=(200, 200), text_size=(118, None))
             root.ids.sl.add_widget(btn)
 
         

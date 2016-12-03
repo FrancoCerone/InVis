@@ -132,6 +132,7 @@ class MyPaintApp(App):
             Clock.schedule_once(self.clear_canvas1, 0.1)
 
     def set_color(self, message, *args):
+        print message[2], message[3], message[4]
         MyPaintApp._color = Color( message[2], message[3], message[4])
     
     def set_runnable(self, message, *args):

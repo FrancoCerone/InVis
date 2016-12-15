@@ -12,8 +12,9 @@ import os
 oscAPI.init()
 
 class Constants():
-    ip = "localhost"
-    #ip = "192.168.1.101" #ElektroWave Wifi
+    #ip = "localhost"
+    ip = "192.168.1.101" #ElektroWave Wifi
+    #ip = "192.168.0.4" #My house WiFi
     flashOnLabel = "Flash On"
     flashOffLabel = "Flash Off"
  
@@ -64,8 +65,7 @@ class FlashButton(Button):
 class AudioBackground(BoxLayout):
     pass
 
-class AudioBackground2(BoxLayout):
-    pass
+
 
 
 class ControllerApp(App):

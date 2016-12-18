@@ -3,20 +3,88 @@ kivy.require('1.0.8')
 
 from kivy.app import App
 from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
 import os
-
-
 oscAPI.init()
+from kivy.uix.screenmanager import ScreenManager, Screen
+
+from kivy.lang import Builder
+
+Builder.load_string("""
+<MenuScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            padding: 10
+            spacing: 10
+            size_hint: 1, None
+            pos_hint: {'top': 1}
+            height: 44
+            Label:
+                height: 24
+                text_size: self.size
+                color: (1, 1, 1, .8)
+                text: 'Controller'
+                valign: 'middle'
+    
+        BoxLayout:
+            StackLayout:
+                id: sl
+       
+        BoxLayout:
+            BoxLayout:
+                id: flashButton
+                size_hint: .6,1
+            GridLayout:
+                cols: 5
+                rows: 2
+                canvas:
+                    Color:
+                        rgb: 0.5,0.5,0.5
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                orientation:'horizontal'
+                id: sl2
+                size_hint: 2,1
+        
+        Button:
+            text: 'Settings ->'
+            on_press: root.manager.current = 'settings'
+            size_hint_y: 5,1
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'My settings button'
+        Button:
+            text: 'Back Home'
+            on_press: root.manager.current = 'menu'
+            size_hint_y: 5,1
+""")
+
+
+
+
+class MenuScreen(Screen):
+    pass
+
+class SettingsScreen(Screen):
+    pass
+
+sm = ScreenManager()
+menuScreen = MenuScreen(name='menu')
+sm.add_widget(menuScreen)
+sm.add_widget(SettingsScreen(name='settings'))
 
 class Constants():
     #ip = "localhost"
     ip = "192.168.1.101" #ElektroWave Wifi
     #ip = "192.168.0.4" #My house WiFi
-    flashOnLabel = "Flash On"
-    flashOffLabel = "Flash Off"
+    flashOnLabel = "Auto Mode On"
+    flashOffLabel = "Auto Mode Off"
  
 
 class FlashHandler():
@@ -52,18 +120,16 @@ class FlashButton(Button):
     def on_press(self):
         if FlashHandler._isFlashRunning == True:
             runFlash = False
-            self.text = "Flash on"
+            self.text = Constants.flashOnLabel
         else:
             runFlash = True
-            self.text = "Flash off"
+            self.text = Constants.flashOffLabel
         oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Constants.ip, port=57110)
         FlashHandler._isFlashRunning = runFlash
         
 
                  
         
-class AudioBackground(BoxLayout):
-    pass
 
 
 
@@ -97,9 +163,6 @@ class ControllerApp(App):
         }
 
     def build(self):
-
-        root = AudioBackground(spacing=5)
-        
         flashBt = FlashButton(
             text=Constants.flashOffLabel,
             size_hint=(1, 1), 
@@ -113,7 +176,7 @@ class ControllerApp(App):
                 background_normal = "resources/" + fn[:-4] + ".png",
                 size_hint=(None, None), halign='center',
                 size=(200, 200), text_size=(118, None))
-            root.ids.sl.add_widget(btn)
+            menuScreen.ids.sl.add_widget(btn)
 
         
         
@@ -128,16 +191,16 @@ class ControllerApp(App):
                 size_hint=(None, None), halign='center',
                 size=(128, 128), text_size=(118, None)
                 )
-            root.ids.sl2.add_widget(btn)
+            menuScreen.ids.sl2.add_widget(btn)
         
-        root.ids.flashButton.add_widget(flashBt)
+        menuScreen.ids.flashButton.add_widget(flashBt)
 
 
-        print root.ids.sl2.size
+       
         
         
    
-        return root
+        return sm
 
 
 

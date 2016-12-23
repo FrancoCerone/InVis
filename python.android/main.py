@@ -12,7 +12,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 
 Builder.load_string("""
-<MenuScreen>:
+<MainScreen>:
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
@@ -55,27 +55,27 @@ Builder.load_string("""
             size_hint_y: 5,1
 
 <SettingsScreen>:
-    BoxLayout:
+    RelativeLayout:
         orientation: 'vertical'
         Button:
-            text: 'My settings button'
-        Button:
             text: 'Back Home'
-            on_press: root.manager.current = 'menu'
-            size_hint_y: 5,1
+            on_press: root.manager.current = 'main'
+        TextInput:
+            text: 'My settings button'
+            
 """)
 
 
 
 
-class MenuScreen(Screen):
+class MainScreen(Screen):
     pass
 
 class SettingsScreen(Screen):
     pass
 
 sm = ScreenManager()
-menuScreen = MenuScreen(name='menu')
+menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
 sm.add_widget(SettingsScreen(name='settings'))
 
@@ -83,8 +83,8 @@ class Constants():
     #ip = "localhost"
     ip = "192.168.1.101" #ElektroWave Wifi
     #ip = "192.168.0.4" #My house WiFi
-    flashOnLabel = "Auto Mode On"
-    flashOffLabel = "Auto Mode Off"
+    flashOnLabel = "Auto Mode"
+    flashOffLabel = "Manual Mode"
  
 
 class FlashHandler():

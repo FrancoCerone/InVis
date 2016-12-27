@@ -55,14 +55,34 @@ Builder.load_string("""
             size_hint_y: 5,1
 
 <SettingsScreen>:
-    RelativeLayout:
-        orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        AnchorLayout:
+            anchor_x: 'left'
+            anchor_y: 'top'
+            AnchorLayout:
+                anchor_x: 'right'
+                anchor_y: 'top'
+                GridLayout:
+                    cols: 2
+                    rows: 2
+                    Label:
+                        text: "Ip to:"
+                        color: (1, 1, 1, .8)
+                        size_hint: None, None
+                        height: sp(30)
+                    TextInput:
+                        id: ipAdress
+                        text: 'localhost'
+                        multiline: False
+                        write_tab: False    
+                        size_hint: None, None
+                        height: sp(30)
+                        width: sp(300)
         Button:
-            text: 'Back Home'
-            on_press: root.manager.current = 'main'
-        TextInput:
-            text: 'My settings button'
-            
+            text: 'Back Home ->'
+            on_press: root.manager.current = 'main'     
+                        Constants.ip =ipAdress.text
 """)
 
 

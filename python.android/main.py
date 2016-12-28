@@ -1,4 +1,5 @@
 import kivy
+from docutils.utils.math.math2html import Constant
 kivy.require('1.0.8')
 
 from kivy.app import App
@@ -81,8 +82,8 @@ Builder.load_string("""
                         width: sp(300)
         Button:
             text: 'Back Home ->'
-            on_press: root.manager.current = 'main'     
-                        Constants.ip =ipAdress.text
+            on_release: root.manager.current = 'main' 
+                        
 """)
 
 
@@ -92,17 +93,17 @@ class MainScreen(Screen):
     pass
 
 class SettingsScreen(Screen):
+    def getIp(self):
+        return str(self.ids.ipAdress.text)
     pass
 
 sm = ScreenManager()
 menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
-sm.add_widget(SettingsScreen(name='settings'))
+settingScreen = SettingsScreen(name='settings')
+sm.add_widget(settingScreen)
 
 class Constants():
-    #ip = "localhost"
-    ip = "192.168.1.101" #ElektroWave Wifi
-    #ip = "192.168.0.4" #My house WiFi
     flashOnLabel = "Auto Mode"
     flashOffLabel = "Manual Mode"
  
@@ -116,7 +117,7 @@ class AudioButton(Button):
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
-        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=Constants.ip, port=57110)
+        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         FlashHandler._isFlashRunning = False
         self.flashBt.text = Constants.flashOnLabel
         
@@ -129,9 +130,9 @@ class ColorButton(Button):
         b = ControllerApp.get_Blue(self.btncolor)
         print r,g,b
         if FlashHandler._isFlashRunning == True:
-            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=Constants.ip, port=57110)
+            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else:
-            oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=Constants.ip, port=57110)
+            oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
             
 
         
@@ -144,7 +145,7 @@ class FlashButton(Button):
         else:
             runFlash = True
             self.text = Constants.flashOffLabel
-        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=Constants.ip, port=57110)
+        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         FlashHandler._isFlashRunning = runFlash
         
 
@@ -215,11 +216,6 @@ class ControllerApp(App):
         
         menuScreen.ids.flashButton.add_widget(flashBt)
 
-
-       
-        
-        
-   
         return sm
 
 

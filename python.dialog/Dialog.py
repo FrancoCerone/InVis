@@ -13,14 +13,23 @@ from kivy.metrics import MetricsBase
 from kivy.config import Config
 from kivy.uix.image import Image
 from kivy.properties import ObjectProperty
+import socket
+import fcntl
+import struct
+import os
 
 class ScreenResolution():
     width = 1280
     height = 720
+    
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('192.0.0.8', 1027))
+    return s.getsockname()[0]
 
 class Network():
-    #ip = '192.168.1.101' #ElektroWave WiFi
-    ip = 'localhost'
+    ip = get_ip_address()
     
 #class Helper():
    # print "Start Gif Loading"

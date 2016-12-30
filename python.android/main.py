@@ -1,5 +1,4 @@
 import kivy
-from docutils.utils.math.math2html import Constant
 kivy.require('1.0.8')
 
 from kivy.app import App

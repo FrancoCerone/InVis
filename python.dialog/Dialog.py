@@ -12,35 +12,28 @@ from kivy.core.window import Window
 from kivy.metrics import MetricsBase
 from kivy.config import Config
 from kivy.uix.image import Image
+from kivy.uix.videoplayer import VideoPlayer
 from kivy.properties import ObjectProperty
 import socket
 import fcntl
 import struct
 import os
+#import pyglet
 
 class ScreenResolution():
-    width = 1280
-    height = 720
+    width = 2560
+    height = 1600
     
 
 def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('192.0.0.8', 1027))
-    return s.getsockname()[0]
+    #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #s.connect(('192.0.0.8', 1027))
+    #ip = s.getsockname()[0]
+    ip = 'localhost'
+    return ip 
 
 class Network():
     ip = get_ip_address()
-    
-#class Helper():
-   # print "Start Gif Loading"
-   # gifMap = { 
-   #     "a.gif" : Image(source="resources/a.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-   #     "b.gif" : Image(source="resources/b.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-   #     "c.gif" : Image(source="resources/c.gif", anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True),
-   #     }
-   # print "Gif Loaded"
-    
-    
 
 class FlashWidget(Widget):
     def add_rectangele(self, color):
@@ -50,21 +43,23 @@ class FlashWidget(Widget):
             Rectangle(pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height))
 
 class ImageWidget(Widget):
-    
-
-  
-    def add_Image(self, imageFileName):
+    def add_gif(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
-            _im = Image(source="resources/"+ imageFileName, anim_delay=0.1, pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height), keep_data = True)
-            _im.keep_ratio= False
+            _im = Image(source="resources/gifs/"+ imageFileName + ".gif", anim_delay=0.1, pos=(0, 0), keep_data = True)
+            _im.keep_ratio= True
             _im.allow_stretch = True
-    
+            _im.size =ScreenResolution.width, ScreenResolution.height
+    def add_png(self, imageFileName):
+        with self.canvas:
+            self.canvas.clear()
+            _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
+            _im.keep_ratio= True
+            _im.allow_stretch = True
+            _im.size =ScreenResolution.width, ScreenResolution.height
     def remove_Image(self):
         self.canvas.clear()
              
-             
-
 
 class MyPaintApp(App):
     _color = Color(1, 1, 1)
@@ -75,8 +70,6 @@ class MyPaintApp(App):
         #Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
-        oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
@@ -84,10 +77,10 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.set_color, '/toSetColor')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_Image, '/toSetImage')
+        oscAPI.bind(oscid, self.set_Gif, '/toSetGif')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.remove_Image, '/toClearImage')
+        oscAPI.bind(oscid, self.set_Png, '/toSetPng')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_Runnuble, '/toSetFlashRunnable')
@@ -109,9 +102,12 @@ class MyPaintApp(App):
         self.flashWidget.canvas.clear()
     
     
-    def set_Image(self, message, *args):
-        MyPaintApp._isFlashRunning = False
-        self.imageWidget.add_Image( message[2])
+    def set_Gif(self, message, *args):
+        self.imageWidget.add_gif( message[2])
+        
+    def set_Png(self, message, *args):
+        self.imageWidget.add_png( message[2])
+        Clock.schedule_once(self.remove_Image, 0.1)
         
     def set_Runnuble(self, message, *args):
         if message[2] == 1:

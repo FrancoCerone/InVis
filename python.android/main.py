@@ -103,12 +103,12 @@ settingScreen = SettingsScreen(name='settings')
 sm.add_widget(settingScreen)
 
 class Constants():
-    flashOnLabel = "Auto Mode"
-    flashOffLabel = "Manual Mode"
+    automaticMode = "Auto Mode"
+    manualMode = "Manual Mode"
  
 
-class FlashHandler():
-    _isFlashRunning = True
+class ModalityHandler():
+    _isAutomaticMode = True
 
 class AudioButton(Button):
     flashBt = ObjectProperty(None, allownone=True)
@@ -116,10 +116,10 @@ class AudioButton(Button):
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
-        oscAPI.sendMsg('/toSetImage', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        FlashHandler._isFlashRunning = False
-        self.flashBt.text = Constants.flashOnLabel
-        
+        if ModalityHandler._isAutomaticMode == True:
+            oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        else: 
+            oscAPI.sendMsg('/toSetPng', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)          
 
 class ColorButton(Button):
     btncolor = StringProperty(None)
@@ -128,7 +128,7 @@ class ColorButton(Button):
         g = ControllerApp.get_Green(self.btncolor)
         b = ControllerApp.get_Blue(self.btncolor)
         print r,g,b
-        if FlashHandler._isFlashRunning == True:
+        if ModalityHandler._isAutomaticMode == True:
             oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else:
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
@@ -138,14 +138,14 @@ class ColorButton(Button):
 
 class FlashButton(Button):
     def on_press(self):
-        if FlashHandler._isFlashRunning == True:
+        if ModalityHandler._isAutomaticMode == True:
             runFlash = False
-            self.text = Constants.flashOnLabel
+            self.text = Constants.automaticMode
         else:
             runFlash = True
-            self.text = Constants.flashOffLabel
+            self.text = Constants.manualMode
         oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        FlashHandler._isFlashRunning = runFlash
+        ModalityHandler._isAutomaticMode = runFlash
         
 
                  
@@ -167,10 +167,13 @@ class ControllerApp(App):
         return rgbString[6:9]
     
     gifMap = { 
-        "a.gif" : "a.gif",
-        "b.gif" : "b.gif",
-        "c.gif" : "c.gif",
-        "d.gif" : "d.gif",
+        "a" : "a.gif",
+        "b" : "b.gif",
+        "c" : "c.gif",
+        "d" : "d.gif",
+        "e" : "e.gif",
+        "f" : "f.gif",
+        "g" : "g.gif",
         }
     
     colorMap = {
@@ -184,7 +187,7 @@ class ControllerApp(App):
 
     def build(self):
         flashBt = FlashButton(
-            text=Constants.flashOffLabel,
+            text=Constants.manualMode,
             size_hint=(1, 1), 
             )
         
@@ -193,7 +196,7 @@ class ControllerApp(App):
             btn = AudioButton(
                 flashBt = flashBt,
                 filename=fn,
-                background_normal = "resources/" + fn[:-4] + ".png",
+                background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
                 size=(200, 200), text_size=(118, None))
             menuScreen.ids.sl.add_widget(btn)

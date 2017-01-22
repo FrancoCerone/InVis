@@ -21,8 +21,8 @@ import os
 #import pyglet
 
 class ScreenResolution():
-    width = 2560
-    height = 1600
+    width = 1360
+    height = 768
     
 
 def get_ip_address():

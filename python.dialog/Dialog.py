@@ -26,10 +26,10 @@ class ScreenResolution():
     
 
 def get_ip_address():
-    #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #s.connect(('192.0.0.8', 1027))
-    #ip = s.getsockname()[0]
-    ip = 'localhost'
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('192.0.0.8', 1027))
+    ip = s.getsockname()[0]
+    #ip = 'localhost'
     return ip 
 
 class Network():

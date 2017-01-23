@@ -110,7 +110,7 @@ class Constants():
 class ModalityHandler():
     _isAutomaticMode = True
 
-class AudioButton(Button):
+class GifImageButton(Button):
     flashBt = ObjectProperty(None, allownone=True)
     filename = StringProperty(None)
     sound = ObjectProperty(None, allownone=True)
@@ -193,7 +193,7 @@ class ControllerApp(App):
         
         
         for fn in self.gifMap:
-            btn = AudioButton(
+            btn = GifImageButton(
                 flashBt = flashBt,
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",

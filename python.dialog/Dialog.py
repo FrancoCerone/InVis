@@ -71,10 +71,9 @@ class MyPaintApp(App):
         #Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
+
         oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-       
-        
         
         oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)

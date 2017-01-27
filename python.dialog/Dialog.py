@@ -64,7 +64,9 @@ class ImageWidget(Widget):
 
 class MyPaintApp(App):
     _color = Color(1, 1, 1)
-    _isFlashRunning = True
+    _isFlashRunning = False
+    _isRersistable = True
+    _modality=0
     
     
     def build(self):
@@ -87,7 +89,7 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.set_Png, '/toSetPng')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_Runnuble, '/toSetFlashRunnable')
+        oscAPI.bind(oscid, self.set_Modality, '/toSetModality')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
@@ -103,22 +105,33 @@ class MyPaintApp(App):
     
 
     def clear_canvas1(self, obj):
-        self.flashWidget.canvas.clear()
+        self.flashWidget.canvas.clear() 
     
     
     def set_Gif(self, message, *args):
+        MyPaintApp._isFlashRunning = False
         self.imageWidget.add_gif( message[2])
         
-    def set_Png(self, message, *args):
-        self.imageWidget.add_png( message[2])
-        Clock.schedule_once(self.remove_Image, 0.1)
         
-    def set_Runnuble(self, message, *args):
-        if message[2] == 1:
-            MyPaintApp._isFlashRunning = True
-            self.imageWidget.remove_Image()
-        else:
+    def set_Png(self, message, *args):
+        self.flashWidget.canvas.clear()
+        self.imageWidget.add_png( message[2])
+        if MyPaintApp._isRersistable == False:
+            Clock.schedule_once(self.remove_Image, 0.1)
+        
+    def set_Modality(self, message, *args):
+        MyPaintApp._modality = message[2]
+        if message[2] == 0:
             MyPaintApp._isFlashRunning = False
+            MyPaintApp._isRersistable = True
+            self.imageWidget.remove_Image()
+        elif message[2] == 1:
+            MyPaintApp._isFlashRunning = True
+            MyPaintApp._isRersistable = False
+        elif message[2] == 2:
+            MyPaintApp._isFlashRunning = False
+            MyPaintApp._isRersistable = False
+    
                 
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
@@ -126,9 +139,11 @@ class MyPaintApp(App):
         
         
     def one_shot_flash(self, message, *args):
+
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
             self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
-            Clock.schedule_once(self.clear_canvas1, 0.1)
+            if MyPaintApp._isRersistable == False:
+                Clock.schedule_once(self.clear_canvas1, 0.1)
         
     
     def automatic_flash(self, message, *args):
@@ -142,6 +157,7 @@ class MyPaintApp(App):
 
     def set_color(self, message, *args):
         print message[2], message[3], message[4]
+        MyPaintApp._isFlashRunning = True
         MyPaintApp._color = Color( message[2], message[3], message[4])
     
     def set_runnable(self, message, *args):

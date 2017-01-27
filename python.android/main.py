@@ -3,7 +3,7 @@ kivy.require('1.0.8')
 
 from kivy.app import App
 from kivy.uix.button import Button
-from kivy.properties import StringProperty, ObjectProperty, NumericProperty
+from kivy.properties import StringProperty, ObjectProperty, NumericProperty, ListProperty
 from kivy.lib.osc import oscAPI
 import os
 oscAPI.init()
@@ -27,17 +27,27 @@ Builder.load_string("""
                 color: (1, 1, 1, .8)
                 text: 'Controller'
                 valign: 'middle'
-    
+        
+        BoxLayout:
+            GridLayout:
+                cols: 3
+                rows: 1
+                canvas:
+                    Color:
+                        rgb: 0.5,0.5,0.5
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                orientation:'horizontal'
+                id: modalityContainer
+                
         BoxLayout:
             StackLayout:
                 id: sl
        
         BoxLayout:
-            BoxLayout:
-                id: flashButton
-                size_hint: .6,1
             GridLayout:
-                cols: 5
+                cols: 6
                 rows: 2
                 canvas:
                     Color:
@@ -88,6 +98,7 @@ Builder.load_string("""
 
 
 
+
 class MainScreen(Screen):
     pass
 
@@ -103,20 +114,24 @@ settingScreen = SettingsScreen(name='settings')
 sm.add_widget(settingScreen)
 
 class Constants():
+    resistMode = "Resist Mode"
     automaticMode = "Auto Mode"
     manualMode = "Manual Mode"
+    
+    
  
 
 class ModalityHandler():
-    _isAutomaticMode = True
+    modalities = ('resist', 'auto', 'manual')
+
 
 class GifImageButton(Button):
-    flashBt = ObjectProperty(None, allownone=True)
+    #flashBt = ObjectProperty(None, allownone=True)
     filename = StringProperty(None)
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
-        if ModalityHandler._isAutomaticMode == True:
+        if ControllerApp._modality== 1:
             oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else: 
             oscAPI.sendMsg('/toSetPng', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)          
@@ -128,34 +143,61 @@ class ColorButton(Button):
         g = ControllerApp.get_Green(self.btncolor)
         b = ControllerApp.get_Blue(self.btncolor)
         print r,g,b
-        if ModalityHandler._isAutomaticMode == True:
+        if ControllerApp._modality== 1:
             oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else:
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
             
 
-        
 
-class FlashButton(Button):
+class ResistModality(Button):
     def on_press(self):
-        if ModalityHandler._isAutomaticMode == True:
-            runFlash = False
-            self.text = Constants.automaticMode
-        else:
-            runFlash = True
-            self.text = Constants.manualMode
-        oscAPI.sendMsg('/toSetFlashRunnable', dataArray=[runFlash], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ModalityHandler._isAutomaticMode = runFlash
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        oscAPI.sendMsg('/toSetModality',dataArray=[ModalityHandler.modalities.index("resist", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityHandler.modalities.index("resist", )
+
+class AutomaticModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.resisthBnt.background_color = [0.9, 0.9, 0.9, 1]
+        self.text = Constants.automaticMode
+        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityHandler.modalities.index("auto", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityHandler.modalities.index("auto", )
+        
+class ManualModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.resisthBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityHandler.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityHandler.modalities.index("manual", )
         
 
-                 
-        
+class ButtonModalityHandler():
+    resisthBnt = ResistModality(
+            text=Constants.resistMode,
+            size_hint=(1, 1), 
+            background_color =  [0.2, 0.3, 0.2, 1]
+            )
 
+    automaticBnt = AutomaticModality(
+            text=Constants.automaticMode,
+            size_hint=(1, 1), 
+            )
+    
+    manualBnt = ManualModality(
+            text=Constants.manualMode,
+            size_hint=(1, 1), 
+            )
+    
 
 
 
 class ControllerApp(App):
-    
+    _modality=0
     @staticmethod 
     def get_Red(rgbString):
         return rgbString[0:3]
@@ -186,15 +228,11 @@ class ControllerApp(App):
         }
 
     def build(self):
-        flashBt = FlashButton(
-            text=Constants.manualMode,
-            size_hint=(1, 1), 
-            )
         
         
         for fn in self.gifMap:
             btn = GifImageButton(
-                flashBt = flashBt,
+                #flashBt = flashBt,
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
@@ -216,7 +254,10 @@ class ControllerApp(App):
                 )
             menuScreen.ids.sl2.add_widget(btn)
         
-        menuScreen.ids.flashButton.add_widget(flashBt)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.resisthBnt)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.automaticBnt)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
+                                                    
 
         return sm
 

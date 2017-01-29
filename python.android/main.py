@@ -3,7 +3,7 @@ kivy.require('1.0.8')
 
 from kivy.app import App
 from kivy.uix.button import Button
-from kivy.properties import StringProperty, ObjectProperty, NumericProperty, ListProperty
+from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
 import os
 oscAPI.init()
@@ -82,14 +82,15 @@ Builder.load_string("""
                         size_hint: None, None
                         height: sp(30)
                     TextInput:
-                        id: ipAdress
-                        text: 'localhost'
+                        id: ipAdressText
+                        text: 'bo'
                         multiline: False
                         write_tab: False    
                         size_hint: None, None
                         height: sp(30)
                         width: sp(300)
         Button:
+            id: backHomeButton
             text: 'Back Home ->'
             on_release: root.manager.current = 'main' 
                         
@@ -104,13 +105,24 @@ class MainScreen(Screen):
 
 class SettingsScreen(Screen):
     def getIp(self):
-        return str(self.ids.ipAdress.text)
+        return str(self.ids.ipAdressText.text)
+    def setIp(self, ip):
+        self.ids.ipAdressText.text = ip
+    
+    def saveIp(self):
+        fob = open('properties.txt','w')
+        fob.write(str(settingScreen.ids.ipAdressText.text))
+        fob.close()
+
+
+    
     pass
 
 sm = ScreenManager()
 menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
 settingScreen = SettingsScreen(name='settings')
+settingScreen.ids.backHomeButton.bind(on_press = SettingsScreen.saveIp)
 sm.add_widget(settingScreen)
 
 class Constants():
@@ -146,6 +158,7 @@ class ColorButton(Button):
         if ControllerApp._modality== 1:
             oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else:
+            print SettingsScreen.getIp(settingScreen) 
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
             
 
@@ -228,7 +241,13 @@ class ControllerApp(App):
         }
 
     def build(self):
+        textfile = open('properties.txt', 'r') 
+        ipFromTxt = textfile.read()
+        print ipFromTxt
+        SettingsScreen.setIp(settingScreen, ipFromTxt)
+
         
+
         
         for fn in self.gifMap:
             btn = GifImageButton(
@@ -236,7 +255,7 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(200, 200), text_size=(118, None))
+                size=(100, 100), text_size=(118, None))
             menuScreen.ids.sl.add_widget(btn)
 
         

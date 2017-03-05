@@ -5,6 +5,8 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
+#from plyer import camera #object to read the camera
+#from plyer import Camera
 import os
 oscAPI.init()
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -58,12 +60,35 @@ Builder.load_string("""
                 orientation:'horizontal'
                 id: sl2
                 size_hint: 2,1
-        
-        Button:
-            text: 'Settings ->'
-            on_press: root.manager.current = 'settings'
-            size_hint_y: 5,1
-
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: '<- Settings'
+                on_press: 
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'settings'
+                
+            Button:
+                text: 'Camera ->'
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'camera'
+                
+<CameraScreen>:
+    BoxLayout:
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: '<- Back to home'
+                on_press: 
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'main'
+                
+            Button:
+                text: 'Settings ->'
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'settings'
 <SettingsScreen>:
     BoxLayout:
         orientation: 'horizontal'
@@ -92,7 +117,9 @@ Builder.load_string("""
         Button:
             id: backHomeButton
             text: 'Back Home ->'
-            on_release: root.manager.current = 'main' 
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'main' 
                         
 """)
 
@@ -101,6 +128,9 @@ Builder.load_string("""
 
 
 class MainScreen(Screen):
+    pass
+
+class CameraScreen(Screen):
     pass
 
 class SettingsScreen(Screen):
@@ -121,9 +151,17 @@ class SettingsScreen(Screen):
 sm = ScreenManager()
 menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
+# later
+cameraScreen = CameraScreen(name='camera')
+sm.add_widget(cameraScreen)
+
 settingScreen = SettingsScreen(name='settings')
 settingScreen.ids.backHomeButton.bind(on_press = SettingsScreen.saveIp)
 sm.add_widget(settingScreen)
+
+#sm.switch_to(cameraScreen, direction='right')
+
+
 
 class Constants():
     resistMode = "Resist Mode"

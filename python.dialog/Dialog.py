@@ -1,35 +1,36 @@
-from random import random
+from Finder.Containers_and_folders import folder
+from argparse import FileType
+import fcntl
 from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, Line
-from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics import Color, Rectangle
-
-from kivy.lib.osc import oscAPI
 from kivy.clock import Clock
-from kivy.core.window import Window
-from kivy.metrics import MetricsBase
 from kivy.config import Config
+from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle
+from kivy.graphics.instructions import InstructionGroup
+from kivy.lib.osc import oscAPI
+from kivy.metrics import MetricsBase
+from kivy.properties import ObjectProperty
 from kivy.uix.image import Image
 from kivy.uix.videoplayer import VideoPlayer
-from kivy.properties import ObjectProperty
-import socket
-import fcntl
-import struct
+from kivy.uix.widget import Widget
 import os
-#import pyglet
+import socket
+import struct
 
+
+#import pyglet
 class ScreenResolution():
-    width = 1360
-    height = 768
+    
+    width = 1600
+    height = 1200
     
 
 def get_ip_address():
     #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
-    #ip = '192.168.1.101'
+   
+    #ip = '192.168.43.188'
     ip = 'localhost'
     return ip 
 
@@ -47,15 +48,19 @@ class ImageWidget(Widget):
     def add_gif(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
-            _im = Image(source="resources/gifs/"+ imageFileName + ".gif", anim_delay=0.1, pos=(0, 0), keep_data = True)
-            _im.keep_ratio= True
+            fileType="zip"
+            fileFolder =fileType+"s"
+            print "loading file: "+ "resources/"+fileFolder+"/"+ imageFileName + "."+fileType
+            _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.04, pos=(0, 0))
+            _im.keep_data = True
+            _im.keep_ratio= False
             _im.allow_stretch = True
             _im.size =ScreenResolution.width, ScreenResolution.height
     def add_png(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
             _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
-            _im.keep_ratio= True
+            _im.keep_ratio= False
             _im.allow_stretch = True
             _im.size =ScreenResolution.width, ScreenResolution.height
     def remove_Image(self):
@@ -63,6 +68,8 @@ class ImageWidget(Widget):
              
 
 class MyPaintApp(App):
+    #Window.borderless = True
+    #Window.fullscreen = True
     _color = Color(1, 1, 1)
     _isFlashRunning = False
     _isRersistable = True
@@ -70,7 +77,6 @@ class MyPaintApp(App):
     
     
     def build(self):
-        #Window.size = (1366, 768)
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
 

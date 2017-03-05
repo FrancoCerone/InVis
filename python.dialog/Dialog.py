@@ -1,4 +1,3 @@
-from Finder.Containers_and_folders import folder
 from argparse import FileType
 import fcntl
 from kivy.app import App

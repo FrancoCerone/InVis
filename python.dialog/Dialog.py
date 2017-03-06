@@ -20,8 +20,8 @@ import struct
 #import pyglet
 class ScreenResolution():
     
-    width = 1600
-    height = 1200
+    width = 1900
+    height = 1050
     
 
 def get_ip_address():
@@ -29,8 +29,8 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    #ip = '192.168.43.188'
-    ip = 'localhost'
+    ip = '192.168.1.102'
+    #ip = 'localhost'
     return ip 
 
 class Network():

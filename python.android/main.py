@@ -181,6 +181,8 @@ class GifImageButton(Button):
     sound = ObjectProperty(None, allownone=True)
     volume = NumericProperty(1.0)
     def on_press(self):
+        print "send to " + SettingsScreen.getIp(settingScreen)
+        print os.path.basename(self.filename)
         if ControllerApp._modality== 1:
             oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         else: 
@@ -267,6 +269,7 @@ class ControllerApp(App):
         "e" : "e.gif",
         "f" : "f.gif",
         "g" : "g.gif",
+        "h" : "h.gif"
         }
     
     colorMap = {

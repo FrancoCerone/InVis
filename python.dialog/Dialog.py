@@ -1,20 +1,11 @@
-from argparse import FileType
-import fcntl
+
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.config import Config
-from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.graphics.instructions import InstructionGroup
 from kivy.lib.osc import oscAPI
-from kivy.metrics import MetricsBase
-from kivy.properties import ObjectProperty
 from kivy.uix.image import Image
-from kivy.uix.videoplayer import VideoPlayer
 from kivy.uix.widget import Widget
-import os
-import socket
-import struct
 
 
 #import pyglet
@@ -29,8 +20,8 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    ip = '192.168.1.102'
-    #ip = 'localhost'
+    #ip = '192.168.1.102'
+    ip = 'localhost'
     return ip 
 
 class Network():
@@ -79,19 +70,19 @@ class MyPaintApp(App):
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
 
-        oscAPI.bind(oscid, self.automatic_flash, '/toFlash')
+        oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
+        oscAPI.bind(oscid, self.one_shot_flash, '/oneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_color, '/toSetColor')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_Gif, '/toSetGif')
+        oscAPI.bind(oscid, self.set_gif, '/toSetGif')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_Png, '/toSetPng')
+        oscAPI.bind(oscid, self.set_png, '/toSetPng')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_Modality, '/toSetModality')
@@ -113,12 +104,12 @@ class MyPaintApp(App):
         self.flashWidget.canvas.clear() 
     
     
-    def set_Gif(self, message, *args):
+    def set_gif(self, message, *args):
         MyPaintApp._isFlashRunning = False
         self.imageWidget.add_gif( message[2])
         
         
-    def set_Png(self, message, *args):
+    def set_png(self, message, *args):
         self.flashWidget.canvas.clear()
         self.imageWidget.add_png( message[2])
         if MyPaintApp._isRersistable == False:
@@ -144,14 +135,13 @@ class MyPaintApp(App):
         
         
     def one_shot_flash(self, message, *args):
-
-            self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
-            self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
-            if MyPaintApp._isRersistable == False:
-                Clock.schedule_once(self.clear_canvas1, 0.1)
+        self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
+        self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
+        if MyPaintApp._isRersistable == False:
+            Clock.schedule_once(self.clear_canvas1, 0.1)
         
     
-    def automatic_flash(self, message, *args):
+    def to_flash(self, message, *args):
         if MyPaintApp._isFlashRunning == True:
             if MyPaintApp._color is None:
                 self.flashWidget.add_rectangele(Color(1., 1., 1.))
@@ -161,7 +151,6 @@ class MyPaintApp(App):
             Clock.schedule_once(self.clear_canvas1, 0.1)
 
     def set_color(self, message, *args):
-        print message[2], message[3], message[4]
         MyPaintApp._isFlashRunning = True
         MyPaintApp._color = Color( message[2], message[3], message[4])
     

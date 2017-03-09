@@ -73,7 +73,7 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.one_shot_flash, '/oneShotFlash')
+        oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_color, '/toSetColor')

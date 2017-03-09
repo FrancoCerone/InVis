@@ -13,8 +13,8 @@ Config.set('graphics', 'fullscreen', 'fake')
 #import pyglet
 class ScreenResolution():
     
-    width = 1900
-    height = 1050
+    width = 1366
+    height = 768
     
 
 def get_ip_address():
@@ -22,8 +22,8 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    #ip = '192.168.1.102'
-    ip = 'localhost'
+    ip = '192.168.1.102'
+    #ip = 'localhost'
     return ip 
 
 class Network():

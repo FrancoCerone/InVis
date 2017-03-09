@@ -6,6 +6,8 @@ from kivy.graphics.instructions import InstructionGroup
 from kivy.lib.osc import oscAPI
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
+from kivy.config import Config
+Config.set('graphics', 'fullscreen', 'fake')
 
 
 #import pyglet

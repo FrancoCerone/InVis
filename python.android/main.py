@@ -49,7 +49,7 @@ Builder.load_string("""
        
         BoxLayout:
             GridLayout:
-                cols: 6
+                cols: 5
                 rows: 2
                 canvas:
                     Color:
@@ -296,7 +296,7 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(100, 100), text_size=(118, None))
+                size=(200, 200), text_size=(118, None))
             menuScreen.ids.sl.add_widget(btn)
 
         
@@ -310,7 +310,7 @@ class ControllerApp(App):
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),
                 size_hint=(None, None), halign='center',
-                size=(128, 128), text_size=(118, None)
+                size=(200, 200), text_size=(118, None)
                 )
             menuScreen.ids.sl2.add_widget(btn)
         

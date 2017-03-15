@@ -17,62 +17,45 @@ Builder.load_string("""
 <MainScreen>:
     BoxLayout:
         orientation: 'vertical'
-        BoxLayout:
-            padding: 10
-            spacing: 10
-            size_hint: 1, None
-            pos_hint: {'top': 1}
-            height: 44
-            Label:
-                height: 24
-                text_size: self.size
-                color: (1, 1, 1, .8)
-                text: 'Controller'
-                valign: 'middle'
         
         BoxLayout:
-            GridLayout:
-                cols: 3
-                rows: 1
-                canvas:
-                    Color:
-                        rgb: 0.5,0.5,0.5
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                orientation:'horizontal'
-                id: modalityContainer
-                
-        BoxLayout:
-            StackLayout:
-                id: sl
-       
-        BoxLayout:
-            GridLayout:
-                cols: 5
-                rows: 2
-                canvas:
-                    Color:
-                        rgb: 0.5,0.5,0.5
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                orientation:'horizontal'
-                id: sl2
-                size_hint: 2,1
-        BoxLayout:
+            
             orientation: 'horizontal'
-            Button:
-                text: '<- Settings'
-                on_press: 
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'settings'
-                
-            Button:
-                text: 'Camera ->'
-                on_press: 
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'camera'
+            BoxLayout:
+                StackLayout:
+                    id: giffButtonContainer
+           
+            BoxLayout:
+                StackLayout:
+                    id: colorButtonContainer
+        BoxLayout:
+            orientation: 'vertical'   
+            size_hint: 1, 0.25
+            BoxLayout:
+                GridLayout:
+                    cols: 3
+                    rows: 1
+                    canvas:
+                        Color:
+                            rgb: 0.5,0.5,0.5
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    orientation:'horizontal'
+                    id: modalityContainer
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    text: '<- Settings'
+                    on_press: 
+                        root.manager.transition.direction = 'right'
+                        root.manager.current = 'settings'
+                    
+                Button:
+                    text: 'Camera ->'
+                    on_press: 
+                        root.manager.transition.direction = 'left'
+                        root.manager.current = 'camera'
                 
 <CameraScreen>:
     BoxLayout:
@@ -296,8 +279,8 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(200, 200), text_size=(118, None))
-            menuScreen.ids.sl.add_widget(btn)
+                size=(250, 250), text_size=(118, None))
+            menuScreen.ids.giffButtonContainer.add_widget(btn)
 
         
         
@@ -310,9 +293,9 @@ class ControllerApp(App):
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),
                 size_hint=(None, None), halign='center',
-                size=(200, 200), text_size=(118, None)
+                size=(250, 250), text_size=(118, None)
                 )
-            menuScreen.ids.sl2.add_widget(btn)
+            menuScreen.ids.colorButtonContainer.add_widget(btn)
         
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.resisthBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.automaticBnt)

@@ -7,15 +7,13 @@ from kivy.lib.osc import oscAPI
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.config import Config
+import ScreenResolution
 Config.set('graphics', 'fullscreen', 'auto')
 
 
 #import pyglet
-class ScreenResolution():
-    
-    width = 1366
-    height = 768
-    
+
+
 
 def get_ip_address():
     #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -34,7 +32,7 @@ class FlashWidget(Widget):
         with self.canvas:
             blue = InstructionGroup()
             blue.add(color)
-            Rectangle(pos=(0, 0), size=(ScreenResolution.width, ScreenResolution.height))
+            Rectangle(pos=(0, 0), size=(ScreenResolution().get_width(), ScreenResolution().get_height()))
 
 class ImageWidget(Widget):
     def add_gif(self, imageFileName):
@@ -47,14 +45,14 @@ class ImageWidget(Widget):
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True
-            _im.size =ScreenResolution.width, ScreenResolution.height
+            _im.size =ScreenResolution().get_width(), ScreenResolution().get_height()
     def add_png(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
             _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
-            _im.size =ScreenResolution.width, ScreenResolution.height
+            _im.size =ScreenResolution().get_width(), ScreenResolution().get_height()
     def remove_Image(self):
         self.canvas.clear()
              

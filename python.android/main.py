@@ -52,13 +52,17 @@ Builder.load_string("""
                         root.manager.current = 'settings'
                     
                 Button:
-                    text: 'Camera ->'
+                    text: 'UserAnimation->'
                     on_press: 
                         root.manager.transition.direction = 'left'
-                        root.manager.current = 'camera'
+                        root.manager.current = 'userAnimation'
                 
-<CameraScreen>:
+<UsersAnimation>:
     BoxLayout:
+        orientation: 'vertical'
+        Button:
+            id: startUserAmimation
+            text: 'StartUserAnimation'
         BoxLayout:
             orientation: 'horizontal'
             Button:
@@ -113,7 +117,7 @@ Builder.load_string("""
 class MainScreen(Screen):
     pass
 
-class CameraScreen(Screen):
+class UsersAnimation(Screen):
     pass
 
 class SettingsScreen(Screen):
@@ -131,12 +135,18 @@ class SettingsScreen(Screen):
     
     pass
 
+class UserAnimation():
+    def send(self):
+        oscAPI.sendMsg('/toStartUserAnimation', "", ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+
+
 sm = ScreenManager()
 menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
 # later
-cameraScreen = CameraScreen(name='camera')
-sm.add_widget(cameraScreen)
+userAnimation = UsersAnimation(name='userAnimation')
+userAnimation.ids.startUserAmimation.bind(on_press = UserAnimation.send)
+sm.add_widget(userAnimation)
 
 settingScreen = SettingsScreen(name='settings')
 settingScreen.ids.backHomeButton.bind(on_press = SettingsScreen.saveIp)
@@ -211,7 +221,6 @@ class ManualModality(Button):
         oscAPI.sendMsg('/toSetModality', dataArray=[ModalityHandler.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         ControllerApp._modality = ModalityHandler.modalities.index("manual", )
         
-
 class ButtonModalityHandler():
     resisthBnt = ResistModality(
             text=Constants.resistMode,
@@ -300,7 +309,8 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.resisthBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.automaticBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
-                                                    
+        
+        #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
 
         return sm
 

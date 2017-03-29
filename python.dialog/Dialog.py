@@ -7,12 +7,14 @@ from kivy.lib.osc import oscAPI
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.config import Config
-import ScreenResolution
-Config.set('graphics', 'fullscreen', 'auto')
+from ScreenResolution import ScreenResolution
+from pong import PongGame
+#Config.set('graphics', 'fullscreen', 'auto')
 
 
 #import pyglet
 
+screenResolution = ScreenResolution()
 
 
 def get_ip_address():
@@ -20,8 +22,8 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    ip = '192.168.1.102'
-    #ip = 'localhost'
+    #ip = '192.168.1.102'
+    ip = 'localhost'
     return ip 
 
 class Network():
@@ -32,7 +34,7 @@ class FlashWidget(Widget):
         with self.canvas:
             blue = InstructionGroup()
             blue.add(color)
-            Rectangle(pos=(0, 0), size=(ScreenResolution().get_width(), ScreenResolution().get_height()))
+            Rectangle(pos=(0, 0), size=(screenResolution.get_width(), screenResolution.get_height()))
 
 class ImageWidget(Widget):
     def add_gif(self, imageFileName):
@@ -45,17 +47,19 @@ class ImageWidget(Widget):
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True
-            _im.size =ScreenResolution().get_width(), ScreenResolution().get_height()
+            _im.size =screenResolution.get_width(), screenResolution.get_height()
     def add_png(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
             _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
-            _im.size =ScreenResolution().get_width(), ScreenResolution().get_height()
+            _im.size =screenResolution.get_width(), screenResolution.get_height()
     def remove_Image(self):
         self.canvas.clear()
-             
+
+class UserAnimation(PongGame):
+    pass
 
 class MyPaintApp(App):
     #Window.borderless = True
@@ -88,6 +92,9 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.set_Modality, '/toSetModality')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
+        oscAPI.bind(oscid, self.set_UserAnimation, '/toStartUserAnimation')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
         self._parent = Widget()
         
         self.flashWidget = FlashWidget()
@@ -95,6 +102,10 @@ class MyPaintApp(App):
         
         self.imageWidget = ImageWidget()
         self._parent.add_widget(self.imageWidget)
+        
+        self.game = PongGame()
+        self.game.build()
+        self._parent.add_widget(self.game)
         
         #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
         return self._parent
@@ -127,6 +138,12 @@ class MyPaintApp(App):
         elif message[2] == 2:
             MyPaintApp._isFlashRunning = False
             MyPaintApp._isRersistable = False
+            
+    def set_UserAnimation(self, message, *args):
+        #MyPaintApp._modality = message[2]
+        #self.imageWidget.remove_Image()
+        #self.game.add_animation()
+        Clock.schedule_interval(self.game.update, 1.0 / 60.0)
     
                 
     def remove_Image(self, message, *args):

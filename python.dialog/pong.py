@@ -5,29 +5,25 @@ Created on 14 mar 2017
 '''
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, ReferenceListProperty,ObjectProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.lang import Builder
-from Cython.Build.BuildExecutable import build
 
 Builder.load_string("""
 <PongBall>:
-    size: 50, 50 
+    size: 50, 50
+    pos:   -50, -50
     canvas:
-        Ellipse:
+        Rectangle:
             pos: self.pos
             size: self.size
-
-<PongGame>:
-    ball: pong_ball
-
-    PongBall:
-        id: pong_ball
-        pos: 0,0
+    
 """)
 
 class PongBall(Widget):
+
+    #pos = 40,40
     velocity_x = NumericProperty(1)
     velocity_y = NumericProperty(1)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
@@ -35,14 +31,21 @@ class PongBall(Widget):
     def move(self, x,y ):
         self.pos = Vector(x,y) + self.pos
 
+
 class PongGame(Widget):
-    def __init__(self):
+    ball = ObjectProperty(None)
+    balls = []
+    def build(self):
+        #self._parent = Widget()
         self.ball = PongBall()
-        self.balls = []
+        self.add_widget(self.ball)
+        #self.ball = PongBall()
         
+        #self._parent.add_widget(self.ball)
+        print "fatto"
     def update(self, dt):
         for amimation in self.balls:
-            amimation.move(20,20)
+            #amimation.move(20,20)
             print amimation.pos
             
         self.ball.move(10,10)
@@ -52,12 +55,11 @@ class PongGame(Widget):
         else:
             self.ball.pos= 0,0
             return False
+
     
-    def add_animation (self):
-        ball = PongBall()
-        self.balls.append(ball)  
-        print self.balls.__sizeof__()
-        
+    def add_animation(self):
+        self.balls.append(PongBall())
+        print "Dimensione delle animazioni", self.balls.__len__()
 
 class PongApp(App):
     def build(self):

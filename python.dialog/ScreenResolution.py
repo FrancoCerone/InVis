@@ -10,9 +10,8 @@ class ScreenResolution(object):
         self.height = 768 
     
     
-    @classmethod
     def get_width(self):
         return self.width;
-    @classmethod
+
     def get_height(self):
         return self.height;

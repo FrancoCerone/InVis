@@ -5,11 +5,11 @@ Created on 14 mar 2017
 '''
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, ReferenceListProperty,\
-    ObjectProperty
+from kivy.properties import NumericProperty, ReferenceListProperty,ObjectProperty
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.lang import Builder
+from Cython.Build.BuildExecutable import build
 
 Builder.load_string("""
 <PongBall>:
@@ -31,15 +31,33 @@ class PongBall(Widget):
     velocity_x = NumericProperty(1)
     velocity_y = NumericProperty(1)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
-
-    def move(self):
-        self.pos = Vector(*self.velocity) + self.pos
+    
+    def move(self, x,y ):
+        self.pos = Vector(x,y) + self.pos
 
 class PongGame(Widget):
-    ball = ObjectProperty(None)
-
+    def __init__(self):
+        self.ball = PongBall()
+        self.balls = []
+        
     def update(self, dt):
-        self.ball.move()
+        for amimation in self.balls:
+            amimation.move(20,20)
+            print amimation.pos
+            
+        self.ball.move(10,10)
+        print self.ball.pos.__getitem__(0)
+        if(self.ball.pos.__getitem__(0) < 600):
+            print self.ball.pos
+        else:
+            self.ball.pos= 0,0
+            return False
+    
+    def add_animation (self):
+        ball = PongBall()
+        self.balls.append(ball)  
+        print self.balls.__sizeof__()
+        
 
 class PongApp(App):
     def build(self):

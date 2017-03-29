@@ -36,16 +36,13 @@ class PongGame(Widget):
     ball = ObjectProperty(None)
     balls = []
     def build(self):
-        #self._parent = Widget()
         self.ball = PongBall()
         self.add_widget(self.ball)
-        #self.ball = PongBall()
-        
-        #self._parent.add_widget(self.ball)
         print "fatto"
+        
     def update(self, dt):
         for amimation in self.balls:
-            #amimation.move(20,20)
+            amimation.move(20,20)
             print amimation.pos
             
         self.ball.move(10,10)
@@ -58,7 +55,9 @@ class PongGame(Widget):
 
     
     def add_animation(self):
-        self.balls.append(PongBall())
+        newAnimation = PongBall()
+        self.balls.append(newAnimation)
+        self.add_widget(newAnimation)
         print "Dimensione delle animazioni", self.balls.__len__()
 
 class PongApp(App):

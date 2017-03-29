@@ -140,9 +140,7 @@ class MyPaintApp(App):
             MyPaintApp._isRersistable = False
             
     def set_UserAnimation(self, message, *args):
-        #MyPaintApp._modality = message[2]
-        #self.imageWidget.remove_Image()
-        #self.game.add_animation()
+        self.game.add_animation()
         Clock.schedule_interval(self.game.update, 1.0 / 60.0)
     
                 

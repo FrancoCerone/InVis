@@ -261,7 +261,8 @@ class ControllerApp(App):
         "e" : "e.gif",
         "f" : "f.gif",
         "g" : "g.gif",
-        "h" : "h.gif"
+        "h" : "h.gif",
+        "ele" : "ele.gif"
         }
     
     colorMap = {
@@ -283,12 +284,13 @@ class ControllerApp(App):
 
         
         for fn in self.gifMap:
+            print fn
             btn = GifImageButton(
                 #flashBt = flashBt,
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(200, 200), text_size=(118, None))
+                size=(150, 150), text_size=(118, None))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
         

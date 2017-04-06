@@ -106,7 +106,7 @@ class MyPaintApp(App):
         
         self.game = PongGame()
         self._parent.add_widget(self.game)
-        Clock.schedule_interval(self.game.update, 0.2)
+        Clock.schedule_interval(self.game.update, 0)
         
         #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
         return self._parent

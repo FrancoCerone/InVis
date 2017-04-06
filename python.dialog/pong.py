@@ -42,16 +42,17 @@ class PongGame(Widget):
         
     def update(self, dt):
         for amimation in self.balls:
-            amimation.move(20,20)
-            print amimation.pos
+            amimation.move(3, 3)
+            #print amimation.pos
+            if(amimation.pos.__getitem__(0) <400):
+                #print "Posizione dell'animation", amimation.pos
+                continue
+            else:
+                self.balls.remove(amimation)
+                if (self.balls.__len__() == 0):
+                    return    
+                
             
-        self.ball.move(10,10)
-        print self.ball.pos.__getitem__(0)
-        if(self.ball.pos.__getitem__(0) < 600):
-            print self.ball.pos
-        else:
-            self.ball.pos= 0,0
-            return False
 
     
     def add_animation(self):

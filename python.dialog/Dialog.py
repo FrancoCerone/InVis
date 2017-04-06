@@ -23,6 +23,7 @@ def get_ip_address():
     #ip = s.getsockname()[0]
    
     #ip = '192.168.1.102'
+    #ip = '192.168.0.6'
     ip = 'localhost'
     return ip 
 
@@ -104,8 +105,8 @@ class MyPaintApp(App):
         self._parent.add_widget(self.imageWidget)
         
         self.game = PongGame()
-        self.game.build()
         self._parent.add_widget(self.game)
+        Clock.schedule_interval(self.game.update, 0.2)
         
         #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
         return self._parent
@@ -141,7 +142,7 @@ class MyPaintApp(App):
             
     def set_UserAnimation(self, message, *args):
         self.game.add_animation()
-        Clock.schedule_interval(self.game.update, 1.0 / 60.0)
+       
     
                 
     def remove_Image(self, message, *args):

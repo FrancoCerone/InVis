@@ -137,7 +137,7 @@ class SettingsScreen(Screen):
 
 class UserAnimation():
     def send(self):
-        oscAPI.sendMsg('/toStartUserAnimation', "", ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        oscAPI.sendMsg('/toStartUserAnimation', "b", ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 
 sm = ScreenManager()
@@ -290,7 +290,7 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(150, 150), text_size=(118, None))
+                size=(250, 250), text_size=(118, None))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
         
@@ -304,7 +304,7 @@ class ControllerApp(App):
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),
                 size_hint=(None, None), halign='center',
-                size=(200, 200), text_size=(118, None)
+                size=(250, 250), text_size=(118, None)
                 )
             menuScreen.ids.colorButtonContainer.add_widget(btn)
         

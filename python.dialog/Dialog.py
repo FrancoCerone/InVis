@@ -12,6 +12,7 @@ from pong import PongGame
 #Config.set('graphics', 'fullscreen', 'auto')
 
 
+
 #import pyglet
 
 screenResolution = ScreenResolution()
@@ -23,8 +24,8 @@ def get_ip_address():
     #ip = s.getsockname()[0]
    
     #ip = '192.168.1.102'
-    #ip = '192.168.0.6'
-    ip = 'localhost'
+    ip = '192.168.0.6'
+    #ip = 'localhost'
     return ip 
 
 class Network():
@@ -141,7 +142,7 @@ class MyPaintApp(App):
             MyPaintApp._isRersistable = False
             
     def set_UserAnimation(self, message, *args):
-        self.game.add_animation()
+        self.game.add_animation(message[2])
        
     
                 

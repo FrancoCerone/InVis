@@ -9,6 +9,9 @@ from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProper
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.lang import Builder
+from ScreenResolution import ScreenResolution
+from kivy.graphics import Color, Rectangle
+
 
 Builder.load_string("""
 <PongBall>:
@@ -18,47 +21,52 @@ Builder.load_string("""
         Ellipse:
             pos: self.pos
             size: self.size
-            source: root.image()
+            source: root.get_image()
     
 """)
 
-class PongBall(Widget):
-
-    #pos = 40,40
-    velocity_x = NumericProperty(1)
-    velocity_y = NumericProperty(1)
-    velocity = ReferenceListProperty(velocity_x, velocity_y)
+class ImageDispatcher():
+    image = ObjectProperty
+    def set_image(self, image):
+        self.image = image;
+    def get_image(self):
+        return 'resources/pngs/'+self.image+'.png';
     
+screenResolution = ScreenResolution()
+
+imageDispatcher = ImageDispatcher()
+
+class PongBall(Widget):
     def move(self, x,y ):
         self.pos = Vector(x,y) + self.pos
         
-    def image(self):
-        return 'resources/pngs/a.png'
+    def get_image(self):
+        print "da image disp", imageDispatcher.get_image()
+        return imageDispatcher.get_image() 
+    
+    def set_image(self, image):
+        print image
 
 
+    
 class PongGame(Widget):
     balls = []
     def build(self):
         self.ball = PongBall()
         self.add_widget(self.ball)
-        print "fatto"
         
     def update(self, dt):
         for amimation in self.balls:
             amimation.move(3, 3)
-            #print amimation.pos
-            if(amimation.pos.__getitem__(0) <1000):
-                #print "Posizione dell'animation", amimation.pos
+            if(amimation.pos.__getitem__(0) <screenResolution.get_height()):
                 continue
             else:
                 self.balls.remove(amimation)
                 if (self.balls.__len__() == 0):
                     return    
-                
-            
-
     
-    def add_animation(self):
+    def add_animation(self, image):
+        imageDispatcher.set_image(image)
         newAnimation = PongBall()
         self.balls.append(newAnimation)
         self.add_widget(newAnimation)

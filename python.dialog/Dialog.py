@@ -64,8 +64,6 @@ class UserAnimation(PongGame):
     pass
 
 class MyPaintApp(App):
-    #Window.borderless = True
-    #Window.fullscreen = True
     _color = Color(1, 1, 1)
     _isFlashRunning = False
     _isRersistable = True

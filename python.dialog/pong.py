@@ -15,8 +15,8 @@ from kivy.graphics import Color, Rectangle
 
 Builder.load_string("""
 <PongBall>:
-    size: 50, 50
-    pos:   -50, -50
+    size: 100, 100
+    pos:   1366, -50
     canvas:
         Ellipse:
             pos: self.pos
@@ -38,6 +38,7 @@ imageDispatcher = ImageDispatcher()
 
 class PongBall(Widget):
     def move(self, x,y ):
+        x= -x
         self.pos = Vector(x,y) + self.pos
         
     def get_image(self):
@@ -58,7 +59,7 @@ class PongGame(Widget):
     def update(self, dt):
         for amimation in self.balls:
             amimation.move(3, 3)
-            if(amimation.pos.__getitem__(0) <screenResolution.get_height()):
+            if(amimation.pos.__getitem__(0) > 0):
                 continue
             else:
                 self.balls.remove(amimation)

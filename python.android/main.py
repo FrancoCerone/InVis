@@ -5,11 +5,10 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.lib.osc import oscAPI
-#from plyer import camera #object to read the camera
-#from plyer import Camera
 import os
 oscAPI.init()
 from kivy.uix.screenmanager import ScreenManager, Screen
+from ButtonDimension import ButtonDimension
 
 from kivy.lang import Builder
 
@@ -60,59 +59,80 @@ Builder.load_string("""
 <UsersAnimation>:
     BoxLayout:
         orientation: 'vertical'
-        Button:
-            id: startUserAmimation
-            text: 'StartUserAnimation'
         BoxLayout:
-            orientation: 'horizontal'
-            Button:
-                text: '<- Back to home'
-                on_press: 
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'main'
-                
-            Button:
-                text: 'Settings ->'
-                on_press: 
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'settings'
+            StackLayout:
+                id: animationButtonContainer
+        BoxLayout:
+            orientation: 'vertical'   
+            size_hint: 1, 0.25
+            GridLayout:
+                cols: 3
+                rows: 1
+                canvas:
+                    Color:
+                        rgb: 0.5,0.5,0.5
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                orientation:'horizontal'
+                id: modalityAnimationContainer
+            
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    text: '<- Back to home'
+                    on_press: 
+                        root.manager.transition.direction = 'right'
+                        root.manager.current = 'main'
+                    
+                Button:
+                    text: 'Settings ->'
+                    on_press: 
+                        root.manager.transition.direction = 'left'
+                        root.manager.current = 'settings'
 <SettingsScreen>:
     BoxLayout:
-        orientation: 'horizontal'
-        AnchorLayout:
-            anchor_x: 'left'
-            anchor_y: 'top'
-            AnchorLayout:
-                anchor_x: 'right'
-                anchor_y: 'top'
-                GridLayout:
-                    cols: 2
-                    rows: 2
-                    Label:
-                        text: "Ip to:"
-                        color: (1, 1, 1, .8)
-                        size_hint: None, None
-                        height: sp(30)
-                    TextInput:
-                        id: ipAdressText
-                        text: 'bo'
-                        multiline: False
-                        write_tab: False    
-                        size_hint: None, None
-                        height: sp(30)
-                        width: sp(300)
-        Button:
-            id: backHomeButton
-            text: 'Back Home ->'
-            on_release:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'main' 
+        orientation: 'vertical'
+       
+        BoxLayout:
+            GridLayout:
+                cols: 2 
+                rows: 2
+                Label:
+                    text: "Ip to:"
+                    color: (1, 1, 1, .8)
+                    size_hint: None, None
+                    height: sp(30)
+                TextInput:
+                    id: ipAdressText
+                    text: 'bo'
+                    multiline: False
+                    write_tab: False    
+                    size_hint: None, None
+                    height: sp(30)
+                    width: sp(300)
+        BoxLayout:
+            orientation: 'vertical'   
+            size_hint: 1, 0.25
+            
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    text: '<- UserAnimation'
+                    on_press: 
+                        root.manager.transition.direction = 'right'
+                        root.manager.current = 'userAnimation'
+        
+                Button:
+                    id: backHomeButton
+                    text: 'Back Home ->'
+                    on_release:
+                        root.manager.transition.direction = 'left'
+                        root.manager.current = 'main'
                         
 """)
 
-
-
-
+buttonDimension = ButtonDimension()
 
 class MainScreen(Screen):
     pass
@@ -135,9 +155,6 @@ class SettingsScreen(Screen):
     
     pass
 
-class UserAnimation():
-    def send(self):
-        oscAPI.sendMsg('/toStartUserAnimation', "b", ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 
 sm = ScreenManager()
@@ -145,7 +162,6 @@ menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
 # later
 userAnimation = UsersAnimation(name='userAnimation')
-userAnimation.ids.startUserAmimation.bind(on_press = UserAnimation.send)
 sm.add_widget(userAnimation)
 
 settingScreen = SettingsScreen(name='settings')
@@ -164,15 +180,22 @@ class Constants():
     
  
 
-class ModalityHandler():
+class AnimationModalityList():
+    modalities = ('linear', 'parabolic', 'random')
+
+class GifModalityList():
     modalities = ('resist', 'auto', 'manual')
+
+class AnimationImageButton(Button):
+    filename = StringProperty(None)
+    def on_press(self):
+        print "send to " + SettingsScreen.getIp(settingScreen), ", Animation Modality: ",  ControllerApp._animation_modality,  ", image: ", os.path.basename(self.filename)
+        oscAPI.sendMsg('/toStartUserAnimation', dataArray=[os.path.basename(self.filename), ControllerApp._animation_modality ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        
 
 
 class GifImageButton(Button):
-    #flashBt = ObjectProperty(None, allownone=True)
     filename = StringProperty(None)
-    sound = ObjectProperty(None, allownone=True)
-    volume = NumericProperty(1.0)
     def on_press(self):
         print "send to " + SettingsScreen.getIp(settingScreen)
         print os.path.basename(self.filename)
@@ -201,8 +224,8 @@ class ResistModality(Button):
         self.background_color =  [0.2, 0.3, 0.2, 1]
         ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        oscAPI.sendMsg('/toSetModality',dataArray=[ModalityHandler.modalities.index("resist", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = ModalityHandler.modalities.index("resist", )
+        oscAPI.sendMsg('/toSetModality',dataArray=[GifModalityList.modalities.index("resist", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = GifModalityList.modalities.index("resist", )
 
 class AutomaticModality(Button):
     def on_press(self):
@@ -210,16 +233,39 @@ class AutomaticModality(Button):
         ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonModalityHandler.resisthBnt.background_color = [0.9, 0.9, 0.9, 1]
         self.text = Constants.automaticMode
-        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityHandler.modalities.index("auto", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = ModalityHandler.modalities.index("auto", )
+        oscAPI.sendMsg('/toSetModality', dataArray=[GifModalityList.modalities.index("auto", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = GifModalityList.modalities.index("auto", )
         
 class ManualModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
         ButtonModalityHandler.resisthBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityHandler.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = ModalityHandler.modalities.index("manual", )
+        oscAPI.sendMsg('/toSetModality', dataArray=[GifModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = GifModalityList.modalities.index("manual", )
+        
+        
+
+class LinearModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonAnimationModalityHandler.parabolaBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonAnimationModalityHandler.randomBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ControllerApp._animation_modality = AnimationModalityList.modalities.index("linear", )
+
+class ParabolaModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonAnimationModalityHandler.linearBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonAnimationModalityHandler.randomBnt.background_color = [0.9, 0.9, 0.9, 1]
+        ControllerApp._animation_modality = AnimationModalityList.modalities.index("parabolic", )
+        
+class RandomModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonAnimationModalityHandler.parabolaBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonAnimationModalityHandler.linearBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ControllerApp._animation_modality = AnimationModalityList.modalities.index("random", )
         
 class ButtonModalityHandler():
     resisthBnt = ResistModality(
@@ -237,12 +283,30 @@ class ButtonModalityHandler():
             text=Constants.manualMode,
             size_hint=(1, 1), 
             )
+
+class ButtonAnimationModalityHandler():
+    linearBnt = LinearModality(
+            text="Lineare",
+            size_hint=(1, 1), 
+            background_color =  [0.2, 0.3, 0.2, 1]
+            )
+
+    parabolaBnt = ParabolaModality(
+            text="Parabolico",
+            size_hint=(1, 1), 
+            )
+    
+    randomBnt = RandomModality(
+            text="Random",
+            size_hint=(1, 1), 
+            )
     
 
 
 
 class ControllerApp(App):
     _modality=0
+    _animation_modality=0
     @staticmethod 
     def get_Red(rgbString):
         return rgbString[0:3]
@@ -290,9 +354,19 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 size_hint=(None, None), halign='center',
-                size=(250, 250), text_size=(118, None))
+                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
+
+                
+        for fn in self.gifMap:
+            btn = AnimationImageButton(
+                #flashBt = flashBt,
+                filename=fn,
+                background_normal = "resources/" + fn + ".png",
+                size_hint=(None, None), halign='center',
+                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
+            userAnimation.ids.animationButtonContainer.add_widget(btn)
         
         
         for color in self.colorMap:
@@ -304,14 +378,19 @@ class ControllerApp(App):
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),
                 size_hint=(None, None), halign='center',
-                size=(250, 250), text_size=(118, None)
+                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None)
                 )
             menuScreen.ids.colorButtonContainer.add_widget(btn)
+        
+        userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.linearBnt)
+        userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.parabolaBnt)
+        userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.randomBnt) 
+        
+        
         
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.resisthBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.automaticBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
-        
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
 
         return sm

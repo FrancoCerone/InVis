@@ -9,6 +9,8 @@ from kivy.uix.widget import Widget
 from kivy.config import Config
 from ScreenResolution import ScreenResolution
 from pong import PongGame
+from kivy.uix.image import AsyncImage
+from kivy.loader import Loader
 #Config.set('graphics', 'fullscreen', 'auto')
 
 
@@ -45,7 +47,7 @@ class ImageWidget(Widget):
             fileType="zip"
             fileFolder =fileType+"s"
             print "loading file: "+ "resources/"+fileFolder+"/"+ imageFileName + "."+fileType
-            _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.04, pos=(0, 0))
+            _im = AsyncImage(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.04, pos=(0, 0))
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True

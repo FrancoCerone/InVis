@@ -23,8 +23,8 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    #ip = '192.168.1.102'
-    ip = '192.168.0.6'
+    ip = '192.168.1.101'
+    ip = '192.168.0.8'
     #ip = 'localhost'
     return ip 
 
@@ -56,6 +56,7 @@ class ImageWidget(Widget):
             _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
+            _im.keep_data = True
             _im.size =screenResolution.get_width(), screenResolution.get_height()
     def remove_Image(self):
         self.canvas.clear()
@@ -107,7 +108,6 @@ class MyPaintApp(App):
         self._parent.add_widget(self.game)
         Clock.schedule_interval(self.game.update, 0)
         
-        #_parent.remove_widget(self.im)  #questo funziona qua ma non nel metodo
         return self._parent
     
 
@@ -140,7 +140,7 @@ class MyPaintApp(App):
             MyPaintApp._isRersistable = False
             
     def set_UserAnimation(self, message, *args):
-        self.game.add_animation(message[2])
+        self.game.add_animation(message[2], message[3] )
        
     
                 

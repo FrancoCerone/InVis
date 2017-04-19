@@ -15,8 +15,6 @@ from kivy.loader import Loader
 
 
 
-#import pyglet
-
 screenResolution = ScreenResolution()
 
 
@@ -47,7 +45,7 @@ class ImageWidget(Widget):
             fileType="zip"
             fileFolder =fileType+"s"
             print "loading file: "+ "resources/"+fileFolder+"/"+ imageFileName + "."+fileType
-            _im = AsyncImage(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.04, pos=(0, 0))
+            _im = AsyncImage(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_loop = 4, anim_delay=0.05, pos=(0, 0) )
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True
@@ -71,6 +69,7 @@ class MyPaintApp(App):
     _isFlashRunning = False
     _isRersistable = True
     _modality=0
+    _lastGif = ""
     
     
     def build(self):
@@ -118,8 +117,10 @@ class MyPaintApp(App):
     
     
     def set_gif(self, message, *args):
+        
         MyPaintApp._isFlashRunning = False
-        self.imageWidget.add_gif( message[2])
+        MyPaintApp._lastGif =  message[2]
+        self.imageWidget.add_gif(  MyPaintApp._lastGif)
         
         
     def set_png(self, message, *args):
@@ -143,6 +144,7 @@ class MyPaintApp(App):
             
     def set_UserAnimation(self, message, *args):
         self.game.add_animation(message[2], message[3] )
+        self.imageWidget.add_gif(  MyPaintApp._lastGif)
        
     
                 

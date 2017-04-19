@@ -29,7 +29,7 @@ Builder.load_string("""
 
 
 screenResolution = ScreenResolution()
-out_file = open("test.txt","w")
+
 
 class ImageDispatcher():
     image = ObjectProperty
@@ -70,7 +70,7 @@ class PongBall(Widget):
         x= self.pos[0] +x
         y= self.pos[1]
   
-        out_file.close()
+ 
         self.pos = Vector(x,y) 
         
     def get_image(self):
@@ -101,7 +101,7 @@ class PongGame(Widget):
                 continue
             else:
                 self.balls.remove(amimation)
-                out_file.close()
+
                 if (self.balls.__len__() == 0):
                     return    
     

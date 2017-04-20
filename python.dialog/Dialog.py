@@ -23,9 +23,9 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    ip = '192.168.1.101'
-    ip = '192.168.0.8'
-    #ip = 'localhost'
+    #ip = '192.168.1.101'
+    #ip = '192.168.0.8'
+    ip = 'localhost'
     return ip 
 
 class Network():
@@ -68,6 +68,7 @@ class MyPaintApp(App):
     _color = Color(1, 1, 1)
     _isFlashRunning = False
     _isRersistable = True
+    _isManual = False
     _modality=0
     _lastGif = ""
     
@@ -132,19 +133,23 @@ class MyPaintApp(App):
     def set_Modality(self, message, *args):
         MyPaintApp._modality = message[2]
         if message[2] == 0:
+            MyPaintApp._isManual = False
             MyPaintApp._isFlashRunning = False
             MyPaintApp._isRersistable = True
             self.imageWidget.remove_Image()
         elif message[2] == 1:
+            MyPaintApp._isManual = False
             MyPaintApp._isFlashRunning = True
             MyPaintApp._isRersistable = False
         elif message[2] == 2:
+            MyPaintApp._isManual = True
             MyPaintApp._isFlashRunning = False
             MyPaintApp._isRersistable = False
             
     def set_UserAnimation(self, message, *args):
         self.game.add_animation(message[2], message[3] )
-        self.imageWidget.add_gif(  MyPaintApp._lastGif)
+        if(MyPaintApp._isFlashRunning == False | MyPaintApp._isRersistable == False | MyPaintApp._isManual == False ):
+            self.imageWidget.add_gif(  MyPaintApp._lastGif)
        
     
                 

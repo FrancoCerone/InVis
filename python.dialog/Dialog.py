@@ -31,6 +31,18 @@ def get_ip_address():
 class Network():
     ip = get_ip_address()
 
+class ObjectToFlash():
+    isColor= True
+    color = Color(1, 1, 1)
+    pngToFlash= ""
+
+class ModalityList():
+    resist = 'resist'
+    gif = 'gif'
+    midi = 'midi'
+    manual = 'manual'
+    modalities = (resist, gif, midi, manual)
+
 class FlashWidget(Widget):
     def add_rectangele(self, color):
         with self.canvas:
@@ -45,7 +57,7 @@ class ImageWidget(Widget):
             fileType="zip"
             fileFolder =fileType+"s"
             print "loading file: "+ "resources/"+fileFolder+"/"+ imageFileName + "."+fileType
-            _im = AsyncImage(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_loop = 4, anim_delay=0.05, pos=(0, 0) )
+            _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.05, pos=(0, 0) )
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True
@@ -65,12 +77,9 @@ class UserAnimation(PongGame):
     pass
 
 class MyPaintApp(App):
-    _color = Color(1, 1, 1)
-    _isFlashRunning = False
-    _isRersistable = True
-    _isManual = False
-    _modality=0
-    _lastGif = ""
+    _objToFlash= ObjectToFlash()
+    _objectToFlash = Color(1, 1, 1)
+    _modality = ModalityList.resist
     
     
     def build(self):
@@ -83,7 +92,7 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_color, '/toSetColor')
+        oscAPI.bind(oscid, self.set_object_to_flash, '/toSetObjectToShow')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_gif, '/toSetGif')
@@ -118,8 +127,6 @@ class MyPaintApp(App):
     
     
     def set_gif(self, message, *args):
-        
-        MyPaintApp._isFlashRunning = False
         MyPaintApp._lastGif =  message[2]
         self.imageWidget.add_gif(  MyPaintApp._lastGif)
         
@@ -127,28 +134,15 @@ class MyPaintApp(App):
     def set_png(self, message, *args):
         self.flashWidget.canvas.clear()
         self.imageWidget.add_png( message[2])
-        if MyPaintApp._isRersistable == False:
+        if MyPaintApp._modality  !=  ModalityList.resist:
             Clock.schedule_once(self.remove_Image, 0.1)
         
     def set_Modality(self, message, *args):
-        MyPaintApp._modality = message[2]
-        if message[2] == 0:
-            MyPaintApp._isManual = False
-            MyPaintApp._isFlashRunning = False
-            MyPaintApp._isRersistable = True
-            self.imageWidget.remove_Image()
-        elif message[2] == 1:
-            MyPaintApp._isManual = False
-            MyPaintApp._isFlashRunning = True
-            MyPaintApp._isRersistable = False
-        elif message[2] == 2:
-            MyPaintApp._isManual = True
-            MyPaintApp._isFlashRunning = False
-            MyPaintApp._isRersistable = False
+        MyPaintApp._modality = ModalityList.modalities.__getitem__(message[2])
             
     def set_UserAnimation(self, message, *args):
         self.game.add_animation(message[2], message[3] )
-        if(MyPaintApp._isFlashRunning == False | MyPaintApp._isRersistable == False | MyPaintApp._isManual == False ):
+        if(MyPaintApp._modality == ModalityList.gif ):
             self.imageWidget.add_gif(  MyPaintApp._lastGif)
        
     
@@ -161,28 +155,31 @@ class MyPaintApp(App):
     def one_shot_flash(self, message, *args):
         self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
         self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
-        if MyPaintApp._isRersistable == False:
+        if MyPaintApp._modality !=  ModalityList.resist:
             Clock.schedule_once(self.clear_canvas1, 0.1)
         
     
     def to_flash(self, message, *args):
-        if MyPaintApp._isFlashRunning == True:
-            if MyPaintApp._color is None:
-                self.flashWidget.add_rectangele(Color(1., 1., 1.))
+        if MyPaintApp._modality == ModalityList.midi:
+            self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
+            if (MyPaintApp._objToFlash.isColor):
+                self.flashWidget.add_rectangele(MyPaintApp._objectToFlash)
             else:
-                self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
-                self.flashWidget.add_rectangele(MyPaintApp._color)
+                self.imageWidget.add_png(MyPaintApp._objToFlash.pngToFlash)
+                Clock.schedule_once(self.remove_Image, 0.1)
+                
             Clock.schedule_once(self.clear_canvas1, 0.1)
 
-    def set_color(self, message, *args):
-        MyPaintApp._isFlashRunning = True
-        MyPaintApp._color = Color( message[2], message[3], message[4])
-    
-    def set_runnable(self, message, *args):
-        if message[2] == True:
-            MyPaintApp._isFlashRunning = True
+    def set_object_to_flash(self, message, *args):
+        if(len(message)==3):
+            print "setGif to flash"
+            MyPaintApp._objToFlash.isColor= False
+            MyPaintApp._objToFlash.pngToFlash = message[2]
         else:
-            MyPaintApp._isFlashRunning = False
-
+            MyPaintApp._objectToFlash = Color( message[2], message[3], message[4])
+            MyPaintApp._objToFlash.isColor= True
+            MyPaintApp._objToFlash.color = Color( message[2], message[3], message[4])
+    
+    
 if __name__ == '__main__':
     MyPaintApp().run()

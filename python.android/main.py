@@ -32,7 +32,7 @@ Builder.load_string("""
             size_hint: 1, 0.25
             BoxLayout:
                 GridLayout:
-                    cols: 3
+                    cols: 4
                     rows: 1
                     canvas:
                         Color:
@@ -174,7 +174,8 @@ sm.add_widget(settingScreen)
 
 class Constants():
     resistMode = "Resist Mode"
-    automaticMode = "Auto Mode"
+    gifMode = "Gif Mode"
+    midiMode = "Midi Mode"
     manualMode = "Manual Mode"
     
     
@@ -183,8 +184,13 @@ class Constants():
 class AnimationModalityList():
     modalities = ('linear', 'parabolic', 'random')
 
-class GifModalityList():
-    modalities = ('resist', 'auto', 'manual')
+
+class ModalityList():
+    resist = 'resist'
+    gif = 'gif'
+    midi = 'midi'
+    manual = 'manual'
+    modalities = (resist, gif, midi, manual)
 
 class AnimationImageButton(Button):
     filename = StringProperty(None)
@@ -199,10 +205,12 @@ class GifImageButton(Button):
     def on_press(self):
         print "send to " + SettingsScreen.getIp(settingScreen)
         print os.path.basename(self.filename)
-        if ControllerApp._modality== 1:
+        if ControllerApp._modality== ModalityList.gif:
             oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        else: 
-            oscAPI.sendMsg('/toSetPng', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)          
+        elif ((ControllerApp._modality == ModalityList.manual) | (ControllerApp._modality == ModalityList.resist)): 
+            oscAPI.sendMsg('/toSetPng', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        elif ((ControllerApp._modality == ModalityList.midi)):
+            oscAPI.sendMsg('/toSetObjectToShow',  dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 class ColorButton(Button):
     btncolor = StringProperty(None)
@@ -211,38 +219,49 @@ class ColorButton(Button):
         g = ControllerApp.get_Green(self.btncolor)
         b = ControllerApp.get_Blue(self.btncolor)
         print r,g,b
-        if ControllerApp._modality== 1:
-            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        else:
+        if ((ControllerApp._modality== ModalityList.midi) ):
+            oscAPI.sendMsg('/toSetObjectToShow', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        elif ((ControllerApp._modality== ModalityList.manual) | (ControllerApp._modality== ModalityList.resist)):
             print SettingsScreen.getIp(settingScreen) 
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-            
-
-
+        
 class ResistModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.midiBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.gifBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        oscAPI.sendMsg('/toSetModality',dataArray=[GifModalityList.modalities.index("resist", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = GifModalityList.modalities.index("resist", )
+        oscAPI.sendMsg('/toSetModality',dataArray=[ModalityList.modalities.index("resist", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityList.resist
 
-class AutomaticModality(Button):
+class GifModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.resisthBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.midiBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        ButtonModalityHandler.resisthBnt.background_color = [0.9, 0.9, 0.9, 1]
-        self.text = Constants.automaticMode
-        oscAPI.sendMsg('/toSetModality', dataArray=[GifModalityList.modalities.index("auto", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = GifModalityList.modalities.index("auto", )
+        self.text = Constants.gifMode
+        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("gif", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityList.gif
+
+class MidiModality(Button):
+    def on_press(self):
+        self.background_color =  [0.2, 0.3, 0.2, 1]
+        ButtonModalityHandler.resisthBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.gifBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.manualBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        self.text = Constants.midiMode
+        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("midi", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityList.midi
         
 class ManualModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
         ButtonModalityHandler.resisthBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        ButtonModalityHandler.automaticBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        oscAPI.sendMsg('/toSetModality', dataArray=[GifModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        ControllerApp._modality = GifModalityList.modalities.index("manual", )
+        ButtonModalityHandler.gifBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        ButtonModalityHandler.midiBnt.background_color =  [0.9, 0.9, 0.9, 1]
+        oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        ControllerApp._modality = ModalityList.manual
         
         
 
@@ -274,8 +293,13 @@ class ButtonModalityHandler():
             background_color =  [0.2, 0.3, 0.2, 1]
             )
 
-    automaticBnt = AutomaticModality(
-            text=Constants.automaticMode,
+    gifBnt = GifModality(
+            text=Constants.gifMode,
+            size_hint=(1, 1), 
+            )
+    
+    midiBnt = MidiModality(
+            text=Constants.midiMode,
             size_hint=(1, 1), 
             )
     
@@ -305,7 +329,7 @@ class ButtonAnimationModalityHandler():
 
 
 class ControllerApp(App):
-    _modality=0
+    _modality=ModalityList.resist
     _animation_modality=0
     @staticmethod 
     def get_Red(rgbString):
@@ -326,7 +350,12 @@ class ControllerApp(App):
         "f" : "f.gif",
         "g" : "g.gif",
         "h" : "h.gif",
-        "ele" : "ele.gif"
+        "ele" : "ele.gif",
+        "m" : "m.gif",
+        "n" : "n.gif",
+        "o" : "o.gif",
+        "p" : "p.gif",
+        "q" : "q.gif",
         }
     
     colorMap = {
@@ -389,7 +418,8 @@ class ControllerApp(App):
         
         
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.resisthBnt)
-        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.automaticBnt)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.gifBnt)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.midiBnt) 
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
 

@@ -24,7 +24,7 @@ def get_ip_address():
     #ip = s.getsockname()[0]
    
     #ip = '192.168.1.101'
-    #ip = '192.168.0.8'
+    #ip = '192.168.0.6'
     ip = 'localhost'
     return ip 
 
@@ -84,8 +84,9 @@ class MyPaintApp(App):
     
     def build(self):
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
+        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
 
+        
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
@@ -158,7 +159,7 @@ class MyPaintApp(App):
         if MyPaintApp._modality !=  ModalityList.resist:
             Clock.schedule_once(self.clear_canvas1, 0.1)
         
-    
+
     def to_flash(self, message, *args):
         if MyPaintApp._modality == ModalityList.midi:
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
@@ -172,7 +173,6 @@ class MyPaintApp(App):
 
     def set_object_to_flash(self, message, *args):
         if(len(message)==3):
-            print "setGif to flash"
             MyPaintApp._objToFlash.isColor= False
             MyPaintApp._objToFlash.pngToFlash = message[2]
         else:

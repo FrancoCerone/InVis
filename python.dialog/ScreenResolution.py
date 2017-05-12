@@ -13,11 +13,11 @@ class ScreenResolution(object):
         #self.height = 1080
         
         #mac
-        #self.width = 2560
-        #self.height = 1600
+        self.width = 2560
+        self.height = 1600
         #windos
-        self.width = 1360
-        self.height = 768 
+        #self.width = 1360
+        #self.height = 768 
     
     
     def get_width(self):

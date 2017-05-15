@@ -20,12 +20,24 @@ Builder.load_string("""
         BoxLayout:
             
             orientation: 'horizontal'
-            BoxLayout:
-                StackLayout:
+            ScrollView:
+                GridLayout:
+                    cols: 3
+                    padding: 10
+                    spacing: 10
+                    size_hint: None, None
+                    height: self.minimum_height
+                    width: self.minimum_width
                     id: giffButtonContainer
            
-            BoxLayout:
-                StackLayout:
+            ScrollView:
+                GridLayout:
+                    cols: 3
+                    padding: 10
+                    spacing: 10
+                    size_hint: None, None
+                    height: self.minimum_height
+                    width: self.minimum_width
                     id: colorButtonContainer
         BoxLayout:
             orientation: 'vertical'   
@@ -369,7 +381,10 @@ class ControllerApp(App):
     
     colorMap = {
         "blue" :  "  0  0  1",
+        "darkblue" : "  0  0.45",
+        "turquoise3" : "  0.77.80",
         "red" :   "  1  0  0",
+        "saddlebrown" : ".55.27.07",
         "green" : "  0  1  0",
         "white" : ".99.99.99",
         "yellow" :".93.99.09",

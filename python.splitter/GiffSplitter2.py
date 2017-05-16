@@ -95,7 +95,7 @@ def processImage(path, outFolder):
 
 
 def main():
-    processImage('/Users/francescocerone/Desktop/gif2/2.gif', '/Users/francescocerone/Desktop/gif2/test/')
+    processImage('/Users/francescocerone/Desktop/gif2/5.gif', '/Users/francescocerone/Desktop/gif2/5/')
     
 
 if __name__ == "__main__":

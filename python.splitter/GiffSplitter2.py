@@ -1,26 +1,7 @@
-import os
 from PIL import Image
-
-
-'''
-I searched high and low for solutions to the "extract animated GIF frames in Python"
-problem, and after much trial and error came up with the following solution based
-on several partial examples around the web (mostly Stack Overflow).
-There are two pitfalls that aren't often mentioned when dealing with animated GIFs -
-firstly that some files feature per-frame local palettes while some have one global
-palette for all frames, and secondly that some GIFs replace the entire image with
-each new frame ('full' mode in the code below), and some only update a specific
-region ('partial').
-This code deals with both those cases by examining the palette and redraw
-instructions of each frame. In the latter case this requires a preliminary (usually
-partial) iteration of the frames before processing, since the redraw mode needs to
-be consistently applied across all frames. I found a couple of examples of
-partial-mode GIFs containing the occasional full-frame redraw, which would result
-in bad renders of those frames if the mode assessment was only done on a
-single-frame basis.
-Nov 2012
-'''
-
+import zipfile
+import os
+os.chdir('.')
 
 def analyseImage(path):
     '''
@@ -48,35 +29,46 @@ def analyseImage(path):
     return results
 
 
-def processImage(path, outFolder):
+
+
+
+
+def processImage(path, imageName):
     '''
     Iterate the GIF, extracting each frame.
     '''
     mode = analyseImage(path)['mode']
     
+    imToCount = Image.open(path)
+    p = imToCount.getpalette()
+    frameCounter = 1;
+    try:
+        while True:
+            
+            if not imToCount.getpalette():
+                imToCount.putpalette(p)
+            
+            new_frame = Image.new('RGBA', imToCount.size)
+
+            frameCounter += 1
+            imToCount.seek(imToCount.tell() + 1)
+    except EOFError:
+        pass
+    print 'Dimensione immsgini gif', frameCounter
     im = Image.open(path)
 
     i = 0
     p = im.getpalette()
     last_frame = im.convert('RGBA')
     
+    
+    
     try:
         while True:
-            print "saving %s (%s) frame %d, %s %s" % (path, mode, i, im.size, im.tile)
-            
-            '''
-            If the GIF uses local colour tables, each frame will have its own palette.
-            If not, we need to apply the global palette to the new frame.
-            '''
             if not im.getpalette():
                 im.putpalette(p)
             
             new_frame = Image.new('RGBA', im.size)
-            
-            '''
-            Is this file a "partial"-mode GIF where frames update a region of a different size to the entire image?
-            If so, we need to construct the new frame by pasting it on top of the preceding frames.
-            '''
             if mode == 'partial':
                 new_frame.paste(last_frame)
             
@@ -85,8 +77,34 @@ def processImage(path, outFolder):
                 prefix='0'
             else:
                 prefix=''
-            new_frame.save(outFolder + prefix+'%d.png' % ( i), 'PNG')
+            print im
+            if(i==0):
+                commanderFolder = get_commanderFolder(os)
+                new_frame.save(commanderFolder+imageName + '.png', 'PNG')
+                animationFolder = get_AnimationFolder(os)
+                new_frame.save(animationFolder+imageName + '.png', 'PNG')
+                jpgFolder = get_JpgFolder(os)
+                new_frame.save(jpgFolder+imageName + '.png', 'PNG')
+                outZipFolder=  get_ZipFolder(os)+ imageName
+                os.makedirs(outZipFolder)
+            if(i == frameCounter/3):
+                new_frame.save(jpgFolder+imageName + '2.png', 'PNG')
+                print "secondaimmagine ", i
+            if (i == frameCounter*2/3):
+                new_frame.save(jpgFolder+imageName + '3.png', 'PNG')
+                print 'terzaimmagine ', i 
+            
+            new_frame.save(outZipFolder +"/" + prefix+'%d.png' % ( i), 'PNG')
 
+            if (i == frameCounter-2):
+                new_frame.save(jpgFolder+imageName + '4.png', 'PNG')
+                print 'ultimaimmagine ', i
+                zf = zipfile.ZipFile(outZipFolder + ".zip", "w")
+                for dirname, subdirs, files in os.walk(outZipFolder):
+                    zf.write(dirname)
+                    for filename in files:
+                        zf.write(os.path.join(dirname, filename))
+                zf.close()
             i += 1
             last_frame = new_frame
             im.seek(im.tell() + 1)
@@ -95,8 +113,38 @@ def processImage(path, outFolder):
 
 
 def main():
-    processImage('/Users/francescocerone/Desktop/gif2/5.gif', '/Users/francescocerone/Desktop/gif2/5/')
-    
+    #processImage('/Users/francescocerone/Desktop/gif/1.gif', '0e')
+    #processImage('/Users/francescocerone/Desktop/gif/2.gif', '0f')
+    #processImage('/Users/francescocerone/Desktop/gif/3.gif', '0g')
+    #processImage('/Users/francescocerone/Desktop/gif/4.gif', '0h')
+    #processImage('/Users/francescocerone/Desktop/gif/5.gif', '0i')
+    #processImage('/Users/francescocerone/Desktop/gif/6.gif', '0l')
+    processImage('/Users/francescocerone/Desktop/gif/7.gif', '0m')
+    print ""
+
+
+def get_JpgFolder(os):
+    os.chdir('.')
+    jpgFolder = os.path.abspath(os.curdir) + '/python.dialog/resources/pngs/'
+    print 'Png folder: ' + jpgFolder
+    return jpgFolder   
+
+def get_commanderFolder(os):
+    os.chdir('..')
+    commanderFolder = os.path.abspath(os.curdir) + '/python.android/resources/'
+    print 'commander Folder: ' + commanderFolder
+    return commanderFolder 
+
+def get_AnimationFolder(os):
+    os.chdir('.')
+    animationFolder = os.path.abspath(os.curdir) + '/python.dialog/resources/animations/'
+    print 'Animation folder: ' + animationFolder
+    return animationFolder
+def get_ZipFolder(os):
+    os.chdir('.')
+    animationFolder = os.path.abspath(os.curdir) + '/python.dialog/resources/zips/'
+    print 'Animation folder: ' + animationFolder
+    return animationFolder
 
 if __name__ == "__main__":
     main()

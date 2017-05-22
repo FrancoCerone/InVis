@@ -1,6 +1,7 @@
 from PIL import Image
 import zipfile
 import os
+from Carbon.QuickDraw import frame
 os.chdir('.')
 
 def analyseImage(path):
@@ -39,30 +40,12 @@ def processImage(path, imageName):
     '''
     mode = analyseImage(path)['mode']
     
-    imToCount = Image.open(path)
-    p = imToCount.getpalette()
-    frameCounter = 1;
-    try:
-        while True:
-            
-            if not imToCount.getpalette():
-                imToCount.putpalette(p)
-            
-            new_frame = Image.new('RGBA', imToCount.size)
-
-            frameCounter += 1
-            imToCount.seek(imToCount.tell() + 1)
-    except EOFError:
-        pass
-    print 'Dimensione immsgini gif', frameCounter
+    frameCounter = get_FrameNumbers(path)
+    
     im = Image.open(path)
-
     i = 0
     p = im.getpalette()
     last_frame = im.convert('RGBA')
-    
-    
-    
     try:
         while True:
             if not im.getpalette():
@@ -96,14 +79,14 @@ def processImage(path, imageName):
             
             new_frame.save(outZipFolder +"/" + prefix+'%d.png' % ( i), 'PNG')
 
-            if (i == frameCounter-2):
+            if (i +1 == frameCounter):
                 new_frame.save(jpgFolder+imageName + '4.png', 'PNG')
                 print 'ultimaimmagine ', i
                 zf = zipfile.ZipFile(outZipFolder + ".zip", "w")
                 for dirname, subdirs, files in os.walk(outZipFolder):
-                    zf.write(dirname)
+                    #zf.write(dirname)
                     for filename in files:
-                        zf.write(os.path.join(dirname, filename))
+                        zf.write(os.path.join(dirname, filename),filename)
                 zf.close()
             i += 1
             last_frame = new_frame
@@ -113,13 +96,14 @@ def processImage(path, imageName):
 
 
 def main():
-    #processImage('/Users/francescocerone/Desktop/gif/1.gif', '0e')
-    #processImage('/Users/francescocerone/Desktop/gif/2.gif', '0f')
-    #processImage('/Users/francescocerone/Desktop/gif/3.gif', '0g')
-    #processImage('/Users/francescocerone/Desktop/gif/4.gif', '0h')
-    #processImage('/Users/francescocerone/Desktop/gif/5.gif', '0i')
-    #processImage('/Users/francescocerone/Desktop/gif/6.gif', '0l')
-    processImage('/Users/francescocerone/Desktop/gif/7.gif', '0m')
+    #processImage('/Users/francescocerone/Desktop/gif/1.gif', '0n')
+    #processImage('/Users/francescocerone/Desktop/gif/2.gif', '0o')
+    #processImage('/Users/francescocerone/Desktop/gif/3.gif', '0p')
+    #processImage('/Users/francescocerone/Desktop/gif/4.gif', '0q')
+    #processImage('/Users/francescocerone/Desktop/gif/5.gif', '0r')
+    #processImage('/Users/francescocerone/Desktop/gif/6.gif', '0s')
+    #processImage('/Users/francescocerone/Desktop/gif/7.gif', '0t')
+    processImage('/Users/francescocerone/Desktop/gif/19.gif', '0u')
     print ""
 
 
@@ -145,6 +129,19 @@ def get_ZipFolder(os):
     animationFolder = os.path.abspath(os.curdir) + '/python.dialog/resources/zips/'
     print 'Animation folder: ' + animationFolder
     return animationFolder
+
+def get_FrameNumbers(path):
+    imToCount = Image.open(path)
+    frameCounter = 1;
+    try:
+        while True:
+            imToCount.seek(imToCount.tell() + 1)
+            frameCounter =frameCounter +  1
+    except EOFError:
+        pass
+    print 'Dimensione immsgini gif', frameCounter
+    return frameCounter
+    
 
 if __name__ == "__main__":
     main()

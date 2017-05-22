@@ -385,6 +385,14 @@ class ControllerApp(App):
         "0i" : "0i.gif",
         "0l" : "0l.gif",
         "0m" : "0m.gif",
+        "0n" : "0n.gif",
+        "0o" : "0o.gif",
+        "0p" : "0p.gif",
+        "0q" : "0q.gif",
+        "0r" : "0r.gif",
+        "0s" : "0s.gif",
+        "0t" : "0t.gif",
+        "0u" : "0u.gif"
         }
     
     colorMap = {

@@ -24,7 +24,7 @@ def get_ip_address():
     #ip = s.getsockname()[0]
    
     #ip = '192.168.1.101'
-    #ip = '192.168.0.6'
+    #ip = '192.168.0.3'
     ip = 'localhost'
     return ip 
 
@@ -65,7 +65,7 @@ class ImageWidget(Widget):
     def add_png(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
-            _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.1, pos=(0, 0), keep_data = True)
+            _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.2, pos=(0, 0), keep_data = True)
             _im.keep_ratio= False
             _im.allow_stretch = True
             _im.keep_data = True
@@ -129,14 +129,18 @@ class MyPaintApp(App):
     
     def set_gif(self, message, *args):
         MyPaintApp._lastGif =  message[2]
-        self.imageWidget.add_gif(  MyPaintApp._lastGif)
+        if MyPaintApp._modality ==  ModalityList.manual:
+            self.imageWidget.add_png( message[2])
+            Clock.schedule_once(self.remove_Image, 0.2  )
+        else:
+            self.imageWidget.add_gif(  MyPaintApp._lastGif)
         
         
     def set_png(self, message, *args):
         self.flashWidget.canvas.clear()
         self.imageWidget.add_png( message[2])
         if MyPaintApp._modality  !=  ModalityList.resist:
-            Clock.schedule_once(self.remove_Image, 0.1)
+            Clock.schedule_once(self.remove_Image, 0.2  )
         
     def set_Modality(self, message, *args):
         MyPaintApp._modality = ModalityList.modalities.__getitem__(message[2])
@@ -167,9 +171,9 @@ class MyPaintApp(App):
                 self.flashWidget.add_rectangele(MyPaintApp._objectToFlash)
             else:
                 self.imageWidget.add_png(MyPaintApp._objToFlash.pngToFlash)
-                Clock.schedule_once(self.remove_Image, 0.1)
+                Clock.schedule_once(self.remove_Image, 0.25)
                 
-            Clock.schedule_once(self.clear_canvas1, 0.1)
+            Clock.schedule_once(self.clear_canvas1, 0.25)
 
     def set_object_to_flash(self, message, *args):
         if(len(message)==3):

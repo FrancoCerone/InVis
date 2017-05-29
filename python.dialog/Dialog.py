@@ -8,6 +8,7 @@ from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from kivy.config import Config
 from ScreenResolution import ScreenResolution
+from SpeedMaper import SpeedMapper
 from pong import PongGame
 from kivy.uix.image import AsyncImage
 from kivy.loader import Loader
@@ -57,7 +58,10 @@ class ImageWidget(Widget):
             fileType="zip"
             fileFolder =fileType+"s"
             print "loading file: "+ "resources/"+fileFolder+"/"+ imageFileName + "."+fileType
-            _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=0.05, pos=(0, 0) )
+            gifSpeed = 0.05
+            if(SpeedMapper.speedMap.get(imageFileName)!= None):
+                gifSpeed = SpeedMapper.speedMap.get(imageFileName)
+            _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=float(gifSpeed), pos=(0, 0) )
             _im.keep_data = True
             _im.keep_ratio= False
             _im.allow_stretch = True
@@ -129,7 +133,9 @@ class MyPaintApp(App):
     
     def set_gif(self, message, *args):
         MyPaintApp._lastGif =  message[2]
-        if MyPaintApp._modality ==  ModalityList.manual:
+        if MyPaintApp._modality ==  ModalityList.resist:
+            self.imageWidget.add_png( message[2]) 
+        elif MyPaintApp._modality ==  ModalityList.manual:
             self.imageWidget.add_png( message[2])
             Clock.schedule_once(self.remove_Image, 0.2  )
         else:
@@ -183,7 +189,7 @@ class MyPaintApp(App):
             MyPaintApp._objectToFlash = Color( message[2], message[3], message[4])
             MyPaintApp._objToFlash.isColor= True
             MyPaintApp._objToFlash.color = Color( message[2], message[3], message[4])
-    
+   
     
 if __name__ == '__main__':
     MyPaintApp().run()

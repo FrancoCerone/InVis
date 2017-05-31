@@ -61,6 +61,7 @@ class ImageWidget(Widget):
             gifSpeed = 0.05
             if(SpeedMapper.speedMap.get(imageFileName)!= None):
                 gifSpeed = SpeedMapper.speedMap.get(imageFileName)
+                print "Overwrite seep for:  "+imageFileName
             _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=float(gifSpeed), pos=(0, 0) )
             _im.keep_data = True
             _im.keep_ratio= False

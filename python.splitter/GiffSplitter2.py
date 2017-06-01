@@ -96,17 +96,10 @@ def processImage(path, imageName):
 
 
 def main():
-    #processImage('/Users/francescocerone/Desktop/gif/1.gif', '0n')
-    #processImage('/Users/francescocerone/Desktop/gif/2.gif', '0o')
-    #processImage('/Users/francescocerone/Desktop/gif/3.gif', '0p')
-    #processImage('/Users/francescocerone/Desktop/gif/4.gif', '0q')
-    #processImage('/Users/francescocerone/Desktop/gif/5.gif', '0r')
-    #processImage('/Users/francescocerone/Desktop/gif/6.gif', '0s')
-    #processImage('/Users/francescocerone/Desktop/gif/7.gif', '0t')
-    processImage('/Users/francescocerone/Desktop/gif/19.gif', '0u')
+    processImage('/Users/francescocerone/Desktop/gif/new/2/R1.gif', '1q')
     print ""
 
-
+ 
 def get_JpgFolder(os):
     os.chdir('.')
     jpgFolder = os.path.abspath(os.curdir) + '/python.dialog/resources/pngs/'

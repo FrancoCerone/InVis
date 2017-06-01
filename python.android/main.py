@@ -21,21 +21,22 @@ Builder.load_string("""
             
             orientation: 'horizontal'
             ScrollView:
+                size_hint: 3, 1
                 GridLayout:
-                    cols: 3
+                    cols: 5
                     padding: 10
                     spacing: 10
-                    size_hint: None, None
+                    size_hint: 0.9, 3
                     height: self.minimum_height
                     width: self.minimum_width
                     id: giffButtonContainer
            
             ScrollView:
+                size_hint: 1, 1
                 GridLayout:
-                    cols: 3
+                    cols: 2
                     padding: 10
                     spacing: 10
-                    size_hint: None, None
                     height: self.minimum_height
                     width: self.minimum_width
                     id: colorButtonContainer
@@ -405,6 +406,11 @@ class ControllerApp(App):
         "1h" : "1h.gif",
         "1i" : "1i.gif",
         "1l" : "1l.gif",
+        "1m" : "1m.gif",
+        "1n" : "1n.gif",
+        "1o" : "1o.gif",
+        "1p" : "1p.gif",
+        "1q" : "1q.gif",
         
         
         

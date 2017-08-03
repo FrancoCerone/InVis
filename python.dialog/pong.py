@@ -55,22 +55,19 @@ class ImageDispatcher():
         print "calculated height: ", heigth
         return heigth
         
-    
-
-
-imageDispatcher = ImageDispatcher()
-
 class PongBall(Widget):
     modality = ObjectProperty
+    status = ObjectProperty
+    status = 'asc'
     def set_height(self, height):
         print "setted height", height
         self.pos[1] = height
         
-    def move(self, x ):
+    def move(self, x, y ):
         x= self.pos[0] +x
-        y= self.pos[1]
-  
- 
+        y= self.pos[1] +y
+    
+   
         self.pos = Vector(x,y) 
         
     def get_image(self):
@@ -85,25 +82,39 @@ class PongBall(Widget):
     def get_modality(self):
         return self.modality;
 
+    def get_status(self):
+        return self.status;
 
-    
-class PongGame(Widget):
+imageDispatcher = ImageDispatcher()
+
+
+class PongGame(Widget): 
     balls = []
     def build(self):
         self.ball = PongBall()
         self.add_widget(self.ball)
         
     def update(self, dt):
-        for amimation in self.balls:
-            amimation.move(3)
-            #print "image with modality: ", amimation.get_modality()
-            if(amimation.pos.__getitem__(0) < screenResolution.get_width()):
+        for effect in self.balls:
+            if(effect.get_modality() == 0):
+                effect.move(3,0)
+            if (effect.get_modality() == 1):
+                #setto lo stato 
+                if(effect.pos.__getitem__(1) >= screenResolution.get_height()- effect.size[1]):
+                    effect.status = 'desc'
+                if(effect.pos.__getitem__(1) <= 0 ):
+                    effect.status = 'asc'
+
+                if(effect.status == 'desc'):   
+                    effect.move(3,-4)
+                else:
+                    effect.move(3,4)
+            if(effect.pos.__getitem__(0) < screenResolution.get_width()):
                 continue
             else:
-                self.balls.remove(amimation)
-
-                if (self.balls.__len__() == 0):
-                    return    
+                self.balls.remove(effect)
+            if (self.balls.__len__() == 0):
+                return    
     
     def add_animation(self, image, modality):
         print "Start animation with image", image, " on modality", modality

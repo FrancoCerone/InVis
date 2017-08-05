@@ -96,7 +96,7 @@ def processImage(path, imageName):
 
 
 def main():
-    processImage('/Users/francescocerone/Desktop/gif/new/2/R1.gif', '1q')
+    processImage('/Users/francescocerone/Desktop/gif/new/wish/5.gif', '1u')
     print ""
 
  

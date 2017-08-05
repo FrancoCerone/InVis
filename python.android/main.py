@@ -195,7 +195,7 @@ class Constants():
  
 
 class AnimationModalityList():
-    modalities = ('linear', 'parabolic', 'random')
+    modalities = ('linear', 'random')
 
 
 class ModalityList():
@@ -281,21 +281,12 @@ class ManualModality(Button):
 class LinearModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
-        ButtonAnimationModalityHandler.parabolaBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonAnimationModalityHandler.randomBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ControllerApp._animation_modality = AnimationModalityList.modalities.index("linear", )
-
-class ParabolaModality(Button):
-    def on_press(self):
-        self.background_color =  [0.2, 0.3, 0.2, 1]
-        ButtonAnimationModalityHandler.linearBnt.background_color =  [0.9, 0.9, 0.9, 1]
-        ButtonAnimationModalityHandler.randomBnt.background_color = [0.9, 0.9, 0.9, 1]
-        ControllerApp._animation_modality = AnimationModalityList.modalities.index("parabolic", )
         
 class RandomModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
-        ButtonAnimationModalityHandler.parabolaBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ButtonAnimationModalityHandler.linearBnt.background_color =  [0.9, 0.9, 0.9, 1]
         ControllerApp._animation_modality = AnimationModalityList.modalities.index("random", )
         
@@ -323,18 +314,14 @@ class ButtonModalityHandler():
 
 class ButtonAnimationModalityHandler():
     linearBnt = LinearModality(
-            text="Lineare",
+            background_normal = "button_incons/linearLine.png",
             size_hint=(1, 1), 
             background_color =  [0.2, 0.3, 0.2, 1]
             )
 
-    parabolaBnt = ParabolaModality(
-            text="Parabolico",
-            size_hint=(1, 1), 
-            )
     
     randomBnt = RandomModality(
-            text="Random",
+            background_normal = "button_incons/randomLine.png",
             size_hint=(1, 1), 
             )
     
@@ -473,7 +460,6 @@ class ControllerApp(App):
             menuScreen.ids.colorButtonContainer.add_widget(btn)
         
         userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.linearBnt)
-        userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.parabolaBnt)
         userAnimation.ids.modalityAnimationContainer.add_widget(ButtonAnimationModalityHandler.randomBnt) 
         
         

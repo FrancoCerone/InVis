@@ -9,6 +9,7 @@ from kivy.uix.widget import Widget
 from kivy.config import Config
 from ScreenResolution import ScreenResolution
 from SpeedMaper import SpeedMapper
+from KeepRatioOverwriter import KeepRatioOverwriter
 from pong import PongGame
 from kivy.uix.image import AsyncImage
 from kivy.loader import Loader
@@ -52,6 +53,14 @@ class FlashWidget(Widget):
             Rectangle(pos=(0, 0), size=(screenResolution.get_width(), screenResolution.get_height()))
 
 class ImageWidget(Widget):
+
+    def setRatio(self, imageFileName, _im):
+        if (KeepRatioOverwriter.ratioOverwriterMap.get(imageFileName) != None):
+            _im.keep_ratio = KeepRatioOverwriter.ratioOverwriterMap.get(imageFileName)
+            print "Overwrite keep ratio for:  " + imageFileName + " in " + str(KeepRatioOverwriter.ratioOverwriterMap.get(imageFileName))
+        else:
+            _im.keep_ratio = False
+
     def add_gif(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
@@ -64,16 +73,16 @@ class ImageWidget(Widget):
                 print "Overwrite seep for:  "+imageFileName
             _im = Image(source="resources/"+fileFolder+"/"+ imageFileName + "."+fileType, anim_delay=float(gifSpeed), pos=(0, 0) )
             _im.keep_data = True
-            _im.keep_ratio= False
+            self.setRatio(imageFileName, _im)
             _im.allow_stretch = True
             _im.size =screenResolution.get_width(), screenResolution.get_height()
     def add_png(self, imageFileName):
         with self.canvas:
             self.canvas.clear()
             _im = Image(source="resources/pngs/"+ imageFileName + ".png", anim_delay=0.2, pos=(0, 0), keep_data = True)
-            _im.keep_ratio= False
-            _im.allow_stretch = True
             _im.keep_data = True
+            self.setRatio(imageFileName, _im)
+            _im.allow_stretch = True
             _im.size =screenResolution.get_width(), screenResolution.get_height()
     def remove_Image(self):
         self.canvas.clear()
@@ -168,7 +177,7 @@ class MyPaintApp(App):
         self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
         self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
         if MyPaintApp._modality !=  ModalityList.resist:
-            Clock.schedule_once(self.clear_canvas1, 0.1)
+            Clock.schedule_once(self.clear_canvas1, 0.3)
         
 
     def to_flash(self, message, *args):

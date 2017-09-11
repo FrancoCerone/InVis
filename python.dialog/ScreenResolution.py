@@ -9,15 +9,20 @@ class ScreenResolution(object):
     
     def __init__(self):
         #secondo scermo da mac
-        #self.width = 1920
-        #self.height = 1080
+        self.width = 1920
+        self.height = 1080
         
         #mac
-        self.width = 2560
-        self.height = 1600
-        #windos
+        #self.width = 2560
+        #self.height = 1600
+        
+        #windows & secondo schermo
         #self.width = 1360
-        #self.height = 768 
+        #self.height = 768
+         
+        #schermo Dario
+        #self.width = 1440
+        #self.height = 900 
     
     
     def get_width(self):

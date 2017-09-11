@@ -398,6 +398,9 @@ class ControllerApp(App):
         "1o" : "1o.gif",
         "1p" : "1p.gif",
         "1q" : "1q.gif",
+        "1v" : "1v.gif",
+        "1z" : "1z.gif",
+        "2a" : "2a.gif",
         
         
         

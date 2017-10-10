@@ -1,28 +1,10 @@
-'''
-Touch Tracer Line Drawing Demonstration
-=======================================
-
-This demonstrates tracking each touch registered to a device. You should
-see a basic background image. When you press and hold the mouse, you
-should see cross-hairs with the coordinates written next to them. As
-you drag, it leaves a trail. Additional information, like pressure,
-will be shown if they are in your device's touch.profile.
-
-This program specifies an icon, the file icon.png, in its App subclass.
-It also uses the particle.png file as the source for drawing the trails which
-are white on transparent. The file touchtracer.kv describes the application.
-
-The file android.txt is used to package the application for use with the
-Kivy Launcher Android application. For Android devices, you can
-copy/paste this directory into /sdcard/kivy/touchtracer on your Android device.
-
-'''
 __version__ = '1.0'
 
 import kivy
+from kivy.gesture import Gesture, GestureDatabase
+from test.test_repr import touch
 kivy.require('1.0.6')
 
-from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle, Point, GraphicException
@@ -47,19 +29,38 @@ def calculate_points(x1, y1, x2, y2, steps=5):
 
 
 class Touchtracer(FloatLayout):
-
+    
+    pathMap = {}
+    
+    #def __init__(self):
+    #    self.pathMap = {"1":"Sachine Tendulkar"}
+    
+    def build(self):
+        with self.canvas.before:
+            Color(0, 0.50, 0.25, 100) # green; colors range from 0-1 instead of 0-255
+            #print self.pathMap
+            #print self.size
+            #print self.size_hint_x
+            #print self.size_hint_y
+            #print self.pos
+    
+    def get_pathMap(self):
+        return self.pathMap 
+        
     def on_touch_down(self, touch):
+        self.canvas.clear()
         win = self.get_parent_window()
         ud = touch.ud
+        touch.ud['gesture_path'] = [(touch.x, touch.y)]
         ud['group'] = g = str(touch.uid)
-        pointsize = 5
+        pointsize = 50
         if 'pressure' in touch.profile:
             ud['pressure'] = touch.pressure
             pointsize = (touch.pressure * 100000) ** 2
         ud['color'] = random()
 
         with self.canvas:
-            Color(ud['color'], 1, 1, mode='hsv', group=g)
+            Color(ud['color'], 1, 1, mode='hsv', group=g)  
             ud['lines'] = [
                 Rectangle(pos=(touch.x, 0), size=(1, win.height), group=g),
                 Rectangle(pos=(0, touch.y), size=(win.width, 1), group=g),
@@ -70,6 +71,7 @@ class Touchtracer(FloatLayout):
         self.update_touch_label(ud['label'], touch)
         self.add_widget(ud['label'])
         touch.grab(self)
+        self.pathMap.clear()
         return True
 
     def on_touch_move(self, touch):
@@ -78,6 +80,8 @@ class Touchtracer(FloatLayout):
         ud = touch.ud
         ud['lines'][0].pos = touch.x, 0
         ud['lines'][1].pos = 0, touch.y
+        self.pathMap[touch.x] =  touch.y
+        touch.ud['gesture_path'].append((touch.x, touch.y))
 
         index = -1
 
@@ -123,27 +127,20 @@ class Touchtracer(FloatLayout):
         if touch.grab_current is not self:
             return
         touch.ungrab(self)
-        ud = touch.ud
-        self.canvas.remove_group(ud['group'])
-        self.remove_widget(ud['label'])
+        gesture = Gesture()
+        gesture.add_stroke(touch.ud['gesture_path'])
+        gesture.normalize()
+        gdb = GestureDatabase()
+        gdb.add_gesture(gesture)
 
     def update_touch_label(self, label, touch):
+        #print self.pathMap
+        #print touch.x, touch.y
         label.text = 'ID: %s\nPos: (%d, %d)\nClass: %s' % (
-            touch.id, touch.x, touch.y, touch.__class__.__name__)
+                touch.id, touch.x, touch.y, touch.__class__.__name__)
         label.texture_update()
         label.pos = touch.pos
         label.size = label.texture_size[0] + 20, label.texture_size[1] + 20
 
 
-class TouchtracerApp(App):
-    title = 'Touchtracer'
-    icon = 'icon.png'
 
-    def build(self):
-        return Touchtracer()
-
-    def on_pause(self):
-        return True
-
-if __name__ == '__main__':
-    TouchtracerApp().run()

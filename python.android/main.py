@@ -9,6 +9,7 @@ import os
 oscAPI.init()
 from kivy.uix.screenmanager import ScreenManager, Screen
 from ButtonDimension import ButtonDimension
+from main1 import Touchtracer
 
 from kivy.lang import Builder
 
@@ -73,8 +74,8 @@ Builder.load_string("""
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            StackLayout:
-                id: animationButtonContainer
+            FloatLayout:
+                id: touchTracker
         BoxLayout:
             orientation: 'vertical'   
             size_hint: 1, 0.25
@@ -89,7 +90,13 @@ Builder.load_string("""
                         size: self.size
                 orientation:'horizontal'
                 id: modalityAnimationContainer
+        BoxLayout:
+            StackLayout:
+                id: animationButtonContainer
             
+        BoxLayout:
+            orientation: 'vertical'   
+            size_hint: 1, 0.25
             BoxLayout:
                 orientation: 'horizontal'
                 Button:
@@ -151,6 +158,7 @@ class MainScreen(Screen):
     pass
 
 class UsersAnimation(Screen):
+    map = {}
     pass
 
 class SettingsScreen(Screen):
@@ -208,6 +216,7 @@ class ModalityList():
 class AnimationImageButton(Button):
     filename = StringProperty(None)
     def on_press(self):
+        print "map:" , userAnimation.map
         print "send to " + SettingsScreen.getIp(settingScreen), ", Animation Modality: ",  ControllerApp._animation_modality,  ", image: ", os.path.basename(self.filename)
         oscAPI.sendMsg('/toStartUserAnimation', dataArray=[os.path.basename(self.filename), ControllerApp._animation_modality ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
@@ -329,6 +338,21 @@ class ButtonAnimationModalityHandler():
 
 
 class ControllerApp(App):
+    
+    def on_pause(self):
+        # Here you can save data if needed
+        return True
+    
+    def on_resume(self):
+        # Here you can check if any data needs replacing (usually nothing)
+        pass
+    
+    def build_config(self, config):
+        config.setdefaults('section1', {
+        'key1': 'value1',
+        'key2': '42'
+    })
+
     _modality=ModalityList.resist
     _animation_modality=0
     @staticmethod 
@@ -419,6 +443,7 @@ class ControllerApp(App):
         }
 
     def build(self):
+        touchtracer = Touchtracer()
         textfile = open('properties.txt', 'r') 
         ipFromTxt = textfile.read()
         print ipFromTxt
@@ -437,7 +462,7 @@ class ControllerApp(App):
                 size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
-
+        userAnimation.ids.touchTracker.add_widget(touchtracer)
                 
         for fn in self.gifMap:
             btn = AnimationImageButton(
@@ -447,8 +472,7 @@ class ControllerApp(App):
                 size_hint=(None, None), halign='center',
                 size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
             userAnimation.ids.animationButtonContainer.add_widget(btn)
-        
-        
+
         for color in self.colorMap:
             color2= self.colorMap.get(color)
             r = ControllerApp.get_Red( color2)

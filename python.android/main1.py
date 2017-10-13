@@ -2,7 +2,6 @@ __version__ = '1.0'
 
 import kivy
 from kivy.gesture import Gesture, GestureDatabase
-from test.test_repr import touch
 kivy.require('1.0.6')
 
 from kivy.uix.floatlayout import FloatLayout

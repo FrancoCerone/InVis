@@ -38,6 +38,7 @@ Builder.load_string("""
                     cols: 2
                     padding: 10
                     spacing: 10
+                    size_hint: 2, 2
                     height: self.minimum_height
                     width: self.minimum_width
                     id: colorButtonContainer
@@ -90,13 +91,22 @@ Builder.load_string("""
                         size: self.size
                 orientation:'horizontal'
                 id: modalityAnimationContainer
-        BoxLayout:
-            StackLayout:
+        ScrollView:
+            size_hint: 1, 0.5
+            do_scroll_x: True
+            do_scroll_y: True
+            GridLayout:
+                cols: 10
+                padding: 10
+                spacing: 10
+                size_hint: 2, 3
+                width: self.minimum_width
+                height: self.minimum_height
                 id: animationButtonContainer
-            
+                
         BoxLayout:
             orientation: 'vertical'   
-            size_hint: 1, 0.25
+            size_hint: 1, 0.15
             BoxLayout:
                 orientation: 'horizontal'
                 Button:

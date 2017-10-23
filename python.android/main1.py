@@ -9,6 +9,8 @@ from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from random import random
 from math import sqrt
+from kivy.properties import ObjectProperty
+
 
 
 def calculate_points(x1, y1, x2, y2, steps=5):
@@ -29,26 +31,20 @@ def calculate_points(x1, y1, x2, y2, steps=5):
 
 class Touchtracer(FloatLayout):
     
-    pathMap = {}
-    
     #def __init__(self):
-    #    self.pathMap = {"1":"Sachine Tendulkar"}
-    
+     #   super.__init__(self)
+        #self.store = store
+    store = ObjectProperty(None)
     def build(self):
         with self.canvas.before:
             Color(0, 0.50, 0.25, 100) # green; colors range from 0-1 instead of 0-255
-            #print self.pathMap
-            #print self.size
-            #print self.size_hint_x
-            #print self.size_hint_y
-            #print self.pos
     
-    def get_pathMap(self):
-        return self.pathMap 
+    def set_store(self,store):
+        self.store = store
         
     def on_touch_down(self, touch):
         self.canvas.clear()
-        win = self.get_parent_window()
+        win = self
         ud = touch.ud
         touch.ud['gesture_path'] = [(touch.x, touch.y)]
         ud['group'] = g = str(touch.uid)
@@ -70,7 +66,6 @@ class Touchtracer(FloatLayout):
         self.update_touch_label(ud['label'], touch)
         self.add_widget(ud['label'])
         touch.grab(self)
-        self.pathMap.clear()
         return True
 
     def on_touch_move(self, touch):
@@ -79,7 +74,6 @@ class Touchtracer(FloatLayout):
         ud = touch.ud
         ud['lines'][0].pos = touch.x, 0
         ud['lines'][1].pos = 0, touch.y
-        self.pathMap[touch.x] =  touch.y
         touch.ud['gesture_path'].append((touch.x, touch.y))
 
         index = -1
@@ -131,6 +125,11 @@ class Touchtracer(FloatLayout):
         gesture.normalize()
         gdb = GestureDatabase()
         gdb.add_gesture(gesture)
+        self.store.store_put('userPath', gesture.strokes)
+        print gesture.strokes
+        
+        
+        #    self.store.put('userPath', gesture.strokes)
 
     def update_touch_label(self, label, touch):
         #print self.pathMap

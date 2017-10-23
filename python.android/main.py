@@ -3,13 +3,16 @@ kivy.require('1.0.8')
 
 from kivy.app import App
 from kivy.uix.button import Button
-from kivy.properties import StringProperty, ObjectProperty, NumericProperty
+from kivy.properties import StringProperty, ObjectProperty
 from kivy.lib.osc import oscAPI
 import os
 oscAPI.init()
 from kivy.uix.screenmanager import ScreenManager, Screen
 from ButtonDimension import ButtonDimension
 from main1 import Touchtracer
+from kivy.storage.jsonstore import JsonStore
+
+
 
 from kivy.lang import Builder
 
@@ -75,6 +78,7 @@ Builder.load_string("""
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
+            size_hint: 1, 0.5
             FloatLayout:
                 id: touchTracker
         BoxLayout:
@@ -224,6 +228,7 @@ class ModalityList():
     modalities = (resist, gif, midi, manual)
 
 class AnimationImageButton(Button):
+    store = ObjectProperty(None)
     filename = StringProperty(None)
     def on_press(self):
         print "map:" , userAnimation.map
@@ -236,7 +241,6 @@ class GifImageButton(Button):
     filename = StringProperty(None)
     def on_press(self):
         print "send to " + SettingsScreen.getIp(settingScreen)
-        print os.path.basename(self.filename)
         if ControllerApp._modality== ModalityList.gif:
             oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         elif ((ControllerApp._modality == ModalityList.manual) | (ControllerApp._modality == ModalityList.resist)): 
@@ -348,6 +352,7 @@ class ButtonAnimationModalityHandler():
 
 
 class ControllerApp(App):
+    store = JsonStore('hello.json')
     
     def on_pause(self):
         # Here you can save data if needed
@@ -454,6 +459,8 @@ class ControllerApp(App):
 
     def build(self):
         touchtracer = Touchtracer()
+        touchtracer.set_store(self.store)
+        
         textfile = open('properties.txt', 'r') 
         ipFromTxt = textfile.read()
         print ipFromTxt
@@ -465,10 +472,9 @@ class ControllerApp(App):
         for fn in self.gifMap:
             print fn
             btn = GifImageButton(
-                #flashBt = flashBt,
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
-                size_hint=(None, None), halign='center',
+                #size_hint=(None, None), halign='center',
                 size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
@@ -476,11 +482,12 @@ class ControllerApp(App):
                 
         for fn in self.gifMap:
             btn = AnimationImageButton(
-                #flashBt = flashBt,
+                store= self.store,
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
-                size_hint=(None, None), halign='center',
-                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
+                #size_hint=(None, None), halign='center'
+                size=(buttonDimension.get_width(), buttonDimension.get_height())
+                )
             userAnimation.ids.animationButtonContainer.add_widget(btn)
 
         for color in self.colorMap:
@@ -491,7 +498,7 @@ class ControllerApp(App):
             btn = ColorButton(
                 btncolor = self.colorMap.get(color),
                 background_color=(r, g, b, 1),
-                size_hint=(None, None), halign='center',
+                #size_hint=(None, None), halign='center',
                 size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None)
                 )
             menuScreen.ids.colorButtonContainer.add_widget(btn)

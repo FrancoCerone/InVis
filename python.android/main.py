@@ -27,7 +27,7 @@ Builder.load_string("""
             ScrollView:
                 size_hint: 3, 1
                 GridLayout:
-                    cols: 5
+                    cols: 3
                     padding: 10
                     spacing: 10
                     size_hint: 0.9, 3
@@ -38,7 +38,7 @@ Builder.load_string("""
             ScrollView:
                 size_hint: 1, 1
                 GridLayout:
-                    cols: 2
+                    cols: 1
                     padding: 10
                     spacing: 10
                     size_hint: 2, 2
@@ -77,10 +77,10 @@ Builder.load_string("""
 <UsersAnimation>:
     BoxLayout:
         orientation: 'vertical'
-        BoxLayout:
-            size_hint: 1, 0.5
-            FloatLayout:
-                id: touchTracker
+        #BoxLayout:
+        #    size_hint: 1, 0.5
+        #    FloatLayout:
+        #        id: touchTracker
         BoxLayout:
             orientation: 'vertical'   
             size_hint: 1, 0.25
@@ -100,7 +100,7 @@ Builder.load_string("""
             do_scroll_x: True
             do_scroll_y: True
             GridLayout:
-                cols: 10
+                cols: 4
                 padding: 10
                 spacing: 10
                 size_hint: 2, 3
@@ -440,6 +440,10 @@ class ControllerApp(App):
         "1v" : "1v.gif",
         "1z" : "1z.gif",
         "2a" : "2a.gif",
+        "logo1" : "logo1.gif",
+        "logo2" : "logo2.gif",
+        "logo3" : "logo3.gif",
+        "logo4" : "logo4.gif",
         
         
         
@@ -475,10 +479,10 @@ class ControllerApp(App):
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
                 #size_hint=(None, None), halign='center',
-                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None))
+                size=(buttonDimension.get_width(), buttonDimension.get_height()))
             menuScreen.ids.giffButtonContainer.add_widget(btn)
 
-        userAnimation.ids.touchTracker.add_widget(touchtracer)
+        #userAnimation.ids.touchTracker.add_widget(touchtracer)
                 
         for fn in self.gifMap:
             btn = AnimationImageButton(

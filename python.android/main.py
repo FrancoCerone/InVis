@@ -22,7 +22,6 @@ Builder.load_string("""
         orientation: 'vertical'
         
         BoxLayout:
-            
             orientation: 'horizontal'
             ScrollView:
                 size_hint: 3, 1
@@ -30,18 +29,19 @@ Builder.load_string("""
                     cols: 3
                     padding: 10
                     spacing: 10
-                    size_hint: 0.9, 3
+                    size_hint: 1, 4
                     height: self.minimum_height
                     width: self.minimum_width
                     id: giffButtonContainer
            
             ScrollView:
                 size_hint: 1, 1
+                do_scroll_x: False
                 GridLayout:
                     cols: 1
                     padding: 10
                     spacing: 10
-                    size_hint: 2, 2
+                    size_hint: 1, 2
                     height: self.minimum_height
                     width: self.minimum_width
                     id: colorButtonContainer
@@ -96,14 +96,14 @@ Builder.load_string("""
                 orientation:'horizontal'
                 id: modalityAnimationContainer
         ScrollView:
-            size_hint: 1, 0.5
+            size_hint: 1, 1
             do_scroll_x: True
             do_scroll_y: True
             GridLayout:
-                cols: 4
+                cols: 2
                 padding: 10
                 spacing: 10
-                size_hint: 2, 3
+                size_hint: 1, 10
                 width: self.minimum_width
                 height: self.minimum_height
                 id: animationButtonContainer

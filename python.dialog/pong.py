@@ -30,11 +30,16 @@ Builder.load_string("""
 
 screenResolution = ScreenResolution()
 
+class AnimationConstant():
+    x_transition = 15
+    animation_hegth = screenResolution.get_height()/3
+    animation_Xrange = screenResolution.get_width()/4
 
 class ImageDispatcher():
     image = ObjectProperty
     modality = ObjectProperty
     lastHeightGiven = NumericProperty
+    lastStartXGiven = NumericProperty
     def set_image(self, image):
         self.image = image;
     def get_image(self):
@@ -46,7 +51,7 @@ class ImageDispatcher():
         return self.modality;
     
     def get_ball_hegth(self):
-        heigth = randint(0, screenResolution.get_height()) 
+        heigth = randint(0,AnimationConstant.animation_hegth ) 
         module = heigth % 100
         heigth = heigth - module
         if( heigth == self.lastHeightGiven):
@@ -54,6 +59,16 @@ class ImageDispatcher():
         self.lastHeightGiven = heigth
         print "calculated height: ", heigth
         return heigth
+    
+    def get_ball_StartX(self):
+        startX = randint(0,AnimationConstant.animation_Xrange ) 
+        module = startX % 100
+        startX = startX - module
+        if( startX == self.lastStartXGiven):
+            startX = startX - 100
+        self.lastStartXGiven = startX
+        print "calculated startX: ", startX
+        return startX
         
 class PongBall(Widget):
     modality = ObjectProperty
@@ -62,7 +77,11 @@ class PongBall(Widget):
     def set_height(self, height):
         print "setted height", height
         self.pos[1] = height
-        
+    
+    def set_startX(self, startX):
+        print "setted startX", startX
+        self.pos[0] = startX
+    
     def move(self, x, y ):
         x= self.pos[0] +x
         y= self.pos[1] +y
@@ -97,22 +116,24 @@ class PongGame(Widget):
     def update(self, dt):
         for effect in self.balls:
             if(effect.get_modality() == 0):
-                effect.move(3,0)
+                effect.move(AnimationConstant.x_transition,0)
             if (effect.get_modality() == 1):
                 #setto lo stato 
-                if(effect.pos.__getitem__(1) >= screenResolution.get_height()- effect.size[1]):
+                if(effect.pos.__getitem__(1) >= AnimationConstant.animation_hegth - effect.size[1]):
                     effect.status = 'desc'
                 if(effect.pos.__getitem__(1) <= 0 ):
                     effect.status = 'asc'
 
                 if(effect.status == 'desc'):   
-                    effect.move(3,-4)
+                    effect.move(AnimationConstant.x_transition,-16)
                 else:
-                    effect.move(3,4)
+                    effect.move(AnimationConstant.x_transition,16)
             if(effect.pos.__getitem__(0) < screenResolution.get_width()):
                 continue
             else:
+                self.remove_widget(effect)
                 self.balls.remove(effect)
+                
             if (self.balls.__len__() == 0):
                 return    
     
@@ -121,9 +142,11 @@ class PongGame(Widget):
         imageDispatcher.set_image(image)
         imageDispatcher.set_modality(modality)
         heightToStart = imageDispatcher.get_ball_hegth()
+        startX = imageDispatcher.get_ball_StartX()
         
         newAnimation = PongBall()
         newAnimation.set_height(heightToStart)
+        newAnimation.set_startX(startX)
         newAnimation.set_modality(modality)
         self.balls.append(newAnimation)
         self.add_widget(newAnimation)

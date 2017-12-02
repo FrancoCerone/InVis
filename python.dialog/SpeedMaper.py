@@ -17,4 +17,6 @@ class SpeedMapper(object):
         "logo2": "0.3",
         "logo3": "0.3",
         "logo4": "0.3",
+        "2c": "0.4",
+        "2d": "0.2",
         }

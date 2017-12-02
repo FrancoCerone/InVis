@@ -96,7 +96,15 @@ def processImage(path, imageName):
 
 
 def main():
-    processImage('/Users/francescocerone/Desktop/gif/new/timeForYounNew/2b.gif', '2b')
+    #processImage('/Users/francescocerone/Desktop/everest/11.gif', '2c')
+    #processImage('/Users/francescocerone/Desktop/everest/2.gif', '2d')
+    #processImage('/Users/francescocerone/Desktop/everest/3.gif', '2e')
+    #processImage('/Users/francescocerone/Desktop/everest/4.gif', '2f')
+    #processImage('/Users/francescocerone/Desktop/everest/5.gif', '2g')
+    #processImage('/Users/francescocerone/Desktop/everest/5.gif', '2h')
+    #processImage('/Users/francescocerone/Desktop/everest/6.gif', '2i')
+    #processImage('/Users/francescocerone/Desktop/everest/10.gif', '2l')
+    processImage('/Users/francescocerone/Desktop/everest/13.gif', '2m')
     print ""
 
  

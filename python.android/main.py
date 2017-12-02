@@ -444,8 +444,15 @@ class ControllerApp(App):
         "logo2" : "logo2.gif",
         "logo3" : "logo3.gif",
         "logo4" : "logo4.gif",
-        
-        
+        "2c": "2c.gif",
+        "2d" : "2d.gif",
+        "2e" : "2e.gif",
+        "2f" : "2f.gif",
+        "2g" : "2g.gif",
+        "2h" : "2h.gif",
+        "2i" : "2i.gif",
+        "2l" : "2l.gif",
+        "2m" : "2m.gif",
         
         }
     

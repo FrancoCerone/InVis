@@ -50,7 +50,7 @@ Builder.load_string("""
             size_hint: 1, 0.25
             BoxLayout:
                 GridLayout:
-                    cols: 4
+                    cols: 6
                     rows: 1
                     canvas:
                         Color:
@@ -237,6 +237,9 @@ class AnimationImageButton(Button):
         
 
 
+
+
+
 class GifImageButton(Button):
     filename = StringProperty(None)
     def on_press(self):
@@ -299,7 +302,14 @@ class ManualModality(Button):
         oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         ControllerApp._modality = ModalityList.manual
         
-        
+class MuskButtonOn(Button):
+    def on_press(self):
+        oscAPI.sendMsg('/toSetMusk', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+class MuskButtonOff(Button):
+    def on_press(self):
+        oscAPI.sendMsg('/toSetMusk', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+            
+                
 
 class LinearModality(Button):
     def on_press(self):
@@ -334,6 +344,15 @@ class ButtonModalityHandler():
             text=Constants.manualMode,
             size_hint=(1, 1), 
             )
+    muskButton = MuskButtonOn(
+            text="Musk On",
+            size_hint=(1, 1), 
+    )
+    muskButtonOff = MuskButtonOff(
+            text="Musk Off",
+            size_hint=(1, 1), 
+    )
+    
 
 class ButtonAnimationModalityHandler():
     linearBnt = LinearModality(
@@ -367,7 +386,7 @@ class ControllerApp(App):
         'key1': 'value1',
         'key2': '42'
     })
-
+    _muskOnOff=0   
     _modality=ModalityList.resist
     _animation_modality=0
     @staticmethod 
@@ -523,6 +542,8 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.gifBnt)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.midiBnt) 
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.muskButton)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.muskButtonOff) 
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
 
         return sm

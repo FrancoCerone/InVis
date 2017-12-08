@@ -26,13 +26,19 @@ def get_ip_address():
     #ip = s.getsockname()[0]
    
     ip = '192.168.1.102'
-    ip2 = '192.168.1.107'
     #ip = '192.168.0.3'
     #ip = 'localhost'
     return ip 
 
+
+def get_PiIp_address():
+    ip = '192.168.1.103'
+    return ip 
+
+
 class Network():
-    ip = get_ip_address()
+    myIp = get_ip_address()
+    piIp = get_PiIp_address()
 
 class ObjectToFlash():
     isColor= True
@@ -100,14 +106,8 @@ class MyPaintApp(App):
     
     def build(self):
         
-        mod = 16 % 2
-        if mod :
-            print 'mod' , mod
-        else:
-            print 'mod' , mod
-        mod = mod +1         
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
+        oscid = oscAPI.listen(ipAddr=Network.myIp, port=57110)
 
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
@@ -182,7 +182,8 @@ class MyPaintApp(App):
     def set_status_Musk(self, message, *args):
         print "arrivato il messsagio"
         print "parametro1", message[2]
-        oscAPI.sendMsg('/toSetStatus', dataArray=[message[2]], ipAddr='192.168.1.103', port=57120)
+        print Network.piIp
+        oscAPI.sendMsg('/toSetStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57120)
         
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()

@@ -31,7 +31,8 @@ Builder.load_string("""
 screenResolution = ScreenResolution()
 
 class AnimationConstant():
-    x_transition = 15
+    x_transition = 5
+    y_transition = 8
     animation_hegth = screenResolution.get_height()/3
     animation_Xrange = screenResolution.get_width()/4
 
@@ -125,9 +126,9 @@ class PongGame(Widget):
                     effect.status = 'asc'
 
                 if(effect.status == 'desc'):   
-                    effect.move(AnimationConstant.x_transition,-16)
+                    effect.move(AnimationConstant.x_transition,-AnimationConstant.x_transition)
                 else:
-                    effect.move(AnimationConstant.x_transition,16)
+                    effect.move(AnimationConstant.x_transition,AnimationConstant.x_transition)
             if(effect.pos.__getitem__(0) < screenResolution.get_width()):
                 continue
             else:

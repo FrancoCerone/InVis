@@ -25,9 +25,10 @@ def get_ip_address():
     #s.connect(('192.0.0.8', 1027))
     #ip = s.getsockname()[0]
    
-    #ip = '192.168.1.101'
+    ip = '192.168.1.102'
+    ip2 = '192.168.1.107'
     #ip = '192.168.0.3'
-    ip = 'localhost'
+    #ip = 'localhost'
     return ip 
 
 class Network():
@@ -89,6 +90,7 @@ class ImageWidget(Widget):
 
 class UserAnimation(PongGame):
     pass
+    
 
 class MyPaintApp(App):
     _objToFlash= ObjectToFlash()
@@ -97,10 +99,16 @@ class MyPaintApp(App):
     
     
     def build(self):
+        
+        mod = 16 % 2
+        if mod :
+            print 'mod' , mod
+        else:
+            print 'mod' , mod
+        mod = mod +1         
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
 
-        
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
@@ -122,6 +130,10 @@ class MyPaintApp(App):
         oscAPI.bind(oscid, self.set_UserAnimation, '/toStartUserAnimation')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
+         
+        oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
         self._parent = Widget()
         
         self.flashWidget = FlashWidget()
@@ -138,6 +150,7 @@ class MyPaintApp(App):
     
 
     def clear_canvas1(self, obj):
+        self.flashWidget.set_top(100)
         self.flashWidget.canvas.clear() 
     
     
@@ -166,8 +179,11 @@ class MyPaintApp(App):
         if(MyPaintApp._modality == ModalityList.gif ):
             self.imageWidget.add_gif(  MyPaintApp._lastGif)
        
-    
-                
+    def set_status_Musk(self, message, *args):
+        print "arrivato il messsagio"
+        print "parametro1", message[2]
+        oscAPI.sendMsg('/toSetStatus', dataArray=[message[2]], ipAddr='192.168.1.103', port=57120)
+        
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
         
@@ -181,6 +197,7 @@ class MyPaintApp(App):
         
 
     def to_flash(self, message, *args):
+        #oscAPI.sendMsg('/toFlash', messaggo, ipAddr='192.168.1.103', port=57120)
         if MyPaintApp._modality == ModalityList.midi:
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
             if (MyPaintApp._objToFlash.isColor):

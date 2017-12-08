@@ -21,12 +21,7 @@ screenResolution = ScreenResolution()
 
 
 def get_ip_address():
-    #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #s.connect(('192.0.0.8', 1027))
-    #ip = s.getsockname()[0]
-   
     ip = '192.168.1.102'
-    #ip = '192.168.0.3'
     #ip = 'localhost'
     return ip 
 
@@ -35,10 +30,20 @@ def get_PiIp_address():
     ip = '192.168.1.103'
     return ip 
 
+def get_SecondIp_address():
+    ip = '192.168.1.101'
+    return ip 
+
+def get_sedond_port():
+    port = '57200'
+    #ip = 'localhost'
+    return port 
 
 class Network():
     myIp = get_ip_address()
     piIp = get_PiIp_address()
+    secondIp = get_SecondIp_address()
+    secondPort= get_sedond_port()
 
 class ObjectToFlash():
     isColor= True
@@ -155,6 +160,11 @@ class MyPaintApp(App):
     
     
     def set_gif(self, message, *args):
+        print message[0]
+        print message[2]
+        print Network.secondIp
+        print Network.secondPort
+        oscAPI.sendMsg('/toSetGif', dataArray=[message[2]], ipAddr=Network.secondIp , port=57200)
         MyPaintApp._lastGif =  message[2]
         if MyPaintApp._modality ==  ModalityList.resist:
             self.imageWidget.add_png( message[2]) 
@@ -163,7 +173,7 @@ class MyPaintApp(App):
             Clock.schedule_once(self.remove_Image, 0.2  )
         else:
             self.imageWidget.add_gif(  MyPaintApp._lastGif)
-        
+        #oscAPI.sendMsg(message[0], dataArray=[ message[2] ] , ipAddr="123.123.123.123", port=111)
         
     def set_png(self, message, *args):
         self.flashWidget.canvas.clear()
@@ -198,7 +208,7 @@ class MyPaintApp(App):
         
 
     def to_flash(self, message, *args):
-        #oscAPI.sendMsg('/toFlash', messaggo, ipAddr='192.168.1.103', port=57120)
+        oscAPI.sendMsg('/toFlash', dataArray=[message[0], message[2] ] , ipAddr='192.168.1.103', port=57120)
         if MyPaintApp._modality == ModalityList.midi:
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
             if (MyPaintApp._objToFlash.isColor):

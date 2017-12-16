@@ -42,7 +42,7 @@ class Dispatcher(App):
     
     def set_status_Musk(self, message, *args):
         print Network.piIp
-        oscAPI.sendMsg('/toSetStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57120)
+        oscAPI.sendMsg('/toSetMusk', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
     
     

@@ -13,37 +13,16 @@ from KeepRatioOverwriter import KeepRatioOverwriter
 from pong import PongGame
 from kivy.uix.image import AsyncImage
 from kivy.loader import Loader
-Config.set('graphics', 'fullscreen', 'auto')
+#Config.set('graphics', 'fullscreen', 'auto')
 
 
 
 screenResolution = ScreenResolution()
 
 
-def get_ip_address():
-    ip = '192.168.1.102'
-    #ip = 'localhost'
-    return ip 
-
-
-def get_PiIp_address():
-    ip = '192.168.1.103'
-    return ip 
-
-def get_SecondIp_address():
-    ip = '192.168.1.101'
-    return ip 
-
-def get_sedond_port():
-    port = '57200'
-    #ip = 'localhost'
-    return port 
-
 class Network():
-    myIp = get_ip_address()
-    piIp = get_PiIp_address()
-    secondIp = get_SecondIp_address()
-    secondPort= get_sedond_port()
+    myIp = "192.168.1.100"
+    #myIp = "localhost"
 
 class ObjectToFlash():
     isColor= True
@@ -103,7 +82,7 @@ class UserAnimation(PongGame):
     pass
     
 
-class MyPaintApp(App):
+class InViS(App):
     _objToFlash= ObjectToFlash()
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
@@ -112,7 +91,7 @@ class MyPaintApp(App):
     def build(self):
         
         oscAPI.init()
-        oscid = oscAPI.listen(ipAddr=Network.myIp, port=57110)
+        oscid = oscAPI.listen(ipAddr=Network.myIp, port=57115)
 
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
@@ -133,10 +112,6 @@ class MyPaintApp(App):
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_UserAnimation, '/toStartUserAnimation')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
-         
-        oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
@@ -160,73 +135,61 @@ class MyPaintApp(App):
     
     
     def set_gif(self, message, *args):
-        oscAPI.sendMsg(message[0], dataArray=[message[2]], ipAddr=Network.secondIp , port=57200)
-        MyPaintApp._lastGif =  message[2]
-        if MyPaintApp._modality ==  ModalityList.resist:
+        InViS._lastGif =  message[2]
+        if InViS._modality ==  ModalityList.resist:
             self.imageWidget.add_png( message[2]) 
-        elif MyPaintApp._modality ==  ModalityList.manual:
+        elif InViS._modality ==  ModalityList.manual:
             self.imageWidget.add_png( message[2])
             Clock.schedule_once(self.remove_Image, 0.2  )
         else:
-            self.imageWidget.add_gif(  MyPaintApp._lastGif)
-        #oscAPI.sendMsg(message[0], dataArray=[ message[2] ] , ipAddr="123.123.123.123", port=111)
+            self.imageWidget.add_gif(  InViS._lastGif)
         
     def set_png(self, message, *args):
-        oscAPI.sendMsg(message[0], dataArray=[message[2]], ipAddr=Network.secondIp , port=57200)
         self.flashWidget.canvas.clear()
         self.imageWidget.add_png( message[2])
-        if MyPaintApp._modality  !=  ModalityList.resist:
+        if InViS._modality  !=  ModalityList.resist:
             Clock.schedule_once(self.remove_Image, 0.2  )
         
     def set_Modality(self, message, *args):
-        oscAPI.sendMsg(message[0], dataArray=[message[2]], ipAddr=Network.secondIp , port=57200)
-        MyPaintApp._modality = ModalityList.modalities.__getitem__(message[2])
+        InViS._modality = ModalityList.modalities.__getitem__(message[2])
             
     def set_UserAnimation(self, message, *args):
         self.game.add_animation(message[2], message[3] )
-        if(MyPaintApp._modality == ModalityList.gif ):
-            self.imageWidget.add_gif(  MyPaintApp._lastGif)
-       
-    def set_status_Musk(self, message, *args):
-        print Network.piIp
-        oscAPI.sendMsg('/toSetStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57120)
-        
+        if(InViS._modality == ModalityList.gif ):
+            self.imageWidget.add_gif(  InViS._lastGif)
+
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
         
         
         
     def one_shot_flash(self, message, *args):
-        oscAPI.sendMsg(message[0], dataArray=[message[2], message[3], message[4]], ipAddr=Network.secondIp , port=57200)
         self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
         self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
-        if MyPaintApp._modality !=  ModalityList.resist:
+        if InViS._modality !=  ModalityList.resist:
             Clock.schedule_once(self.clear_canvas1, 0.3)
         
 
     def to_flash(self, message, *args):
-        oscAPI.sendMsg('/toFlash', dataArray=[ ] , ipAddr=Network.secondIp, port=57200)
-        if MyPaintApp._modality == ModalityList.midi:
+        if InViS._modality == ModalityList.midi:
             self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
-            if (MyPaintApp._objToFlash.isColor):
-                self.flashWidget.add_rectangele(MyPaintApp._objectToFlash)
+            if (InViS._objToFlash.isColor):
+                self.flashWidget.add_rectangele(InViS._objectToFlash)
             else:
-                self.imageWidget.add_png(MyPaintApp._objToFlash.pngToFlash)
+                self.imageWidget.add_png(InViS._objToFlash.pngToFlash)
                 Clock.schedule_once(self.remove_Image, 0.25)
                 
             Clock.schedule_once(self.clear_canvas1, 0.25)
 
     def set_object_to_flash(self, message, *args):
         if(len(message)==3):
-            oscAPI.sendMsg(message[0], dataArray=[message[2]], ipAddr=Network.secondIp , port=57200)
-            MyPaintApp._objToFlash.isColor= False
-            MyPaintApp._objToFlash.pngToFlash = message[2]
+            InViS._objToFlash.isColor= False
+            InViS._objToFlash.pngToFlash = message[2]
         else:
-            oscAPI.sendMsg(message[0], dataArray=[message[2], message[3], message[4]], ipAddr=Network.secondIp , port=57200)
-            MyPaintApp._objectToFlash = Color( message[2], message[3], message[4])
-            MyPaintApp._objToFlash.isColor= True
-            MyPaintApp._objToFlash.color = Color( message[2], message[3], message[4])
+            InViS._objectToFlash = Color( message[2], message[3], message[4])
+            InViS._objToFlash.isColor= True
+            InViS._objToFlash.color = Color( message[2], message[3], message[4])
    
     
 if __name__ == '__main__':
-    MyPaintApp().run()
+    InViS().run()

@@ -17,10 +17,10 @@ def server():
         #print "\nServer started at " + str(socket.gethostbyname(socket.gethostname())) + " at port " + str(90)  
         port = 8085
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        serversocket.bind(("",port))
+        serversocket.bind(("", 8085 ))
         serversocket.listen(10)
         pygame.camera.init()
-        cam = pygame.camera.Camera(0,(640,480),"RGB")
+        cam = pygame.camera.Camera("/dev/video0",(640,480),"RGB")
         cam.start()
         img = pygame.Surface((640,480))
         while True:

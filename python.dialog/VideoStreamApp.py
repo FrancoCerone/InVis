@@ -15,8 +15,9 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
-import socket
-import pygame 
+import socket 
+import pygame
+ 
 from threading import *
 from kivy.uix.image import Image
 from kivy.cache import Cache
@@ -81,7 +82,7 @@ class main(BoxLayout):
     def recv(self, dt):
         clientsocket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #clientsocket.connect(("192.168.0.4", 8080))
-        clientsocket.connect(("192.168.0.6", 90))
+        clientsocket.connect(("192.168.0.7", 8085))
         received = []
         while True:
             recvd_data = clientsocket.recv(230400)

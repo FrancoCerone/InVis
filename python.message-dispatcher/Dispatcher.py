@@ -15,14 +15,36 @@ from kivy.uix.image import Image
 from kivy.uix.widget import Widget
 from symbol import parameters
 from kivy.lang import Builder
+from kivy.uix.settings      import SettingItem
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.core.window import Window
+from kivy.uix.screenmanager import ScreenManager, Screen
+
+
+from kivy.lang import Builder
+
+Builder.load_string("""
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        id: id
+""")
 
 
 
 class Network():
-    dispatherIp = "192.168.1.100"
-    ipList = ["192.168.1.100", '192.168.1.105']
+    dispatherIp = "192.168.0.3"
+    ipList = ["localhost"]
     piIp = '192.168.1.107'
 
+
+class MainScreen(Screen):
+    pass
+
+sm = ScreenManager()
+menuScreen = MainScreen(name='main')
+sm.add_widget(menuScreen)
 
 class Dispatcher(App):
     
@@ -47,18 +69,7 @@ class Dispatcher(App):
     
     
     def build(self):
-        
-        
-        #for ip in Network.ipList:
-       #     btn = GifImageButton(
-        #        filename=ip,
-         #       text = ip
-         #       #size_hint=(None, None), halign='center',
-         #       size=(100, 100)
-          #  menuScreen.ids.giffButtonContainer.add_widget(btn)
-        
-        
-        
+        Window.size = (300, 100)
         oscAPI.init()
         self._parent = Widget()
         oscid = oscAPI.listen(ipAddr=Network.dispatherIp, port=57110)
@@ -87,8 +98,18 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
+        dispatcherIpLabel = Label(text='Dipatcher IP  ->' + Network.dispatherIp, markup=True)
+        menuScreen.ids.id.add_widget(dispatcherIpLabel)
+                
+        raspberryIpLAbel = Label(text='Raspberry IP  ->' + Network.piIp, markup=True)
+        menuScreen.ids.id.add_widget(raspberryIpLAbel)
         
-        return self._parent
+        for ip in Network.ipList:
+            invisIp = Label(text='InViS IP  ->' +ip, markup=True)
+            menuScreen.ids.id.add_widget(invisIp)
+        
+        
+        return sm
     
 if __name__ == '__main__':
     Dispatcher().run()

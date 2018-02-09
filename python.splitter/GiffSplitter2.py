@@ -96,16 +96,25 @@ def processImage(path, imageName):
 
 
 def main():
-    #processImage('/Users/francescocerone/Desktop/everest/11.gif', '2c')
-    #processImage('/Users/francescocerone/Desktop/everest/2.gif', '2d')
-    #processImage('/Users/francescocerone/Desktop/everest/3.gif', '2e')
-    #processImage('/Users/francescocerone/Desktop/everest/4.gif', '2f')
-    #processImage('/Users/francescocerone/Desktop/everest/5.gif', '2g')
-    #processImage('/Users/francescocerone/Desktop/everest/5.gif', '2h')
-    #processImage('/Users/francescocerone/Desktop/everest/6.gif', '2i')
-    #processImage('/Users/francescocerone/Desktop/everest/10.gif', '2l')
-    processImage('/Users/francescocerone/Desktop/everest/13.gif', '2m')
-    print ""
+   
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_groove_stacco1.gif', 'ev_groove_stacco1')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro1.gif', 'ev_intro1')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro2.gif', 'ev_intro2')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro3_chiaro.gif', 'ev_intro3_chiaro')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro3.gif', 'ev_intro3')
+    
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro4.gif', 'ev_intro4')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_lancio.gif', 'ev_lancio')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_pausa1.gif', 'ev_pausa1')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_pausa2.gif', 'ev_pausa2')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_rit1.gif', 'ev_rit1')
+    
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_rit2.gif', 'ev_rit2')
+    
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_stacco.gif', 'ev_stacco')
+    #processImage('/Users/francescocerone/Desktop/everest/2/ev_ultimo_stacco.gif', 'ev_ultimo_stacco')
+    
+    print "Done!"
 
  
 def get_JpgFolder(os):

@@ -472,7 +472,20 @@ class ControllerApp(App):
         "2i" : "2i.gif",
         "2l" : "2l.gif",
         "2m" : "2m.gif",
-        
+        "ev_groove_stacco1" : "ev_groove_stacco1.gif",
+        "ev_intro1" : "ev_intro1.gif",
+        "ev_intro2" : "ev_intro2.gif",
+        "ev_intro3_chiaro" : "ev_intro3_chiaro.gif",
+        "ev_intro3" : "ev_intro3.gif",
+        "ev_intro4" : "ev_intro4.gif",
+        "ev_lancio" : "ev_lancio.gif",
+        "ev_pausa1" : "ev_pausa1.gif",
+        "ev_pausa2" : "ev_pausa2.gif",
+        "ev_rit1" : "ev_rit1.gif",
+        "ev_rit2" : "ev_rit2.gif",
+        "ev_stacco" : "ev_stacco.gif",
+        "ev_ultimo_stacco" : "ev_ultimo_stacco.gif",
+      
         }
     
     colorMap = {
@@ -498,8 +511,9 @@ class ControllerApp(App):
 
         
 
-        
-        for fn in self.gifMap:
+        keylist = self.gifMap.keys()
+        keylist.sort()
+        for fn in keylist:
             print fn
             btn = GifImageButton(
                 filename=fn,

@@ -34,7 +34,7 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = "192.168.0.3"
+    dispatherIp = "192.168.1.103"
     ipList = ["localhost"]
     piIp = '192.168.1.107'
 
@@ -66,7 +66,13 @@ class Dispatcher(App):
         print Network.piIp
         oscAPI.sendMsg('/toSetMusk', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
+    def set_status_Musk1(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetMusk1', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
+    def set_status_Musk2(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetMusk2', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
     def build(self):
         Window.size = (300, 100)
@@ -96,6 +102,12 @@ class Dispatcher(App):
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+                
+        oscAPI.bind(oscid, self.set_status_Musk1, '/toSetMusk1');
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.set_status_Musk2, '/toSetMusk2');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         dispatcherIpLabel = Label(text='Dipatcher IP  ->' + Network.dispatherIp, markup=True)

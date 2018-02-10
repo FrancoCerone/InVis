@@ -485,7 +485,10 @@ class ControllerApp(App):
         "ev_rit2" : "ev_rit2.gif",
         "ev_stacco" : "ev_stacco.gif",
         "ev_ultimo_stacco" : "ev_ultimo_stacco.gif",
-      
+        "G1" : "G1.gif",
+        "G2" : "G2.gif",
+        "G3" : "G3.gif",
+        "G4" : "G4.gif",
         }
     
     colorMap = {

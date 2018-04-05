@@ -29,20 +29,20 @@ def get_microphone_level():
     global levels
     while True:
         data = s.read(chunk)
-        mx = audioop.rms(data, 2)
+        mx = audioop.rms(data, 2)/20
         if len(levels) >= 100:
-            levels = []
-        levels.append(mx/2)
+            levels.pop(0)
+        levels.append(mx)
 
 
 class Logic(BoxLayout):
     def __init__(self,):
         super(Logic, self).__init__()
-        self.plot = MeshLinePlot(color=[1, 0, 0, 1])
+        self.plot = MeshLinePlot(color=[1, 1, 0, 1])
 
     def start(self):
         self.ids.graph.add_plot(self.plot)
-        Clock.schedule_interval(self.get_value, 0.001)
+        Clock.schedule_interval(self.get_value, 0.01)
 
     def stop(self):
         Clock.unschedule(self.get_value)

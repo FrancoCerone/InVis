@@ -11,18 +11,19 @@ from ScreenResolution import ScreenResolution
 from SpeedMaper import SpeedMapper
 from KeepRatioOverwriter import KeepRatioOverwriter
 from pong import PongGame
+from audioVisualizer import AudioVisualizerGraph
 from kivy.uix.image import AsyncImage
 from kivy.loader import Loader
+from kivy.lang import Builder
 #Config.set('graphics', 'fullscreen', 'auto')
 
 
-
 screenResolution = ScreenResolution()
-
+levels = []
 
 class Network():
-    myIp = "192.168.1.100"
-    #myIp = "localhost"
+    #myIp = "192.168.1.100"
+    myIp = "localhost"
 
 class ObjectToFlash():
     isColor= True
@@ -83,6 +84,8 @@ class UserAnimation(PongGame):
     
 
 class InViS(App):
+    screenResolution = ScreenResolution()
+    levels = []
     _objToFlash= ObjectToFlash()
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
@@ -114,6 +117,9 @@ class InViS(App):
         oscAPI.bind(oscid, self.set_UserAnimation, '/toStartUserAnimation')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
+        oscAPI.bind(oscid, self.set_AudioVisualizerGraph, '/toSetAudioVisualizerGraph')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
         self._parent = Widget()
         
         self.flashWidget = FlashWidget()
@@ -125,6 +131,9 @@ class InViS(App):
         self.game = PongGame()
         self._parent.add_widget(self.game)
         Clock.schedule_interval(self.game.update, 0)
+        
+        self.audioVisulizerGraph = AudioVisualizerGraph()
+        self._parent.add_widget(self.audioVisulizerGraph)
         
         return self._parent
     
@@ -157,7 +166,13 @@ class InViS(App):
         self.game.add_animation(message[2], message[3] )
         if(InViS._modality == ModalityList.gif ):
             self.imageWidget.add_gif(  InViS._lastGif)
-
+    
+    def set_AudioVisualizerGraph(self, message, *args):
+        if(message[2] == 0 ):
+            self.audioVisulizerGraph.start()
+        else:
+            self.audioVisulizerGraph.stop()
+            
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
         
@@ -192,4 +207,5 @@ class InViS(App):
    
     
 if __name__ == '__main__':
+    
     InViS().run()

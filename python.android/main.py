@@ -50,7 +50,7 @@ Builder.load_string("""
             size_hint: 1, 0.25
             BoxLayout:
                 GridLayout:
-                    cols: 6
+                    cols: 8
                     rows: 1
                     canvas:
                         Color:
@@ -357,7 +357,13 @@ class MuskButtonOff(Button):
     background_normal = "button_incons/msOff.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        
+class GraphButtonOn(Button):
+    def on_press(self):
+        oscAPI.sendMsg('/toSetAudioVisualizerGraph', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+class GraphButtonOff(Button):
+    def on_press(self):
+        oscAPI.sendMsg('/toSetAudioVisualizerGraph', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+                
 class Musk1ButtonOn(Button):
     background_normal = "button_incons/mOn.png"
     def on_press(self):
@@ -415,6 +421,14 @@ class ButtonModalityHandler():
     )
     muskButtonOff = MuskButtonOff(
             text="Musk Off",
+            size_hint=(1, 1), 
+    )
+    graphButtonOn = GraphButtonOn(
+            text="Graph On",
+            size_hint=(1, 1), 
+    )
+    graphButtonOff = GraphButtonOff(
+            text="Graph Off",
             size_hint=(1, 1), 
     )
     musk1ButtonOn = Musk1ButtonOn(
@@ -642,7 +656,10 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.midiBnt) 
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.manualBnt) 
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.muskButton)
-        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.muskButtonOff) 
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.muskButtonOff)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOn)
+        menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOff)
+         
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
         
         muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="Musk On",size_hint=(1, 1),))

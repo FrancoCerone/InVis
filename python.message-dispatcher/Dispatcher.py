@@ -34,7 +34,7 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = "192.168.1.103"
+    dispatherIp = "localhost"
     ipList = ["localhost"]
     piIp = '192.168.1.107'
 

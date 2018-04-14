@@ -110,7 +110,7 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.set_status_Musk2, '/toSetMusk2');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        oscAPI.bind(oscid, self.set_audio_visualizer, '/toSetAudioVisualizerGraph');
+        oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         dispatcherIpLabel = Label(text='Dipatcher IP  ->' + Network.dispatherIp, markup=True)

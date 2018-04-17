@@ -8,12 +8,13 @@ from kivy.lang import Builder
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.garden.graph import MeshLinePlot
-from kivy.garden.graph import Graph
+from kivy.garden.graph import Graph, SmoothLinePlot, MeshStemPlot,ContourPlot, LinePlot
 from kivy.clock import Clock
 from threading import Thread
 from kivy.uix.widget import Widget
 from ScreenResolution import ScreenResolution
-from cycler import cycler
+from kivy.utils import get_color_from_hex as rgb
+#from cycler import cycler
 #import numpy as np
 #import matplotlib.pyplot as plt
 screenResolution = ScreenResolution()
@@ -50,7 +51,7 @@ def get_microphone_level():
                frames_per_buffer=chunk)
 
     while True:
-        data = s.read(chunk, exception_on_overflow = False)
+        data = s.read(chunk)
         mx = audioop.rms(data, 2)/60
         if len(Dialog.levels) >= 100:
             Dialog.levels = Dialog.levels[:-1]
@@ -63,21 +64,39 @@ class AudioVisualizerGraph(Widget):
         get_level_thread.daemon = True
         get_level_thread.start()
         super(AudioVisualizerGraph, self).__init__()
+        
+        
+        graph_theme = {
+            'label_options': {
+                'color': rgb('444444'),  # color of tick labels and titles
+                'bold': True},
+            'background_color': rgb('f8f8f2'),  # back ground color of canvas
+            'tick_color': rgb('808080'),  # ticks and grid
+            'border_color': rgb('808080')}  # border drawn around each graph
 
-        self.graph = Graph(xlabel='Times',
-                               ylabel='Sales',
-                               x_ticks_minor=5,
-                               x_ticks_major=10,
-                               y_ticks_minor=5,
-                               y_ticks_major=10,
-                               y_grid_label=True,
-                               x_grid_label=True,
-                               padding=5,
-                               xlog=False,
-                               ylog=False,
-                               x_grid=True,
-                               y_grid=True)
-        self.plot = MeshLinePlot(color=[1, 1, 0, 1])
+        graph = Graph(
+                    xlabel='Cheese',
+                    ylabel='Apples',
+                    x_ticks_minor=5,
+                    x_ticks_major=25,
+                    y_ticks_major=1,
+                    y_grid_label=True,
+                    x_grid_label=True,
+                    padding=5,
+                    xlog=False,
+                    ylog=False,
+                    x_grid=True,
+                    y_grid=True,
+                    xmin=-50,
+                    xmax=50,
+                    ymin=-1,
+                    ymax=1,
+                    **graph_theme)
+        
+        mesh_plot = LinePlot(color=[1,0,0,1], line_width= 8)
+        #mesh_plot = MeshStemPlot(color=[1,1,1,1])
+        #mesh_plot =ContourPlot(color=[1,1,1,1])
+        self.plot = mesh_plot
         self.ids.box.size = screenResolution.get_width(),screenResolution.get_height()
 
     def start(self):

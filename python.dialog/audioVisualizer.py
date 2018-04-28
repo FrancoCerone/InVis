@@ -23,7 +23,7 @@ Builder.load_string("""
 <AudioVisualizerGraph>:
     BoxLayout:
         size: 100,100
-        pos: 0 ,0
+        pos: -5,-5
         id: box
         orientation: "vertical"
         Graph:
@@ -52,7 +52,7 @@ def get_microphone_level():
 
     while True:
         data = s.read(chunk)
-        mx = audioop.rms(data, 2)/60
+        mx = audioop.rms(data, 2)/10
         if len(Dialog.levels) >= 100:
             Dialog.levels = Dialog.levels[:-1]
         Dialog.levels.insert(0,mx)
@@ -97,7 +97,8 @@ class AudioVisualizerGraph(Widget):
         #mesh_plot = MeshStemPlot(color=[1,1,1,1])
         #mesh_plot =ContourPlot(color=[1,1,1,1])
         self.plot = mesh_plot
-        self.ids.box.size = screenResolution.get_width(),screenResolution.get_height()
+        #self.ids.graph = graph
+        self.ids.box.size = screenResolution.get_width()+10,screenResolution.get_height()+10
 
     def start(self):
         self.ids.graph.add_plot(self.plot)

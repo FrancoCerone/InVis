@@ -153,16 +153,7 @@ Builder.load_string("""
                     text: 'Main screen ->'
                     on_press: 
                         root.manager.transition.direction = 'left'
-                        root.manager.current = 'main'                
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                        
+                                        
 <SettingsScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -201,7 +192,36 @@ Builder.load_string("""
                     text: 'Back Home ->'
                     on_release:
                         root.manager.transition.direction = 'left'
-                        root.manager.current = 'main'
+                        root.manager.current = 'FrancoPowerGrooveScreen'
+                        
+<FrancoPowerGrooveScreen>:
+    BoxLayout:
+        orientation: 'vertical'  
+        ScrollView:
+            size_hint: 1, 1
+            do_scroll_x: True
+            do_scroll_y: True
+            GridLayout:
+                cols: 1
+                padding: 10
+                spacing: 10
+                size_hint: 1, 1
+                width: self.minimum_width
+                height: self.minimum_height
+                id: francoButtonContainer
+                    
+    BoxLayout:
+        orientation: 'vertical'   
+        size_hint: 1, 0.05
+        BoxLayout:
+            orientation: 'horizontal'
+           
+            Button:
+                text: ''
+                background_color: (0, 0, 0.0, 1)
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'main'
                         
 """)
 
@@ -218,6 +238,8 @@ class UsersAnimation(Screen):
 class MusksControl(Screen):
     pass
 
+class FrancoPowerGrooveScreen(Screen):
+    pass
 class SettingsScreen(Screen):
     def getIp(self):
         return str(self.ids.ipAdressText.text)
@@ -242,6 +264,9 @@ sm.add_widget(menuScreen)
 muskControlScreen = MusksControl(name='musksControl')
 sm.add_widget(muskControlScreen)
 
+francoPowerGrooveScreen = FrancoPowerGrooveScreen(name='FrancoPowerGrooveScreen')
+sm.add_widget(francoPowerGrooveScreen) 
+ 
 # later
 userAnimation = UsersAnimation(name='userAnimation')
 sm.add_widget(userAnimation)
@@ -348,6 +373,7 @@ class ManualModality(Button):
         ButtonModalityHandler.midiBnt.background_color =  [0.9, 0.9, 0.9, 1]
         oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         ControllerApp._modality = ModalityList.manual
+
         
 class MuskButtonOn(Button):
     background_normal = "button_incons/msOn.png"
@@ -581,10 +607,10 @@ class ControllerApp(App):
         "ev_rit2" : "ev_rit2.gif",
         "ev_stacco" : "ev_stacco.gif",
         "ev_ultimo_stacco" : "ev_ultimo_stacco.gif",
-        "zzG1" : "zzG1.gif",
-        "zzG2" : "zzG2.gif",
-        "zzG3" : "zzG3.gif",
-        "zzG4" : "zzG4.gif",
+        "G1" : "G1.gif",
+        "G2" : "G2.gif",
+        "G3" : "zzG3.gif",
+        "G4" : "G4.gif",
         }
     
     colorMap = {
@@ -670,6 +696,22 @@ class ControllerApp(App):
 
         muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOff)
         muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOff)
+        
+        fn = 'FrancoLogo'
+        francoLogoButton = GifImageButton(
+                filename=fn,
+                background_normal = "resources/" + fn + ".png",
+                #size_hint=(None, None), halign='center',
+                size=(buttonDimension.get_width(), buttonDimension.get_height()))
+        graphButtonOn = GraphButtonOn(
+            text="",
+            background_normal = "button_incons/graphicon.jpg",
+            size_hint=(1, 1), 
+        )
+        
+        francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(francoLogoButton)
+        francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(graphButtonOn)
+        
         return sm
 
 

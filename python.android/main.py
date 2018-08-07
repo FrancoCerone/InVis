@@ -153,7 +153,7 @@ Builder.load_string("""
                     text: 'Main screen ->'
                     on_press: 
                         root.manager.transition.direction = 'left'
-                                        
+                        root.manager.current = 'main'                
 <SettingsScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -442,19 +442,21 @@ class ButtonModalityHandler():
             size_hint=(1, 1), 
             )
     muskButton = MuskButtonOn(
-            text="Musk On",
+            text="",
             size_hint=(1, 1), 
     )
     muskButtonOff = MuskButtonOff(
-            text="Musk Off",
+            text="",
             size_hint=(1, 1), 
     )
     graphButtonOn = GraphButtonOn(
-            text="Graph On",
+            background_normal = "button_incons/graphicon.jpg",
+            text="",
             size_hint=(1, 1), 
     )
     graphButtonOff = GraphButtonOff(
-            text="Graph Off",
+            background_normal = "button_incons/graphic_off.jpg",
+            text="",
             size_hint=(1, 1), 
     )
     musk1ButtonOn = Musk1ButtonOn(
@@ -611,6 +613,7 @@ class ControllerApp(App):
         "G2" : "G2.gif",
         "G3" : "zzG3.gif",
         "G4" : "G4.gif",
+        "FrancoLogo" : "FrancoLogo.png"
         }
     
     colorMap = {
@@ -688,14 +691,14 @@ class ControllerApp(App):
          
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
         
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="Musk On",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="Musk Off",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
         
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOn)
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOn)
+        #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOn)
+        #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOn)
 
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOff)
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOff)
+        #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOff)
+        #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOff)
         
         fn = 'FrancoLogo'
         francoLogoButton = GifImageButton(

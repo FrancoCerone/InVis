@@ -34,9 +34,9 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = "localhost"
+    dispatherIp = "192.168.1.105"
     ipList = ["localhost"]
-    piIp = '192.168.1.107'
+    piIp = '192.168.1.106'
 
 
 class MainScreen(Screen):
@@ -64,6 +64,7 @@ class Dispatcher(App):
     
     def set_status_Musk(self, message, *args):
         print Network.piIp
+        print "messaggio raspberry:" , message[2]
         oscAPI.sendMsg('/toSetMusk', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
     def set_status_Musk1(self, message, *args):
@@ -74,6 +75,10 @@ class Dispatcher(App):
         print Network.piIp
         oscAPI.sendMsg('/toSetMusk2', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
     
+    def change_status_musk(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/changeStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
+        
     def build(self):
         Window.size = (300, 100)
         oscAPI.init()
@@ -92,6 +97,7 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.forward_message, '/toSetGif')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
+        
         oscAPI.bind(oscid, self.forward_message, '/toSetPng')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
@@ -109,7 +115,10 @@ class Dispatcher(App):
         
         oscAPI.bind(oscid, self.set_status_Musk2, '/toSetMusk2');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
+
+        oscAPI.bind(oscid, self.change_status_musk, '/changeStatus');
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+                
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         

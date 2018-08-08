@@ -1,4 +1,5 @@
 import kivy
+from kivy.uix.label import Label
 kivy.require('1.0.8')
 
 from kivy.app import App
@@ -135,7 +136,7 @@ Builder.load_string("""
             do_scroll_x: True
             do_scroll_y: True
             GridLayout:
-                cols: 2
+                cols: 3
                 padding: 10
                 spacing: 10
                 size_hint: 1, 1
@@ -192,8 +193,8 @@ Builder.load_string("""
                     text: 'Back Home ->'
                     on_release:
                         root.manager.transition.direction = 'left'
-                        root.manager.current = 'FrancoPowerGrooveScreen'
-                        
+                        #root.manager.current = 'FrancoPowerGrooveScreen'
+                        root.manager.current = 'main'
 <FrancoPowerGrooveScreen>:
     BoxLayout:
         orientation: 'vertical'  
@@ -264,8 +265,8 @@ sm.add_widget(menuScreen)
 muskControlScreen = MusksControl(name='musksControl')
 sm.add_widget(muskControlScreen)
 
-francoPowerGrooveScreen = FrancoPowerGrooveScreen(name='FrancoPowerGrooveScreen')
-sm.add_widget(francoPowerGrooveScreen) 
+#francoPowerGrooveScreen = FrancoPowerGrooveScreen(name='FrancoPowerGrooveScreen')
+#sm.add_widget(francoPowerGrooveScreen) 
  
 # later
 userAnimation = UsersAnimation(name='userAnimation')
@@ -408,6 +409,11 @@ class Musk2ButtonOff(Button):
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk2', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)                
 
+class ChangeMuskStatusButton(Button):
+    background_normal = "button_incons/mOn.png"
+    def on_press(self):
+        oscAPI.sendMsg('/changeStatus', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)   
+
 class LinearModality(Button):
     def on_press(self):
         self.background_color =  [0.2, 0.3, 0.2, 1]
@@ -476,7 +482,10 @@ class ButtonModalityHandler():
             text="Musk Off",
             size_hint=(1, 1), 
     )
-    
+    changeStatus = ChangeMuskStatusButton(
+            text="Cambia Stato",
+            size_hint=(1, 1), 
+    )
     
 class ButtonAnimationModalityHandler():
     linearBnt = LinearModality(
@@ -690,9 +699,17 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOff)
          
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
-        
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
+        
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.changeStatus)
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
+        
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
         
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOn)
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOn)
@@ -712,8 +729,8 @@ class ControllerApp(App):
             size_hint=(1, 1), 
         )
         
-        francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(francoLogoButton)
-        francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(graphButtonOn)
+        #francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(francoLogoButton)
+        #francoPowerGrooveScreen.ids.francoButtonContainer.add_widget(graphButtonOn)
         
         return sm
 

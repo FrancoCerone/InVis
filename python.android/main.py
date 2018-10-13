@@ -1,5 +1,6 @@
 import kivy
 from kivy.uix.label import Label
+from numpy.lib.utils import source
 kivy.require('1.0.8')
 
 from kivy.app import App
@@ -14,7 +15,8 @@ from main1 import Touchtracer
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.slider import Slider
 from kivy.graphics import Rectangle
-
+from kivy.uix.image import Image
+from kivy.uix.boxlayout import BoxLayout
 
 
 
@@ -132,20 +134,17 @@ Builder.load_string("""
 <AudioVisControl>:
     BoxLayout:
         orientation: 'vertical' 
-        size_hint: 1.8, 0.85 
+        
         pos_hint:{"right":1,"top":1}
-        ScrollView:
+        GridLayout:
+            cols: 2
+            padding: 0
+            spacing: 0
             size_hint: 1, 1
-            do_scroll_x: True
-            do_scroll_y: True
-            GridLayout:
-                cols: 3
-                padding: 10
-                spacing: 10
-                size_hint: 1, 1
-                width: self.minimum_width
-                height: self.minimum_height
-                id: audioVisContainer                      
+            width: self.minimum_width
+            height: self.minimum_height
+            id: audioVisContainer
+                                      
     BoxLayout:
         orientation: 'horizontal'
         size_hint: 1, 0.15
@@ -347,10 +346,13 @@ class AnimationImageButton(Button):
 
 class MicFader(Slider):
     def on_touch_up(self, touch):
-        oscAPI.sendMsg('/toSetMicLevel', dataArray=[self.value], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
-        print self.value
+        if touch.grab_current == self:
+            oscAPI.sendMsg('/toSetMicLevel', dataArray=[self.value], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
-
+class VelocityFader(Slider):
+    def on_touch_up(self, touch):
+        if touch.grab_current == self:
+            oscAPI.sendMsg('/toSetVelocity', dataArray=[int(self.value)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 class GifImageButton(Button):
     filename = StringProperty(None)
@@ -756,9 +758,21 @@ class ControllerApp(App):
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOff)
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOff)
         
-        s = MicFader(value_track=True, value_track_color=[1, 0, 0, 1], orientation='vertical', value=350, min=400, max=1)
-        audioVisScreen.ids.audioVisContainer.add_widget(s)
+        b = BoxLayout(orientation='vertical')
+        s1 = MicFader(orientation='vertical', value=350, min=400, max=1)
+        b.add_widget(s1)
+        micImage = Image(source = "button_icons/mic.png") 
+        b.add_widget(micImage)
+        audioVisScreen.ids.audioVisContainer.add_widget(b)
         
+        b2 = BoxLayout(orientation='vertical')
+        s2 = VelocityFader(orientation='vertical', value=3500, min=4000, max=1000)
+        b2.add_widget(s2)
+        speedImage = Image(source = "button_icons/speed.png") 
+        b2.add_widget(speedImage)
+        audioVisScreen.ids.audioVisContainer.add_widget(b2)
+        
+
             
         
         fn = 'FrancoLogo'

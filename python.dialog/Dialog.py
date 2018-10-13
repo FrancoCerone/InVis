@@ -92,42 +92,25 @@ class InViS(App):
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
     mic_coefficient = 100
-    velocity = 2030
+    velocity = 3500
     
     def build(self):
         
         oscAPI.init()
         oscid = oscAPI.listen(ipAddr=Network.myIp, port=57115)
-
         oscAPI.bind(oscid, self.to_flash, '/toFlash')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.one_shot_flash, '/toOneShotFlash')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_object_to_flash, '/toSetObjectToShow')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_gif, '/toSetGif')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_png, '/toSetPng')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_Modality, '/toSetModality')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_UserAnimation, '/toStartUserAnimation')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_AudioVisualizerGraph, '/toSetAudioVisualizerGraph')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_mic_coefficient, '/toSetMicLevel')
+        oscAPI.bind(oscid, self.set_velocity, '/toSetVelocity')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
-        
         self.flashWidget = FlashWidget()
         self._parent.add_widget(self.flashWidget)
         
@@ -180,9 +163,10 @@ class InViS(App):
             self.audioVisulizerGraph.stop()
     
     def set_mic_coefficient(self, message, *args):
-            print "value before", self.mic_coefficient
-            self.mic_coefficient = message[2]
-            print "value after", self.mic_coefficient
+        self.mic_coefficient = message[2]
+    
+    def set_velocity(self, message, *args):
+        self.velocity = message[2]
     
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()

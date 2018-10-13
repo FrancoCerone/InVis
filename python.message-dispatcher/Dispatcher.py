@@ -88,43 +88,20 @@ class Dispatcher(App):
         oscid = oscAPI.listen(ipAddr=Network.dispatherIp, port=57110)
         
         oscAPI.bind(oscid, self.forward_message, '/toFlash')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toOneShotFlash')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toSetObjectToShow')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toSetGif')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
-        
         oscAPI.bind(oscid, self.forward_message, '/toSetPng')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toSetModality')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toStartUserAnimation')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-                
         oscAPI.bind(oscid, self.set_status_Musk1, '/toSetMusk1');
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.set_status_Musk2, '/toSetMusk2');
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-
         oscAPI.bind(oscid, self.change_status_musk, '/changeStatus');
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-                
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
         oscAPI.bind(oscid, self.forward_message, '/toSetMicLevel');
+        oscAPI.bind(oscid, self.forward_message, '/toSetVelocity');
+
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         dispatcherIpLabel = Label(text='Dipatcher IP  ->' + Network.dispatherIp, markup=True)

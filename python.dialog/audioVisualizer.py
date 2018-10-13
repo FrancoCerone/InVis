@@ -52,8 +52,8 @@ def get_microphone_level():
                frames_per_buffer=chunk)
 
     while True:
-        data = s.read(chunk)
-        print App.get_running_app().mic_coefficient
+        data = s.read(App.get_running_app().velocity)
+        print App.get_running_app().velocity
         mx = audioop.rms(data, 2)/App.get_running_app().mic_coefficient
         if len(Dialog.levels) >= 100:
             Dialog.levels = Dialog.levels[:-1]

@@ -14,6 +14,7 @@ from threading import Thread
 from kivy.uix.widget import Widget
 from ScreenResolution import ScreenResolution
 from kivy.utils import get_color_from_hex as rgb
+
 #from cycler import cycler
 #import numpy as np
 #import matplotlib.pyplot as plt
@@ -38,7 +39,7 @@ def get_microphone_level():
     source: http://stackoverflow.com/questions/26478315/getting-volume-levels-from-pyaudio-for-use-in-arduino
     audioop.max alternative to audioop.rms
     """
-    chunk = 1024
+    chunk = App.get_running_app().velocity
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
@@ -52,7 +53,8 @@ def get_microphone_level():
 
     while True:
         data = s.read(chunk)
-        mx = audioop.rms(data, 2)/10
+        print App.get_running_app().mic_coefficient
+        mx = audioop.rms(data, 2)/App.get_running_app().mic_coefficient
         if len(Dialog.levels) >= 100:
             Dialog.levels = Dialog.levels[:-1]
         Dialog.levels.insert(0,mx)

@@ -91,6 +91,8 @@ class InViS(App):
     _objToFlash= ObjectToFlash()
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
+    mic_coefficient = 100
+    velocity = 2030
     
     def build(self):
         
@@ -178,9 +180,9 @@ class InViS(App):
             self.audioVisulizerGraph.stop()
     
     def set_mic_coefficient(self, message, *args):
-            print "value before", self.coefficient
-            self.coefficient = message[2]
-            print "value after", self.coefficient
+            print "value before", self.mic_coefficient
+            self.mic_coefficient = message[2]
+            print "value after", self.mic_coefficient
     
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()

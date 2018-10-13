@@ -64,43 +64,13 @@ class AudioVisualizerGraph(Widget):
         get_level_thread.daemon = True
         get_level_thread.start()
         super(AudioVisualizerGraph, self).__init__()
-        
-        
-        graph_theme = {
-            'label_options': {
-                'color': rgb('444444'),  # color of tick labels and titles
-                'bold': True},
-            'background_color': rgb('f8f8f2'),  # back ground color of canvas
-            'tick_color': rgb('808080'),  # ticks and grid
-            'border_color': rgb('808080')}  # border drawn around each graph
-
-        graph = Graph(
-                    xlabel='Cheese',
-                    ylabel='Apples',
-                    x_ticks_minor=5,
-                    x_ticks_major=25,
-                    y_ticks_major=1,
-                    y_grid_label=True,
-                    x_grid_label=True,
-                    padding=5,
-                    xlog=False,
-                    ylog=False,
-                    x_grid=True,
-                    y_grid=True,
-                    xmin=-50,
-                    xmax=50,
-                    ymin=-1,
-                    ymax=1,
-                    **graph_theme)
-        
-        mesh_plot = LinePlot(color=[1,0,0,1], line_width= 8)
-        #mesh_plot = MeshStemPlot(color=[1,1,1,1])
-        #mesh_plot =ContourPlot(color=[1,1,1,1])
+        mesh_plot = LinePlot()
         self.plot = mesh_plot
-        #self.ids.graph = graph
         self.ids.box.size = screenResolution.get_width()+10,screenResolution.get_height()+10
 
     def start(self):
+        self.stop()
+        self.plot = LinePlot(color=[1,1,0,1], line_width= 8)
         self.ids.graph.add_plot(self.plot)
         Clock.schedule_interval(self.get_value, 0.01)
 
@@ -112,16 +82,12 @@ class AudioVisualizerGraph(Widget):
     def get_value(self, dt):
         import Dialog
         self.plot.points = [(i, j/5) for i, j in enumerate(Dialog.levels)]
+    def get_plot(self):
+        self.plot
+    
+    
         
 
 
-class RealTimeMicrophone(App):
-    screenResolution = ScreenResolution()
-    def build(self):
-        return AudioVisualizerGraph()
 
-if __name__ == "__main__":
-    levels = []
-   
-    RealTimeMicrophone().run()
     

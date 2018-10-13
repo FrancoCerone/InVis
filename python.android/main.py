@@ -12,6 +12,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from ButtonDimension import ButtonDimension
 from main1 import Touchtracer
 from kivy.storage.jsonstore import JsonStore
+from kivy.uix.slider import Slider
+from kivy.graphics import Rectangle
+
 
 
 
@@ -70,10 +73,10 @@ Builder.load_string("""
                         root.manager.current = 'musksControl'
                     
                 Button:
-                    text: 'UserAnimation->'
+                    text: 'Audio Vis Control ->'
                     on_press: 
                         root.manager.transition.direction = 'left'
-                        root.manager.current = 'userAnimation'
+                        root.manager.current = 'audioVisControl'
                 
 <UsersAnimation>:
     BoxLayout:
@@ -126,8 +129,37 @@ Builder.load_string("""
                         root.manager.transition.direction = 'left'
                         root.manager.current = 'settings'
             
-                        
-                        
+<AudioVisControl>:
+    BoxLayout:
+        orientation: 'vertical' 
+        size_hint: 1.8, 0.85 
+        pos_hint:{"right":1,"top":1}
+        ScrollView:
+            size_hint: 1, 1
+            do_scroll_x: True
+            do_scroll_y: True
+            GridLayout:
+                cols: 3
+                padding: 10
+                spacing: 10
+                size_hint: 1, 1
+                width: self.minimum_width
+                height: self.minimum_height
+                id: audioVisContainer                      
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: 1, 0.15
+        Button:
+            text: '<- Main Control'
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'main'
+            
+        Button:
+            text: 'Animation Control ->'
+            on_press: 
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'userAnimation'     
 <MusksControl>:
     BoxLayout:
         orientation: 'vertical'  
@@ -235,6 +267,8 @@ class MainScreen(Screen):
 class UsersAnimation(Screen):
     map = {}
     pass
+class AudioVisControl(Screen):
+    pass
 
 class MusksControl(Screen):
     pass
@@ -261,7 +295,8 @@ class SettingsScreen(Screen):
 sm = ScreenManager()
 menuScreen = MainScreen(name='main')
 sm.add_widget(menuScreen)
-
+audioVisScreen = AudioVisControl(name='audioVisControl')
+sm.add_widget(audioVisScreen)
 muskControlScreen = MusksControl(name='musksControl')
 sm.add_widget(muskControlScreen)
 
@@ -280,6 +315,7 @@ sm.add_widget(settingScreen)
 
 
 
+    
 class Constants():
     resistMode = "Resist Mode"
     gifMode = "Gif Mode"
@@ -309,7 +345,10 @@ class AnimationImageButton(Button):
         oscAPI.sendMsg('/toStartUserAnimation', dataArray=[os.path.basename(self.filename), ControllerApp._animation_modality ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
 
-
+class MicFader(Slider):
+    def on_touch_up(self, touch):
+        oscAPI.sendMsg('/toSetMicLevel', dataArray=[self.value], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        print self.value
 
 
 
@@ -377,11 +416,11 @@ class ManualModality(Button):
 
         
 class MuskButtonOn(Button):
-    background_normal = "button_incons/msOn.png"
+    background_normal = "button_icons/msOn.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class MuskButtonOff(Button):
-    background_normal = "button_incons/msOff.png"
+    background_normal = "button_icons/msOff.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class GraphButtonOn(Button):
@@ -392,25 +431,25 @@ class GraphButtonOff(Button):
         oscAPI.sendMsg('/toSetAudioVisualizerGraph', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
                 
 class Musk1ButtonOn(Button):
-    background_normal = "button_incons/mOn.png"
+    background_normal = "button_icons/mOn.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk1', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class Musk1ButtonOff(Button):
-    background_normal = "button_incons/mOff.png"
+    background_normal = "button_icons/mOff.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk1', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
             
 class Musk2ButtonOn(Button):
-    background_normal = "button_incons/mOn.png"
+    background_normal = "button_icons/mOn.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk2', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class Musk2ButtonOff(Button):
-    background_normal = "button_incons/mOff.png"
+    background_normal = "button_icons/mOff.png"
     def on_press(self):
         oscAPI.sendMsg('/toSetMusk2', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)                
 
 class ChangeMuskStatusButton(Button):
-    background_normal = "button_incons/mOn.png"
+    background_normal = "button_icons/mOn.png"
     def on_press(self):
         oscAPI.sendMsg('/changeStatus', dataArray=[1], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)   
 
@@ -456,12 +495,12 @@ class ButtonModalityHandler():
             size_hint=(1, 1), 
     )
     graphButtonOn = GraphButtonOn(
-            background_normal = "button_incons/graphicon.jpg",
+            background_normal = "button_icons/graphicon.jpg",
             text="",
             size_hint=(1, 1), 
     )
     graphButtonOff = GraphButtonOff(
-            background_normal = "button_incons/graphic_off.jpg",
+            background_normal = "button_icons/graphic_off.jpg",
             text="",
             size_hint=(1, 1), 
     )
@@ -489,14 +528,14 @@ class ButtonModalityHandler():
     
 class ButtonAnimationModalityHandler():
     linearBnt = LinearModality(
-            background_normal = "button_incons/linearLine.png",
+            background_normal = "button_icons/linearLine.png",
             size_hint=(1, 1), 
             background_color =  [0.2, 0.3, 0.2, 1]
             )
 
     
     randomBnt = RandomModality(
-            background_normal = "button_incons/randomLine.png",
+            background_normal = "button_icons/randomLine.png",
             size_hint=(1, 1), 
             )
     
@@ -717,6 +756,11 @@ class ControllerApp(App):
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOff)
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOff)
         
+        s = MicFader(value_track=True, value_track_color=[1, 0, 0, 1], orientation='vertical', value=350, min=400, max=1)
+        audioVisScreen.ids.audioVisContainer.add_widget(s)
+        
+            
+        
         fn = 'FrancoLogo'
         francoLogoButton = GifImageButton(
                 filename=fn,
@@ -725,7 +769,7 @@ class ControllerApp(App):
                 size=(buttonDimension.get_width(), buttonDimension.get_height()))
         graphButtonOn = GraphButtonOn(
             text="",
-            background_normal = "button_incons/graphicon.jpg",
+            background_normal = "button_icons/graphicon.jpg",
             size_hint=(1, 1), 
         )
         

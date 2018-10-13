@@ -15,11 +15,13 @@ from audioVisualizer import AudioVisualizerGraph
 from kivy.uix.image import AsyncImage
 from kivy.loader import Loader
 from kivy.lang import Builder
+
 #Config.set('graphics', 'fullscreen', 'auto')
 
 
 screenResolution = ScreenResolution()
 levels = []
+
 
 class Network():
     #myIp = "192.168.1.100"
@@ -90,7 +92,6 @@ class InViS(App):
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
     
-    
     def build(self):
         
         oscAPI.init()
@@ -118,6 +119,9 @@ class InViS(App):
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         oscAPI.bind(oscid, self.set_AudioVisualizerGraph, '/toSetAudioVisualizerGraph')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.set_mic_coefficient, '/toSetMicLevel')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
@@ -172,10 +176,15 @@ class InViS(App):
             self.audioVisulizerGraph.start()
         else:
             self.audioVisulizerGraph.stop()
-            
+    
+    def set_mic_coefficient(self, message, *args):
+            print "value before", self.coefficient
+            self.coefficient = message[2]
+            print "value after", self.coefficient
+    
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
-        
+
         
         
     def one_shot_flash(self, message, *args):
@@ -204,6 +213,8 @@ class InViS(App):
             InViS._objectToFlash = Color( message[2], message[3], message[4])
             InViS._objToFlash.isColor= True
             InViS._objToFlash.color = Color( message[2], message[3], message[4])
+            
+
    
     
 if __name__ == '__main__':

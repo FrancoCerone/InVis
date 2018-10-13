@@ -34,7 +34,7 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = "192.168.1.105"
+    dispatherIp = "localhost"
     ipList = ["localhost"]
     piIp = '192.168.1.106'
 
@@ -78,7 +78,9 @@ class Dispatcher(App):
     def change_status_musk(self, message, *args):
         print Network.piIp
         oscAPI.sendMsg('/changeStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
-        
+    
+    
+    
     def build(self):
         Window.size = (300, 100)
         oscAPI.init()
@@ -120,6 +122,9 @@ class Dispatcher(App):
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
                 
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        oscAPI.bind(oscid, self.forward_message, '/toSetMicLevel');
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         dispatcherIpLabel = Label(text='Dipatcher IP  ->' + Network.dispatherIp, markup=True)

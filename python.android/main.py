@@ -32,28 +32,29 @@ Builder.load_string("""
             ScrollView:
                 size_hint: 3, 1
                 GridLayout:
-                    cols: 3
+                    cols:6
                     padding: 10
                     spacing: 10
-                    size_hint: 1, 4
+                    size_hint: 1, 2
                     height: self.minimum_height
                     width: self.minimum_width
                     id: giffButtonContainer
            
+            
+        BoxLayout:
+            orientation: 'vertical'   
+            size_hint: 1, 0.25
             ScrollView:
                 size_hint: 1, 1
                 do_scroll_x: False
                 GridLayout:
-                    cols: 1
+                    cols: 8
                     padding: 10
                     spacing: 10
                     size_hint: 1, 2
                     height: self.minimum_height
                     width: self.minimum_width
                     id: colorButtonContainer
-        BoxLayout:
-            orientation: 'vertical'   
-            size_hint: 1, 0.25
             BoxLayout:
                 GridLayout:
                     cols: 8

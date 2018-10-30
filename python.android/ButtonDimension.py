@@ -6,8 +6,8 @@ Created on 14 mar 2017
 class ButtonDimension(object):
     
     def __init__(self):
-        self.width = 100
-        self.height = 100 
+        self.width = 20
+        self.height = 20 
     
     
     def get_width(self):

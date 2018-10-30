@@ -663,7 +663,10 @@ class ControllerApp(App):
         "G2" : "G2.gif",
         "G3" : "zzG3.gif",
         "G4" : "G4.gif",
-        "FrancoLogo" : "FrancoLogo.png"
+        "franco1" : "franco1",
+        "franco2" : "franco2",
+        "franco3" : "franco3",
+        "franco4" : "franco4"
         }
     
     colorMap = {

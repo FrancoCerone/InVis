@@ -1,7 +1,7 @@
 from PIL import Image
 import zipfile
 import os
-from Carbon.QuickDraw import frame
+
 os.chdir('.')
 
 def analyseImage(path):
@@ -97,22 +97,10 @@ def processImage(path, imageName):
 
 def main():
    
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_groove_stacco1.gif', 'ev_groove_stacco1')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro1.gif', 'ev_intro1')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro2.gif', 'ev_intro2')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro3_chiaro.gif', 'ev_intro3_chiaro')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro3.gif', 'ev_intro3')
-    
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_intro4.gif', 'ev_intro4')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_lancio.gif', 'ev_lancio')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_pausa1.gif', 'ev_pausa1')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_pausa2.gif', 'ev_pausa2')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_rit1.gif', 'ev_rit1')
-    
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_rit2.gif', 'ev_rit2')
-    
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_stacco.gif', 'ev_stacco')
-    #processImage('/Users/francescocerone/Desktop/everest/2/ev_ultimo_stacco.gif', 'ev_ultimo_stacco')
+    #processImage('/home/franco/Desktop/franco1.gif', 'franco1')
+    #processImage('/home/franco/Desktop/franco2.gif', 'franco2')
+    #processImage('/home/franco/Desktop/franco3.gif', 'franco3')
+    #processImage('/home/franco/Desktop/franco4.gif', 'franco4')
     
     print "Done!"
 

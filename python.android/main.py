@@ -42,20 +42,19 @@ Builder.load_string("""
            
             
         BoxLayout:
-            orientation: 'vertical'   
-            size_hint: 1, 0.25
-            ScrollView:
+            orientation: 'vertical'
+            size_hint: 1, 0.3
+            do_scroll_x: False
+            GridLayout:
+                cols: 9
+                padding: 10
+                spacing: 10
                 size_hint: 1, 1
-                do_scroll_x: False
-                GridLayout:
-                    cols: 8
-                    padding: 10
-                    spacing: 10
-                    size_hint: 1, 2
-                    height: self.minimum_height
-                    width: self.minimum_width
-                    id: colorButtonContainer
+                height: self.minimum_height
+                width: self.minimum_width
+                id: colorButtonContainer
             BoxLayout:
+                size_hint: 1, 1
                 GridLayout:
                     cols: 8
                     rows: 1
@@ -211,7 +210,6 @@ Builder.load_string("""
         BoxLayout:
             orientation: 'vertical'   
             size_hint: 1, 0.25
-            
             BoxLayout:
                 orientation: 'horizontal'
                 Button:
@@ -317,10 +315,10 @@ sm.add_widget(settingScreen)
 
     
 class Constants():
-    resistMode = "Resist Mode"
-    gifMode = "Gif Mode"
-    midiMode = "Midi Mode"
-    manualMode = "Manual Mode"
+    resistMode = "Resist"
+    gifMode = "Gif"
+    midiMode = "Midi"
+    manualMode = "Manual"
     
     
  
@@ -576,26 +574,26 @@ class ControllerApp(App):
     
     gifMap = { 
         "a" : "a.gif",
-        "b" : "b.gif",
+        #"b" : "b.gif",
         "c" : "c.gif",
         "d" : "d.gif",
         "e" : "e.gif",
         "f" : "f.gif",
         "g" : "g.gif",
         "h" : "h.gif",
-        "ele" : "ele.gif",
+        #"ele" : "ele.gif",
         "m" : "m.gif",
-        "n" : "n.gif",
+        #"n" : "n.gif",
         "o" : "o.gif",
         "p" : "p.gif",
         "q" : "q.gif",
         "r" : "r.gif",
         "s" : "s.gif",
-        "t" : "t.gif",
+        #"t" : "t.gif",
         "u" : "u.gif",
         "v" : "v.gif",
         "z" : "z.gif",
-        "0a" : "0a.gif",
+        #"0a" : "0a.gif",
         "0b" : "0b.gif",
         "0c" : "0c.gif",
         "0d" : "0d.gif",
@@ -606,7 +604,7 @@ class ControllerApp(App):
         "0i" : "0i.gif",
         "0l" : "0l.gif",
         "0m" : "0m.gif",
-        "0n" : "0n.gif",
+        #"0n" : "0n.gif",
         "0o" : "0o.gif",
         "0p" : "0p.gif",
         "0q" : "0q.gif",
@@ -620,9 +618,9 @@ class ControllerApp(App):
         "1b" : "1b.gif",
         "1c" : "1c.gif",
         "1d" : "1d.gif",
-        "1e" : "1e.gif",
-        "1f" : "1f.gif",
-        "1g" : "1g.gif",
+        #"1e" : "1e.gif",
+        #"1f" : "1f.gif",
+        #"1g" : "1g.gif",
         "1h" : "1h.gif",
         "1i" : "1i.gif",
         "1l" : "1l.gif",
@@ -634,10 +632,10 @@ class ControllerApp(App):
         "1v" : "1v.gif",
         "1z" : "1z.gif",
         "2a" : "2a.gif",
-        "logo1" : "logo1.gif",
-        "logo2" : "logo2.gif",
-        "logo3" : "logo3.gif",
-        "logo4" : "logo4.gif",
+        #"logo1" : "logo1.gif",
+        #"logo2" : "logo2.gif",
+        #"logo3" : "logo3.gif",
+        #"logo4" : "logo4.gif",
         "2c": "2c.gif",
         "2d" : "2d.gif",
         "2e" : "2e.gif",
@@ -648,9 +646,9 @@ class ControllerApp(App):
         "2l" : "2l.gif",
         "2m" : "2m.gif",
         "ev_groove_stacco1" : "ev_groove_stacco1.gif",
-        "ev_intro1" : "ev_intro1.gif",
-        "ev_intro2" : "ev_intro2.gif",
-        "ev_intro3_chiaro" : "ev_intro3_chiaro.gif",
+        #"ev_intro1" : "ev_intro1.gif",
+        #"ev_intro2" : "ev_intro2.gif",
+        #"ev_intro3_chiaro" : "ev_intro3_chiaro.gif",
         "ev_intro3" : "ev_intro3.gif",
         "ev_intro4" : "ev_intro4.gif",
         "ev_lancio" : "ev_lancio.gif",
@@ -660,14 +658,15 @@ class ControllerApp(App):
         "ev_rit2" : "ev_rit2.gif",
         "ev_stacco" : "ev_stacco.gif",
         "ev_ultimo_stacco" : "ev_ultimo_stacco.gif",
-        "G1" : "G1.gif",
-        "G2" : "G2.gif",
-        "G3" : "zzG3.gif",
-        "G4" : "G4.gif",
+        #"G1" : "G1.gif",
+        #"G2" : "G2.gif",
+        #"G3" : "zzG3.gif",
+        #"G4" : "G4.gif",
         "franco1" : "franco1",
         "franco2" : "franco2",
         "franco3" : "franco3",
-        "franco4" : "franco4"
+        "franco4" : "franco4",
+        "syria" : "syria"
         }
     
     colorMap = {
@@ -675,7 +674,7 @@ class ControllerApp(App):
         "darkblue" : "  0  0.45",
         "turquoise3" : "  0.77.80",
         "red" :   "  1  0  0",
-        "saddlebrown" : ".55.27.07",
+        #"saddlebrown" : ".55.27.07",
         "green" : "  0  1  0",
         "white" : ".99.99.99",
         "yellow" :".93.99.09",

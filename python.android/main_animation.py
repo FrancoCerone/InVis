@@ -377,10 +377,11 @@ class ControllerApp(App):
         "0l" : "0l.gif",
         "0m" : "0m.gif",
         "2a" : "2a.gif",
-        "logo1" : "logo1.gif",
-        "logo2" : "logo2.gif",
-        "logo3" : "logo3.gif",
-        "logo4" : "logo4.gif",
+        "franco1" : "franco1",
+        "franco2" : "franco2",
+        "franco3" : "franco3",
+        "franco4" : "franco4",
+        "0r" : "0r.gif",
         
         
         

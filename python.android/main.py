@@ -1,6 +1,6 @@
 import kivy
 from kivy.uix.label import Label
-from numpy.lib.utils import source
+
 kivy.require('1.0.8')
 
 from kivy.app import App

@@ -318,14 +318,14 @@ class ButtonModalityHandler():
 
 class ButtonAnimationModalityHandler():
     linearBnt = LinearModality(
-            background_normal = "button_incons/linearLine.png",
+            background_normal = "button_icons/linearLine.png",
             size_hint=(1, 1), 
             background_color =  [0.2, 0.3, 0.2, 1]
             )
 
     
     randomBnt = RandomModality(
-            background_normal = "button_incons/randomLine.png",
+            background_normal = "button_icons/randomLine.png",
             size_hint=(1, 1), 
             )
     
@@ -382,6 +382,9 @@ class ControllerApp(App):
         "franco3" : "franco3",
         "franco4" : "franco4",
         "0r" : "0r.gif",
+        "zucca" : "zucca",
+        "ghost" : "ghost",
+        "spider" : "spider"
         
         
         

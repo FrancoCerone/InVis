@@ -53,7 +53,6 @@ def get_microphone_level():
 
     while True:
         data = s.read(App.get_running_app().velocity)
-        print App.get_running_app().velocity
         mx = audioop.rms(data, 2)/App.get_running_app().mic_coefficient
         if len(Dialog.levels) >= 100:
             Dialog.levels = Dialog.levels[:-1]
@@ -72,7 +71,7 @@ class AudioVisualizerGraph(Widget):
 
     def start(self):
         self.stop()
-        self.plot = LinePlot(color=[1,1,0,1], line_width= 8)
+        self.plot = LinePlot(color=[1,0,0,1], line_width= 8)
         self.ids.graph.add_plot(self.plot)
         Clock.schedule_interval(self.get_value, 0.01)
 

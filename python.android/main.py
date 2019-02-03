@@ -438,22 +438,18 @@ class ManualModality(Button):
 ##lOGO CONTROLLER
 class TurnOnLogo(Button):
     text="Accendi"
-    size_hint=(1, 1)
     def on_press(self):
         oscAPI.sendMsg('/turnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class TurnOffLogo(Button):
     text="Spengi"
-    size_hint=(1, 1)
     def on_press(self):
         oscAPI.sendMsg('/turnOffLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class IncrementalTurnOnLogo(Button):
     text="Accensione Incrementale"
-    size_hint=(1, 1)
     def on_press(self):
         oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class FlashLogo(Button):
     text="Flash"
-    size_hint=(1, 1)
     def on_press(self):
         oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
@@ -789,13 +785,13 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOn)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOff)
          
-        #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOnLogo())
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo())
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo())
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo())
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))
+                                                   
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOnLogo(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))
         
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto5"))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto6"))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto7"))

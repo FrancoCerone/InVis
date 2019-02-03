@@ -34,9 +34,9 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = "localhost"
+    dispatherIp = '192.168.0.7'
     ipList = ["localhost"]
-    piIp = '192.168.1.106'
+    piIp = '192.168.0.17'
 
 
 class MainScreen(Screen):
@@ -74,10 +74,37 @@ class Dispatcher(App):
     def set_status_Musk2(self, message, *args):
         print Network.piIp
         oscAPI.sendMsg('/toSetMusk2', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
-    
     def change_status_musk(self, message, *args):
         print Network.piIp
         oscAPI.sendMsg('/changeStatus', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
+    
+    
+    def set_turn_on_logo(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/turnOnLogo', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
+        
+    def set_turn_off_logo(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/turnOffLogo', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)
+    
+    def set_incremental_turn_on_logo(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
+    def set_logo_flash(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/logoFlash', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
+    def set_logo_color(self, message, *args):
+        i=2;
+        parameters = []
+        while i< len(message):
+            print 'message[i]:', message[i] 
+            parameters.append(message[i])
+            i=i+1;
+        print Network.piIp
+        oscAPI.sendMsg('/toSetLogoColor', dataArray=parameters, ipAddr=Network.piIp , port=57110)   
+        
+    
+
     
     
     
@@ -94,9 +121,18 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.forward_message, '/toSetPng')
         oscAPI.bind(oscid, self.forward_message, '/toSetModality')
         oscAPI.bind(oscid, self.forward_message, '/toStartUserAnimation')
+        #maschere
         oscAPI.bind(oscid, self.set_status_Musk, '/toSetMusk');
         oscAPI.bind(oscid, self.set_status_Musk1, '/toSetMusk1');
         oscAPI.bind(oscid, self.set_status_Musk2, '/toSetMusk2');
+        #logo
+        oscAPI.bind(oscid, self.set_turn_on_logo, '/turnOnLogo');
+        oscAPI.bind(oscid, self.set_turn_off_logo, '/turnOffLogo');
+        oscAPI.bind(oscid, self.set_incremental_turn_on_logo, '/incrementalTurnOnLogo');
+        oscAPI.bind(oscid, self.set_logo_flash, '/logoFlash');
+        oscAPI.bind(oscid, self.set_logo_color, '/toSetLogoColor');
+        
+        
         oscAPI.bind(oscid, self.change_status_musk, '/changeStatus');
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
         oscAPI.bind(oscid, self.forward_message, '/toSetMicLevel');

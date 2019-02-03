@@ -14,9 +14,9 @@ from ButtonDimension import ButtonDimension
 from main1 import Touchtracer
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.slider import Slider
-from kivy.graphics import Rectangle
 from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
+from decimal import Decimal
 
 
 
@@ -167,13 +167,25 @@ Builder.load_string("""
             do_scroll_x: True
             do_scroll_y: True
             GridLayout:
-                cols: 3
+                cols: 4
                 padding: 10
                 spacing: 10
                 size_hint: 1, 1
                 width: self.minimum_width
                 height: self.minimum_height
                 id: musksControlButtonContainer
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, 0.3
+            do_scroll_x: False
+            GridLayout:
+                cols: 4
+                padding: 10
+                spacing: 10
+                size_hint: 1, 1
+                height: self.minimum_height
+                width: self.minimum_width
+                id: colorLogoButtonContainer
                 
         BoxLayout:
             orientation: 'vertical'   
@@ -376,6 +388,15 @@ class ColorButton(Button):
         elif ((ControllerApp._modality== ModalityList.manual) | (ControllerApp._modality== ModalityList.resist)):
             print SettingsScreen.getIp(settingScreen) 
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+
+class ColorLogoButton(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        r = int((Decimal(ControllerApp.get_Red(self.btncolor)) * 255))
+        g = int((Decimal(ControllerApp.get_Green(self.btncolor))* 255))
+        b = int((Decimal(ControllerApp.get_Blue(self.btncolor))* 255))
+        print r,g,b
+        oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
 class ResistModality(Button):
     def on_press(self):
@@ -414,8 +435,29 @@ class ManualModality(Button):
         ButtonModalityHandler.midiBnt.background_color =  [0.9, 0.9, 0.9, 1]
         oscAPI.sendMsg('/toSetModality', dataArray=[ModalityList.modalities.index("manual", ) ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         ControllerApp._modality = ModalityList.manual
+##lOGO CONTROLLER
+class TurnOnLogo(Button):
+    text="Accendi"
+    size_hint=(1, 1)
+    def on_press(self):
+        oscAPI.sendMsg('/turnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+class TurnOffLogo(Button):
+    text="Spengi"
+    size_hint=(1, 1)
+    def on_press(self):
+        oscAPI.sendMsg('/turnOffLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+class IncrementalTurnOnLogo(Button):
+    text="Accensione Incrementale"
+    size_hint=(1, 1)
+    def on_press(self):
+        oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+class FlashLogo(Button):
+    text="Flash"
+    size_hint=(1, 1)
+    def on_press(self):
+        oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
-        
+
 class MuskButtonOn(Button):
     background_normal = "button_icons/msOn.png"
     def on_press(self):
@@ -680,7 +722,12 @@ class ControllerApp(App):
         "yellow" :".93.99.09",
         "purple" :".99  0.83",
         }
-
+    logocolorMap = {
+        "blue" :  "  0  0  1",
+        "red" :   "  1  0  0",
+        "green" : "  0  1  0",
+        "white" : " 1  1  1",
+        }
     def build(self):
         touchtracer = Touchtracer()
         touchtracer.set_store(self.store)
@@ -743,17 +790,33 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOff)
          
         #userAnimation.ids.startUserAmimation.add_widget(UserAnimation())                                           
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOnLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))
+        
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto5"))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto6"))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto7"))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto8"))
+        
         muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
-        
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.changeStatus)
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
-        
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = ""))
+        
+        for color in self.logocolorMap:
+            color2= self.colorMap.get(color)
+            g = ControllerApp.get_Red( color2)
+            r = ControllerApp.get_Green(color2)
+            b = ControllerApp.get_Blue(color2)
+            btn = ColorLogoButton(
+                btncolor = self.colorMap.get(color),
+                background_color=(r, g, b, 1),
+                #size_hint=(None, None), halign='center',
+                size=(buttonDimension.get_width(), buttonDimension.get_height()), text_size=(118, None)
+                )
+            muskControlScreen.ids.colorLogoButtonContainer.add_widget(btn)
         
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk1ButtonOn)
         #muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.musk2ButtonOn)

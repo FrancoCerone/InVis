@@ -17,6 +17,8 @@ from kivy.uix.slider import Slider
 from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
 from decimal import Decimal
+from AnimationList import AnimationList
+from VisualList import Visualist
 
 
 
@@ -32,13 +34,24 @@ Builder.load_string("""
             ScrollView:
                 size_hint: 3, 1
                 GridLayout:
-                    cols:6
+                    cols: 3
                     padding: 10
                     spacing: 10
-                    size_hint: 1, 2
+                    size_hint: 1, 5
                     height: self.minimum_height
                     width: self.minimum_width
                     id: giffButtonContainer
+            ScrollView:
+                size_hint: 0.5, 1
+                do_scroll_x: False
+                GridLayout:
+                    cols: 1
+                    padding: 10
+                    spacing: 10
+                    size_hint: 1, 20
+                    height: self.minimum_height
+                    width: self.minimum_width
+                    id: allGiffButtonContainer
            
             
         BoxLayout:
@@ -388,6 +401,9 @@ class ColorButton(Button):
         elif ((ControllerApp._modality== ModalityList.manual) | (ControllerApp._modality== ModalityList.resist)):
             print SettingsScreen.getIp(settingScreen) 
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        elif (ControllerApp._modality== ModalityList.gif):
+            print SettingsScreen.getIp(settingScreen) 
+            oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 class ColorLogoButton(Button):
     btncolor = StringProperty(None)
@@ -610,103 +626,6 @@ class ControllerApp(App):
     def get_Blue(rgbString):
         return rgbString[6:9]
     
-    gifMap = { 
-        "a" : "a.gif",
-        #"b" : "b.gif",
-        "c" : "c.gif",
-        "d" : "d.gif",
-        "e" : "e.gif",
-        "f" : "f.gif",
-        "g" : "g.gif",
-        "h" : "h.gif",
-        #"ele" : "ele.gif",
-        "m" : "m.gif",
-        #"n" : "n.gif",
-        "o" : "o.gif",
-        "p" : "p.gif",
-        "q" : "q.gif",
-        "r" : "r.gif",
-        "s" : "s.gif",
-        #"t" : "t.gif",
-        "u" : "u.gif",
-        "v" : "v.gif",
-        "z" : "z.gif",
-        #"0a" : "0a.gif",
-        "0b" : "0b.gif",
-        "0c" : "0c.gif",
-        "0d" : "0d.gif",
-        "0e" : "0e.gif",
-        "0f" : "0f.gif",
-        "0g" : "0g.gif",
-        "0h" : "0h.gif",
-        "0i" : "0i.gif",
-        "0l" : "0l.gif",
-        "0m" : "0m.gif",
-        #"0n" : "0n.gif",
-        "0o" : "0o.gif",
-        "0p" : "0p.gif",
-        "0q" : "0q.gif",
-        "0r" : "0r.gif",
-        "0s" : "0s.gif",
-        "0t" : "0t.gif",
-        "0u" : "0u.gif",
-        "0v" : "0v.gif",
-        "0z" : "0z.gif",
-        "1a" : "1a.gif",
-        "1b" : "1b.gif",
-        "1c" : "1c.gif",
-        "1d" : "1d.gif",
-        #"1e" : "1e.gif",
-        #"1f" : "1f.gif",
-        #"1g" : "1g.gif",
-        "1h" : "1h.gif",
-        "1i" : "1i.gif",
-        "1l" : "1l.gif",
-        "1m" : "1m.gif",
-        "1n" : "1n.gif",
-        "1o" : "1o.gif",
-        "1p" : "1p.gif",
-        "1q" : "1q.gif",
-        "1v" : "1v.gif",
-        "1z" : "1z.gif",
-        "2a" : "2a.gif",
-        #"logo1" : "logo1.gif",
-        #"logo2" : "logo2.gif",
-        #"logo3" : "logo3.gif",
-        #"logo4" : "logo4.gif",
-        "2c": "2c.gif",
-        "2d" : "2d.gif",
-        "2e" : "2e.gif",
-        "2f" : "2f.gif",
-        "2g" : "2g.gif",
-        "2h" : "2h.gif",
-        "2i" : "2i.gif",
-        "2l" : "2l.gif",
-        "2m" : "2m.gif",
-        "ev_groove_stacco1" : "ev_groove_stacco1.gif",
-        #"ev_intro1" : "ev_intro1.gif",
-        #"ev_intro2" : "ev_intro2.gif",
-        #"ev_intro3_chiaro" : "ev_intro3_chiaro.gif",
-        "ev_intro3" : "ev_intro3.gif",
-        "ev_intro4" : "ev_intro4.gif",
-        "ev_lancio" : "ev_lancio.gif",
-        "ev_pausa1" : "ev_pausa1.gif",
-        "ev_pausa2" : "ev_pausa2.gif",
-        "ev_rit1" : "ev_rit1.gif",
-        "ev_rit2" : "ev_rit2.gif",
-        "ev_stacco" : "ev_stacco.gif",
-        "ev_ultimo_stacco" : "ev_ultimo_stacco.gif",
-        #"G1" : "G1.gif",
-        #"G2" : "G2.gif",
-        #"G3" : "zzG3.gif",
-        #"G4" : "G4.gif",
-        "franco1" : "franco1",
-        "franco2" : "franco2",
-        "franco3" : "franco3",
-        "franco4" : "franco4",
-        "syria" : "syria"
-        }
-    
     colorMap = {
         "blue" :  "  0  0  1",
         "darkblue" : "  0  0.45",
@@ -719,9 +638,9 @@ class ControllerApp(App):
         "purple" :".99  0.83",
         }
     logocolorMap = {
-        "blue" :  "  0  0  1",
         "red" :   "  1  0  0",
         "green" : "  0  1  0",
+        "blue" :  "  0  0  1",
         "white" : " 1  1  1",
         }
     def build(self):
@@ -735,8 +654,20 @@ class ControllerApp(App):
 
         
 
-        keylist = self.gifMap.keys()
-        keylist.sort()
+        keylist = Visualist.visualListMap.keys()
+        
+        for fn in keylist:
+            print fn
+            print "valore " , Visualist.visualListMap[fn]
+            if(Visualist.visualListMap[fn] ==True):
+                btn = GifImageButton(
+                    filename=fn,
+                    background_normal = "resources/" + fn + ".png",
+                    #size_hint=(None, None), halign='center',
+                    size=(buttonDimension.get_width(), buttonDimension.get_height()))
+                menuScreen.ids.giffButtonContainer.add_widget(btn)
+            
+        keylist = Visualist.visualListMap.keys()
         for fn in keylist:
             print fn
             btn = GifImageButton(
@@ -744,11 +675,11 @@ class ControllerApp(App):
                 background_normal = "resources/" + fn + ".png",
                 #size_hint=(None, None), halign='center',
                 size=(buttonDimension.get_width(), buttonDimension.get_height()))
-            menuScreen.ids.giffButtonContainer.add_widget(btn)
+            menuScreen.ids.allGiffButtonContainer.add_widget(btn)
 
         #userAnimation.ids.touchTracker.add_widget(touchtracer)
                 
-        for fn in self.gifMap:
+        for fn in AnimationList.animationListMap:
             btn = AnimationImageButton(
                 store= self.store,
                 filename=fn,

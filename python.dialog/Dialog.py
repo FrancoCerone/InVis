@@ -19,9 +19,11 @@ from kivy.lang import Builder
 #Config.set('graphics', 'fullscreen', 'auto')
 
 
+
+
+
 screenResolution = ScreenResolution()
 levels = []
-
 
 class Network():
     #myIp = "192.168.1.100"
@@ -38,6 +40,7 @@ class ModalityList():
     midi = 'midi'
     manual = 'manual'
     modalities = (resist, gif, midi, manual)
+    
 
 class FlashWidget(Widget):
     def add_rectangele(self, color):
@@ -91,8 +94,11 @@ class InViS(App):
     _objToFlash= ObjectToFlash()
     _objectToFlash = Color(1, 1, 1)
     _modality = ModalityList.resist
+    _audioGraphIsOn = False
     mic_coefficient = 100
     velocity = 3500
+    screenColor = Color(1,0,0)
+    colorLine = [0,0,1,1]
     
     def build(self):
         
@@ -108,6 +114,7 @@ class InViS(App):
         oscAPI.bind(oscid, self.set_AudioVisualizerGraph, '/toSetAudioVisualizerGraph')
         oscAPI.bind(oscid, self.set_mic_coefficient, '/toSetMicLevel')
         oscAPI.bind(oscid, self.set_velocity, '/toSetVelocity')
+        oscAPI.bind(oscid, self.set_color, '/toSetColor')
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
         self._parent = Widget()
@@ -157,10 +164,13 @@ class InViS(App):
             self.imageWidget.add_gif(  InViS._lastGif)
     
     def set_AudioVisualizerGraph(self, message, *args):
+        
         if(message[2] == 0 ):
             self.audioVisulizerGraph.start()
+            InViS._audioGraphIsOn =  True
         else:
             self.audioVisulizerGraph.stop()
+            InViS._audioGraphIsOn =  False
     
     def set_mic_coefficient(self, message, *args):
         self.mic_coefficient = message[2]
@@ -171,11 +181,29 @@ class InViS(App):
     def remove_Image(self, message, *args):
         self.imageWidget.remove_Image()
 
-        
+    def set_color(self, message, *args):
+        print "setColor"
+        self.screenColor = Color( message[2], message[3], message[4])
+        self.colorLine = [message[2], message[3], message[4], 1]   
+        if (InViS._audioGraphIsOn == True):
+            print "Grafico acceso"
+            self.audioVisulizerGraph.stop()
+            self.audioVisulizerGraph.start()
+            
         
     def one_shot_flash(self, message, *args):
         self.imageWidget.remove_Image() #Forse rallenta il flash, trovare il modo per farlo una volta sola
-        self.flashWidget.add_rectangele(Color( message[2], message[3], message[4]))
+        print "ci passa"
+        self.screenColor = Color( message[2], message[3], message[4])
+        self.flashWidget.add_rectangele(self.screenColor)
+        self.colorLine = [message[2], message[3], message[4], 1]
+        
+        if (InViS._audioGraphIsOn == True):
+            print "Grafico acceso"
+            self.audioVisulizerGraph.stop()
+            self.audioVisulizerGraph.start()
+        
+        
         if InViS._modality !=  ModalityList.resist:
             Clock.schedule_once(self.clear_canvas1, 0.3)
         
@@ -199,8 +227,9 @@ class InViS(App):
             InViS._objectToFlash = Color( message[2], message[3], message[4])
             InViS._objToFlash.isColor= True
             InViS._objToFlash.color = Color( message[2], message[3], message[4])
-            
+    
 
+                
    
     
 if __name__ == '__main__':

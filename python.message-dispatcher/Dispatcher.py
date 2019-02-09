@@ -20,6 +20,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
+from decimal import Decimal
 
 
 from kivy.lang import Builder
@@ -34,9 +35,9 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = '192.168.0.7'
+    dispatherIp = '192.168.0.4'
     ipList = ["localhost"]
-    piIp = '192.168.0.17'
+    piIp = '192.168.0.5'
 
 
 class MainScreen(Screen):
@@ -48,6 +49,13 @@ sm.add_widget(menuScreen)
 
 class Dispatcher(App):
     
+
+    def normalizeValueForRaspberry(self, message):
+        if  '.' in message:
+            print "contiene il punto"
+            message = '0'+ message
+        return message
+
     def forward_message(self, message, *args):
         i=2;
         parameters = []
@@ -60,7 +68,17 @@ class Dispatcher(App):
             print 'message[0]: ', message[0]
             print 'paramenters: ', parameters
             print 'ip: ', ip
+            if message[0] in( '/toOneShotFlash' ,  '/toSetColor'):
+                
+                red = int(( Decimal( self.normalizeValueForRaspberry(message[2])) * 255))
+                green = int(( Decimal( self.normalizeValueForRaspberry(message[3])) * 255))
+                message[4] = int(( Decimal( self.normalizeValueForRaspberry(message[4])) * 255))
+                message[2] = green
+                message[3] = red
+                self.set_logo_color(message )
+                
             oscAPI.sendMsg(message[0],  dataArray=parameters, ipAddr=ip , port=57115)
+
     
     def set_status_Musk(self, message, *args):
         print Network.piIp
@@ -94,13 +112,13 @@ class Dispatcher(App):
         print Network.piIp
         oscAPI.sendMsg('/logoFlash', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
     def set_logo_color(self, message, *args):
+        print "setto il colore del  logo"
+        print message
         i=2;
         parameters = []
         while i< len(message):
-            print 'message[i]:', message[i] 
             parameters.append(message[i])
             i=i+1;
-        print Network.piIp
         oscAPI.sendMsg('/toSetLogoColor', dataArray=parameters, ipAddr=Network.piIp , port=57110)   
         
     
@@ -137,6 +155,8 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
         oscAPI.bind(oscid, self.forward_message, '/toSetMicLevel');
         oscAPI.bind(oscid, self.forward_message, '/toSetVelocity');
+        
+        oscAPI.bind(oscid, self.forward_message, '/toSetColor');
 
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         

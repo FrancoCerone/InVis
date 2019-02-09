@@ -62,7 +62,7 @@ def get_microphone_level():
 class AudioVisualizerGraph(Widget):
     def __init__(self,):
         get_level_thread = Thread(target = get_microphone_level)
-        get_level_thread.daemon = True
+        get_level_thread.daemon = True  
         get_level_thread.start()
         super(AudioVisualizerGraph, self).__init__()
         mesh_plot = LinePlot()
@@ -71,7 +71,9 @@ class AudioVisualizerGraph(Widget):
 
     def start(self):
         self.stop()
-        self.plot = LinePlot(color=[1,0,0,1], line_width= 8)
+        print App.get_running_app().colorLine
+        self.plot = LinePlot(color=App.get_running_app().colorLine, line_width= 8)
+        print "creato LinePlot"
         self.ids.graph.add_plot(self.plot)
         Clock.schedule_interval(self.get_value, 0.01)
 

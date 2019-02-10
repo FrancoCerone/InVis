@@ -34,12 +34,12 @@ LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 10  # Set to 0 for darkest and 255 for brightest
+LED_BRIGHTNESS = 255 # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 def get_ip_address():
-    ip = '192.168.0.17'
+    ip = '192.168.0.5'
     return ip
 class Network():
     ip = get_ip_address();
@@ -125,6 +125,36 @@ class WipeStripsRunner(Thread):
                 print 'break'
                 break
 
+
+class TheaterChaseRunner(Thread):
+    def __init__(self):
+        self.running = True
+    def teriminate(self):
+        self._running = False
+    def run(self):
+        print "accensione da thread Theater chase"
+        iterations = 1000
+        wait_ms=50
+        for j in range(iterations):
+            print "1"
+            for q in range(3):
+                print "2"
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, color)
+                    if canRunStrip == False:
+                        break
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, 0)
+                    if canRunStrip == False:
+                        break
+                if canRunStrip == False:
+                    break                    
+            if canRunStrip == False:
+                break
+                
+
     
 class RaspBerryApp(App):
     
@@ -138,9 +168,8 @@ class RaspBerryApp(App):
         
         strip.begin()
 
-        A = WipeStripsRunner();
-        At = Thread(target=A.run)
-        At.start()
+
+
         print "superato il thread"
         
         numpixel = strip.numPixels()
@@ -154,6 +183,7 @@ class RaspBerryApp(App):
         oscAPI.bind(oscid, self.turnOff, '/turnOffLogo')
         oscAPI.bind(oscid, self.flash, '/logoFlash')
         oscAPI.bind(oscid, self.incrementalTurnOnLogocolorWipe, '/incrementalTurnOnLogo')
+        oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
         oscAPI.bind(oscid, self.setColor, '/toSetLogoColor')
 
 
@@ -164,8 +194,30 @@ class RaspBerryApp(App):
 	
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
 
+        #################################################
+        #Show case accensione ###########################
+        #################################################
         
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(127, 127, 127))
+            strip.show()
 
+        #rainbow(strip)
+        #rainbowCycle(strip)
+        #theaterChaseRainbow(strip)
+
+        
+        #################################################
+
+            
+        
+             
+        #self.colorWipe(Color(100, 0, 0))  # Red wipe
+
+
+                    
+
+            
     def setColor(self, message, *args):
         print "Tunn on"
         print 'color 1' , int(message[2])
@@ -221,18 +273,21 @@ class RaspBerryApp(App):
         At = Thread(target=A.run)
         At.start()
         print "Fine"
-            
-                
-    # Define functions which animate LEDs in various ways.
-    def colorWipe(self, message, *args):
-        print "ci siamo"
-        print self.strip
+
+    
+
+    def theaterChaseEffect(self, message, *args):
+        global canRunStrip 
+        canRunStrip = True
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
         
-        """Wipe color across display a pixel at a time."""
-        for i in range(self.strip.numPixels()):
-            self.strip.setPixelColor(i, Color(100, 0, 0))
-            self.strip.show()
-            #time.sleep(wait_ms/1000.0)
+        A = TheaterChaseRunner();
+        At = Thread(target=A.run)
+        At.start()
+        print "Fine"
+
     
   
     def setStatus(self, message, *args):
@@ -262,6 +317,54 @@ class RaspBerryApp(App):
     def setStatusMask2(self, message, *args):
         print 'arrivato il messaggio' , message[2]
         GPIO.output(10, (message[2]+1)%2)
+
+
+
+                    
+
+
+
+
+                    
+
+
+    def wheel(pos):
+        """Generate rainbow colors across 0-255 positions."""
+        if pos < 85:
+            return Color(pos * 3, 255 - pos * 3, 0)
+        elif pos < 170:
+            pos -= 85
+            return Color(255 - pos * 3, 0, pos * 3)
+        else:
+            pos -= 170
+            return Color(0, pos * 3, 255 - pos * 3)
+
+    def rainbow(strip, wait_ms=20, iterations=1):
+        """Draw rainbow that fades across all pixels at once."""
+        for j in range(256*iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, wheel((i+j) & 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+
+    def rainbowCycle(strip, wait_ms=20, iterations=5):
+        """Draw rainbow that uniformly distributes itself across all pixels."""
+        for j in range(256*iterations):
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+
+    def theaterChaseRainbow(strip, wait_ms=50):
+        """Rainbow movie theater light style chaser animation."""
+        for j in range(256):
+            for q in range(3):
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, wheel((i+j) % 255))
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, 0)
         
 if __name__ == '__main__':
     RaspBerryApp().run()

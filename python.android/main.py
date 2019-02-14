@@ -176,6 +176,18 @@ Builder.load_string("""
     BoxLayout:
         orientation: 'vertical'  
         BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, 0.15
+            do_scroll_x: False
+            GridLayout:
+                cols: 9
+                padding: 10
+                spacing: 10
+                size_hint: 1, 1
+                height: self.minimum_height
+                width: self.minimum_width
+                id: modalityLogo
+        BoxLayout:
             orientation: 'horizontal'
             ScrollView:
                 size_hint: 1, 1
@@ -426,6 +438,9 @@ class ColorLogoButton(Button):
         print r,g,b
         oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
+
+
+
 class FlasLogoButton(Button):
     btncolor = StringProperty(None)
     def on_press(self):
@@ -478,6 +493,35 @@ class TurnOnLogo(Button):
     text="Accendi"
     def on_press(self):
         oscAPI.sendMsg('/turnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+
+class AllLogoOn(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        oscAPI.sendMsg('/toSetAllLedsOn', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+
+class BorderLogoOn(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        oscAPI.sendMsg('/toSetBorderLedOn', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+
+class BorderEyesMouthLogoOn(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        oscAPI.sendMsg('/toSetBorderEyesMouthLedOn', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+   
+
+class EyesOnLogoOn(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        oscAPI.sendMsg('/toSetEyesLedOn', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+   
+class EyesAndMounthLogoOn(Button):
+    btncolor = StringProperty(None)
+    def on_press(self):
+        oscAPI.sendMsg('/toSetEyesAndMounthLedOn', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+   
+
+        
 class TurnOffLogo(Button):
     text="Spengi"
     def on_press(self):
@@ -748,7 +792,16 @@ class ControllerApp(App):
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOn)
         menuScreen.ids.modalityContainer.add_widget(ButtonModalityHandler.graphButtonOff)
          
-                                                   
+               
+            
+        muskControlScreen.ids.modalityLogo.add_widget(AllLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        muskControlScreen.ids.modalityLogo.add_widget(BorderLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        muskControlScreen.ids.modalityLogo.add_widget(BorderEyesMouthLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        muskControlScreen.ids.modalityLogo.add_widget(EyesAndMounthLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        muskControlScreen.ids.modalityLogo.add_widget(EyesOnLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        
+                                              
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(TheaterChaseEffectLogo(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))

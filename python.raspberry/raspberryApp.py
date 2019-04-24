@@ -61,7 +61,7 @@ canRunStrip = False
 
 
 def get_ip_address():
-    ip = '192.168.0.5'
+    ip = '192.168.0.52'
     return ip
 class Network():
     ip = get_ip_address();

@@ -35,9 +35,9 @@ Builder.load_string("""
 
 
 class Network():
-    dispatherIp = '192.168.0.4'
+    dispatherIp = '192.168.0.51'
     ipList = ["localhost"]
-    piIp = '192.168.0.5'
+    piIp = '192.168.0.52'
 
 
 class MainScreen(Screen):
@@ -113,8 +113,29 @@ class Dispatcher(App):
         oscAPI.sendMsg('/theaterChase', dataArray=[message[2]], ipAddr=Network.piIp , port=57110) 
     
     
-    def set_logo_flash(self, message, *args):
+    
+    def setAllLedsOn(self, message, *args):
         print Network.piIp
+        oscAPI.sendMsg('/toSetAllLedsOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+    
+    def setBorderLedOn(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetBorderLedOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+    
+    def setBorderEyesMouthLedOn(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetBorderEyesMouthLedOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+    
+    def setEyesLedOn(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetEyesLedOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+    
+    def setEyesAndMouthLedOn(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toSetEyesAndMounthLedOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+    
+    def set_logo_flash(self, message, *args):
+        print message
         oscAPI.sendMsg('/logoFlash', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
     def set_logo_color(self, message, *args):
         print "setto il colore del  logo"
@@ -156,6 +177,14 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.set_theater_Chase, '/theaterChase');
         oscAPI.bind(oscid, self.set_logo_flash, '/logoFlash');
         oscAPI.bind(oscid, self.set_logo_color, '/toSetLogoColor');
+        
+        oscAPI.bind(oscid, self.setAllLedsOn, '/toSetAllLedsOn')
+        oscAPI.bind(oscid, self.setBorderLedOn, '/toSetBorderLedOn')
+        oscAPI.bind(oscid, self.setBorderEyesMouthLedOn, '/toSetBorderEyesMouthLedOn')
+        oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
+        oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
+    
+        
         
         
         oscAPI.bind(oscid, self.change_status_musk, '/changeStatus');

@@ -177,7 +177,7 @@ Builder.load_string("""
         orientation: 'vertical'  
         BoxLayout:
             orientation: 'vertical'
-            size_hint: 1, 0.15
+            size_hint: 1, 0.25
             do_scroll_x: False
             GridLayout:
                 cols: 9
@@ -794,11 +794,11 @@ class ControllerApp(App):
          
                
             
-        muskControlScreen.ids.modalityLogo.add_widget(AllLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
-        muskControlScreen.ids.modalityLogo.add_widget(BorderLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
-        muskControlScreen.ids.modalityLogo.add_widget(BorderEyesMouthLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
-        muskControlScreen.ids.modalityLogo.add_widget(EyesAndMounthLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
-        muskControlScreen.ids.modalityLogo.add_widget(EyesOnLogoOn(text="", background_normal = "button_icons/logo.png",size_hint=(1, 1),))
+        muskControlScreen.ids.modalityLogo.add_widget(AllLogoOn(text="", background_normal = "button_icons/logo1.png",size_hint=(1, 2),))
+        muskControlScreen.ids.modalityLogo.add_widget(BorderLogoOn(text="", background_normal = "button_icons/logo2.png",size_hint=(1, 2),))
+        muskControlScreen.ids.modalityLogo.add_widget(BorderEyesMouthLogoOn(text="", background_normal = "button_icons/logo3.png",size_hint=(1, 2),))
+        muskControlScreen.ids.modalityLogo.add_widget(EyesAndMounthLogoOn(text="", background_normal = "button_icons/logo4.png",size_hint=(1, 2),))
+        muskControlScreen.ids.modalityLogo.add_widget(EyesOnLogoOn(text="", background_normal = "button_icons/logo5.png",size_hint=(1, 2),))
         
                                               
         muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))

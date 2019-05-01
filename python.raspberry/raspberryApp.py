@@ -130,10 +130,9 @@ class WipeStripsRunner(Thread):
         print "canRunStrip fuori", canRunStrip
         
         for i in indexToTurnOn:
-            strip.setPixelColor(i, color)
+            RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
             strip.show()
             time.sleep(10/1000.0)
-            print "canRunStrip new ciclo", canRunStrip
             if canRunStrip == False:
                 print 'break'
                 break
@@ -167,31 +166,53 @@ class TheaterChaseRunner(Thread):
             if canRunStrip == False:
                 break
 
+        
+
+
 class BottomUpCurtenRunner(Thread):
     def __init__(self):
         self.running = True
     def teriminate(self):
+        print "terminated bottomUp"
         self._running = False
     def run(self):
-        print "accensione da thread Theater chase"
-        for elementLed in indexToTurnOn:
-            if(type(elementLed) == list):
-                for ledStrip in elementLed:
-                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
-                strip.show()
-                time.sleep(0.05)
-            else:
-                strip.setPixelColor(elementLed, Color(127, 127, 127))
-                strip.show()
+        print "accensione BottomUpCurtenRunner"
+        internalList = list(indexToTurnOn)
+        for elementLed in internalList:
+            RaspBerryApp.setColorForElemtOrList(elementLed, strip)
 
-
-
-
-            
-            
+class TopDownCurtenRunner(Thread):
+    def __init__(self):
+        self.running = True
+    def teriminate(self):
+        print "terminated topDown"
+        self._running = False
+    def run(self):
+        print "accensione TopDownCurtenRunner"
+        internalList = list(indexToTurnOn)
+        for elementLed in reversed(internalList):
+            RaspBerryApp.setColorForElemtOrList(elementLed, strip)
 
     
 class RaspBerryApp(App):
+    @staticmethod 
+    def setColorForElemtOrList(elementLed, strip):
+        if (type(elementLed) == list):
+            for ledStrip in elementLed:
+                strip.setPixelColor(ledStrip, color)
+        else:
+            strip.setPixelColor(elementLed, color)
+        strip.show()    
+        time.sleep(10/1000.0)
+        
+    
+    @staticmethod 
+    def setColorForElemtOrListWithOutWaitAndShow(elementLed, strip):
+        if (type(elementLed) == list):
+            for ledStrip in elementLed:
+                strip.setPixelColor(ledStrip, color)
+        else:
+            strip.setPixelColor(elementLed, color)
     
     def build(self):
 
@@ -233,6 +254,7 @@ class RaspBerryApp(App):
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
         
         oscAPI.bind(oscid, self.setBottomUpCurten, '/toBottomUpCurten')
+        oscAPI.bind(oscid, self.setTopDownCurten, '/toTopDownCurten')
     
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
 
@@ -247,6 +269,8 @@ class RaspBerryApp(App):
         
         
         ######################################
+        
+        
         for elementLed in indexToTurnOn:
             if(type(elementLed) == list):
                 for ledStrip in elementLed:
@@ -256,6 +280,25 @@ class RaspBerryApp(App):
             else:
                 strip.setPixelColor(elementLed, Color(127, 127, 127))
                 strip.show()
+        
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
+        
+        for elementLed in reversed(indexToTurnOn):
+            if(type(elementLed) == list):
+                for ledStrip in elementLed:
+                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
+                strip.show()
+                time.sleep(0.05)
+            else:
+                strip.setPixelColor(elementLed, Color(127, 127, 127))
+                strip.show()
+        
+
+        
+        
+
         #################################################
         
     def setColor(self, message, *args):
@@ -269,8 +312,10 @@ class RaspBerryApp(App):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0,0,0))
         strip.show()
+        print "indexToTurnOn", indexToTurnOn
         for i in indexToTurnOn:
-            strip.setPixelColor(i, color)
+            #print "set Color in the for", color
+            RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
         strip.show()
     def turnOn(self, message, *args):
         print "Tunn on"
@@ -377,6 +422,10 @@ class RaspBerryApp(App):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
+        if(len(indexToTurnOn)== 52):
+            global indexToTurnOn
+            indexToTurnOn = logo.get_allSripIndex()
+        
         A = WipeStripsRunner();
         At = Thread(target=A.run)
         At.start()
@@ -407,8 +456,19 @@ class RaspBerryApp(App):
         A = BottomUpCurtenRunner();
         At = Thread(target=A.run)
         At.start()
-
-        print "Fine"
+        
+    
+    def setTopDownCurten(self, message, *args):
+        global canRunStrip 
+        canRunStrip = True
+        global indexToTurnOn
+        indexToTurnOn = logo.get_bottom_up_border_leds_index()
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
+        A = TopDownCurtenRunner();
+        At = Thread(target=A.run)
+        At.start()
     
     
       

@@ -15,13 +15,20 @@ class LogoStrip(object):
     def get_indexStart(self):
         return self.indexStart
     
+    def get_really_indexStart(self):
+        return self.indexStart -1
+        
     def get_length(self):
         return self.length
     
     
     def get_indexEnd(self):
         return self.indexStart + self.length -1;
-
+    
+    def get_really_indexEnd(self):
+        return self.indexStart + self.length -2;
+    
+    
 class Logo(object):
     stripList= []
     def __init__(self):
@@ -157,7 +164,717 @@ class Logo(object):
         strips.append(self.stripList[16])
         return self.getIndex(strips)
 
+    def get_bottom_up_border_index(self):
+        strips = []
+        strips.append(self.getIndex(self.stripList[0]))
+        mergedlist = []
+        mergedlist.extend(self.getIndex(self.stripList[1]))
+        mergedlist.extend(self.getIndex(self.stripList[5]))
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        mergedlist.extend(self.getIndex(self.stripList[2]))
+        mergedlist.extend(self.getIndex(self.stripList[4]))
+        strips.append(mergedlist)
+        
+        strips.append(self.getIndex(self.stripList[3]))
+        return self.getIndex(strips)
     
+    def get_bottom_up_border_leds_index(self):
+        strips = []
+        strips.append(self.getIndex(self.stripList[0]))
+        mergedlist = []
+        delta = 0
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta = 1
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+
+        mergedlist = []
+        delta = 2
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 3
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 4
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 5
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 6
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        mergedlist.extend(self.getIndex(self.stripList[6]))
+        mergedlist.append(self.stripList[7].get_really_indexStart())
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta = 7
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+1)
+        
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd())
+        mergedlist.append(self.stripList[13].get_really_indexStart())
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 8
+        delta_2 = 1
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 9
+        delta_2 = 2
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 10
+        delta_2 = 3
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 11
+        delta_2 = 4
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 12
+        delta_2 = 5
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        
+        mergedlist.append(self.stripList[15].get_really_indexStart())
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta = 13
+        delta_2 = 6
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta_2 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - delta_2)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta_2)
+        mergedlist.extend(self.getIndex(self.stripList[11]))
+        mergedlist.extend(self.getIndex(self.stripList[12]))
+        
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart())
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 14
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd())
+        mergedlist.extend(self.getIndex(self.stripList[11]))
+        mergedlist.extend(self.getIndex(self.stripList[12]))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 15
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta = 16
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 17
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 18
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 19
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +1)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[25].get_really_indexStart() + delta- 14)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta = 20
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart())
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd())
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 21
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 22
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 23
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta = 24
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =25
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =26
+        
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[7].get_really_indexStart()+delta -7 +1)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =27
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =28
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =29
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =30
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        ##duplico le prime 6
+        mergedlist = []
+        delta =31
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta -1)
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -8))
+            
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -21))
+        
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 22))
+        
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -7)
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 15))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =32
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -7))
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -6))
+            
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -19))
+        mergedlist.append(self.stripList[26].get_really_indexStart()+ (delta -20))
+        
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 13))
+        mergedlist.append(self.stripList[10].get_really_indexEnd()- (delta - 14))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[15].get_really_indexStart() + delta- 12)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        #mergedlist.append(self.stripList[1].get_really_indexStart() + delta +2)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =33
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        
+        mergedlist.append(self.stripList[24].get_really_indexEnd() - (delta -6))
+        
+        mergedlist.extend(self.getIndex(self.stripList[27]))
+        mergedlist.extend(self.getIndex(self.stripList[28]))
+        
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.extend(self.getIndex(self.stripList[17]))
+        mergedlist.extend(self.getIndex(self.stripList[18]))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta + 1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =34
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.extend(self.getIndex(self.stripList[17]))
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta + 1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =35
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta + 1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =36
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        #mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        #mergedlist.append(self.stripList[1].get_really_indexStart() + delta + 1)
+        strips.append(mergedlist)
+        
+                
+        mergedlist = []
+        delta =37
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-22))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =38
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-22))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        strips.append(mergedlist)
+        
+                
+        mergedlist = []
+        delta =39
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-22))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =40
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-22))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =41
+        mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
+        mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
+        
+        
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-22))
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-21))
+        mergedlist.append(self.stripList[20].get_really_indexEnd()-(delta-20))
+        
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =42
+        mergedlist.extend(self.getIndex(self.stripList[23]))
+        mergedlist.extend(self.getIndex(self.stripList[22]))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =43
+        mergedlist.append(self.stripList[4].get_really_indexEnd() - (delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =44
+        mergedlist.append(self.stripList[4].get_really_indexEnd() -(delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        
+        mergedlist = []
+        delta =45
+        mergedlist.append(self.stripList[4].get_really_indexEnd() - ( delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =46
+        mergedlist.append(self.stripList[4].get_really_indexEnd()- ( delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+
+        mergedlist = []
+        delta =47
+        mergedlist.append(self.stripList[4].get_really_indexEnd() -( delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =48
+        mergedlist.append(self.stripList[4].get_really_indexEnd() - ( delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        
+        mergedlist = []
+        delta =49
+        mergedlist.append(self.stripList[4].get_really_indexEnd() -(delta - 43))
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
+        strips.append(mergedlist)
+        mergedlist = []
+        
+        delta = 50
+        strips.append(self.getIndex(self.stripList[3]))
+
+        return self.getIndex(strips)
+            
     def get_eyes_and_mounth_strips_index(self):
         strips = []
         strips.append(self.stripList[28])
@@ -185,44 +902,33 @@ class Logo(object):
     
     def getIndex(self, selectedstripList):
         indexs = []
-        print "numero di strisce:", selectedstripList.__len__()
-        for logoStrip in  selectedstripList:
-            print "index Start", logoStrip.get_indexStart()
-            index =logoStrip.get_indexStart()
-            while index <= logoStrip.get_indexEnd():
-                indexs.append(index - 1)
+        if(type(selectedstripList) == list):
+            for logoStrip in  selectedstripList:
+                if(type(logoStrip) == LogoStrip) :
+                    index =logoStrip.get_indexStart()
+                    indexList = []
+                    while index <= logoStrip.get_indexEnd():
+                        indexs.append(index - 1)
+                        index = index+1
+                else:
+                    indexs.append(logoStrip)
+        else:
+            index =selectedstripList.get_indexStart()
+            indexList = []
+            while index <= selectedstripList.get_indexEnd():
+                indexList.append(index - 1)
                 index = index+1
+            return indexList
         return indexs   
         
 
 if __name__ == '__main__':
     logo = Logo();
-    logo.get_allSrip();
     
+
     
+    print "ogo.get_bottom_up_border_leds_index()"
+    print logo.get_bottom_up_border_leds_index()
     
-    print logo.getIndex(logo.get_eyes_and_mounth_strips())
-    
-    
-    
-    
-    
-    '''
-    for strip in logo.get_allSrip():
-        print strip.get_indexStart()
-    
-    indexs = logo.getIndex(logo.get_allSrip())
-    print 'tutto gli indici', indexs
-    list = [] 
-    list.append(logo.get_allSrip()[0])
-    print 'prima strisca', logo.getIndex(list)
-    list = [] 
-    list.append(logo.get_allSrip()[1])
-    print 'seconda strisca', logo.getIndex(list)
-    list = []
-    list.append(logo.get_allSrip()[2])
-    print 'terza strisca', logo.getIndex(list)
-    print "ultimo elemento" , logo.get_number_of_leds()
-    '''
-    print "prima striscia", logo.get_allSrip()[0]
+
     

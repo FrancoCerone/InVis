@@ -44,7 +44,9 @@ LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 global color
 color = Color(255, 0, 0)
 global indexToTurnOn
-indexToTurnOn = logo.get_eyes_and_mounth_strips_index()
+#indexToTurnOn = logo.get_eyes_and_mounth_strips_index()
+#indexToTurnOn = logo.get_bottom_up_border_index()
+indexToTurnOn = logo.get_bottom_up_border_leds_index()
 
 
 
@@ -211,28 +213,26 @@ class RaspBerryApp(App):
 
         #################################################
         #Show case accensione ###########################
-        #################################################
-        for indexLed in indexToTurnOn:
+        
+        '''for indexLed in indexToTurnOn:
             print "indice**************: ",i
             strip.setPixelColor(indexLed, Color(127, 127, 127))
             strip.show()
-
-        #rainbow(strip)
-        #rainbowCycle(strip)
-        #theaterChaseRainbow(strip)
-
+        '''
         
+        
+        ######################################
+        for elementLed in indexToTurnOn:
+            if(type(elementLed) == list):
+                for ledStrip in elementLed:
+                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
+                strip.show()
+                time.sleep(0.05)
+            else:
+                strip.setPixelColor(elementLed, Color(127, 127, 127))
+                strip.show()
         #################################################
-
-            
         
-             
-        #self.colorWipe(Color(100, 0, 0))  # Red wipe
-
-
-                    
-
-            
     def setColor(self, message, *args):
         print "Tunn on"
         print 'color 1' , int(message[2])

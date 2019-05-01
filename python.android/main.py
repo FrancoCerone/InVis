@@ -531,10 +531,16 @@ class TheaterChaseEffectLogo(Button):
     text="Teather Chase"
     def on_press(self):
         oscAPI.sendMsg('/theaterChase', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        
 class IncrementalTurnOnLogo(Button):
     text="Accensione Incrementale"
     def on_press(self):
         oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        
+class ToBottomUpCurten(Button):
+    text="Bottom Up Curten"
+    def on_press(self):
+        oscAPI.sendMsg('/toBottomUpCurten', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 class FlashLogo(Button):
     text="Flash"
     def on_press(self):
@@ -802,10 +808,11 @@ class ControllerApp(App):
         
                                               
         muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(ToBottomUpCurten(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(TheaterChaseEffectLogo(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo(text="",size_hint=(1, 1),))
+        
         
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto5"))

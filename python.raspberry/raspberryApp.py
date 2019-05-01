@@ -166,7 +166,29 @@ class TheaterChaseRunner(Thread):
                     break                    
             if canRunStrip == False:
                 break
-                
+
+class BottomUpCurtenRunner(Thread):
+    def __init__(self):
+        self.running = True
+    def teriminate(self):
+        self._running = False
+    def run(self):
+        print "accensione da thread Theater chase"
+        for elementLed in indexToTurnOn:
+            if(type(elementLed) == list):
+                for ledStrip in elementLed:
+                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
+                strip.show()
+                time.sleep(0.05)
+            else:
+                strip.setPixelColor(elementLed, Color(127, 127, 127))
+                strip.show()
+
+
+
+
+            
+            
 
     
 class RaspBerryApp(App):
@@ -208,6 +230,9 @@ class RaspBerryApp(App):
         oscAPI.bind(oscid, self.setBorderEyesMouthLedOn, '/toSetBorderEyesMouthLedOn')
         oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
+        oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
+        
+        oscAPI.bind(oscid, self.setBottomUpCurten, '/toBottomUpCurten')
     
         Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
 
@@ -370,9 +395,23 @@ class RaspBerryApp(App):
         At = Thread(target=A.run)
         At.start()
         print "Fine"
-
     
-  
+    def setBottomUpCurten(self, message, *args):
+        global canRunStrip 
+        canRunStrip = True
+        global indexToTurnOn
+        indexToTurnOn = logo.get_bottom_up_border_leds_index()
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
+        A = BottomUpCurtenRunner();
+        At = Thread(target=A.run)
+        At.start()
+
+        print "Fine"
+    
+    
+      
     def setStatus(self, message, *args):
         print 'arrivato il messaggio' , message[2]
         if message[2] == 0 :

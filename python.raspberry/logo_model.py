@@ -189,7 +189,7 @@ class Logo(object):
         mergedlist.append(self.stripList[5].get_really_indexEnd() - delta)
         mergedlist.append(self.stripList[14].get_really_indexEnd() - delta)
         strips.append(mergedlist)
-        
+    
         
         mergedlist = []
         delta = 1

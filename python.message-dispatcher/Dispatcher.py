@@ -107,7 +107,11 @@ class Dispatcher(App):
     
     def set_incremental_turn_on_logo(self, message, *args):
         print Network.piIp
-        oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
+        oscAPI.sendMsg('/incrementalTurnOnLogo', dataArray=[message[2]], ipAddr=Network.piIp , port=57110) 
+        
+    def set_to_bottom_up_curten(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toBottomUpCurten', dataArray=[message[2]], ipAddr=Network.piIp , port=57110) 
     def set_theater_Chase(self, message, *args):
         print Network.piIp
         oscAPI.sendMsg('/theaterChase', dataArray=[message[2]], ipAddr=Network.piIp , port=57110) 
@@ -173,6 +177,8 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.set_turn_on_logo, '/turnOnLogo');
         oscAPI.bind(oscid, self.set_turn_off_logo, '/turnOffLogo');
         oscAPI.bind(oscid, self.set_incremental_turn_on_logo, '/incrementalTurnOnLogo');
+        
+        oscAPI.bind(oscid, self.set_to_bottom_up_curten, '/toBottomUpCurten');
         
         oscAPI.bind(oscid, self.set_theater_Chase, '/theaterChase');
         oscAPI.bind(oscid, self.set_logo_flash, '/logoFlash');

@@ -793,7 +793,9 @@ class Logo(object):
         mergedlist = []
         delta =41
         mergedlist.append(self.stripList[5].get_really_indexEnd() - delta - 2)
-        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 20))
+        
+        mergedlist.append(self.stripList[30].get_really_indexEnd() - (delta - 21))
+        
         mergedlist.append(self.stripList[13].get_really_indexStart() + delta -6)
         mergedlist.append(self.stripList[14].get_really_indexEnd() - delta - 1)
         
@@ -865,7 +867,7 @@ class Logo(object):
         mergedlist = []
         delta =49
         mergedlist.append(self.stripList[4].get_really_indexEnd() -(delta - 43))
-        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 13)
+        mergedlist.append(self.stripList[21].get_really_indexStart()+ delta - 14)
         mergedlist.append(self.stripList[1].get_really_indexStart() + delta+1)
         strips.append(mergedlist)
         mergedlist = []

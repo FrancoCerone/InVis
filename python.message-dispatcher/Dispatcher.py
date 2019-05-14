@@ -198,7 +198,6 @@ class Dispatcher(App):
     
         
         
-        
         oscAPI.bind(oscid, self.change_status_musk, '/changeStatus');
         oscAPI.bind(oscid, self.forward_message, '/toSetAudioVisualizerGraph');
         oscAPI.bind(oscid, self.forward_message, '/toSetMicLevel');

@@ -144,7 +144,6 @@ class TheaterChaseRunner(Thread):
     def teriminate(self):
         self._running = False
     def run(self):
-        print "accensione da thread Theater chase"
         iterations = 100
         wait_ms=50
         for j in range(iterations):
@@ -179,6 +178,8 @@ class BottomUpCurtenRunner(Thread):
         print "accensione BottomUpCurtenRunner"
         internalList = list(indexToTurnOn)
         for elementLed in internalList:
+            if canRunStrip == False:
+                    break            
             RaspBerryApp.setColorForElemtOrList(elementLed, strip)
 
 class TopDownCurtenRunner(Thread):
@@ -191,7 +192,56 @@ class TopDownCurtenRunner(Thread):
         print "accensione TopDownCurtenRunner"
         internalList = list(indexToTurnOn)
         for elementLed in reversed(internalList):
+            if canRunStrip == False:
+                    break            
             RaspBerryApp.setColorForElemtOrList(elementLed, strip)
+
+
+class DownUpDownRunner(Thread):
+    def __init__(self):
+        self.running = True
+    def teriminate(self):
+        print "terminated DownUpDownRunner"
+        self._running = False
+    def run(self):
+        numberOfRows = 30
+        iterations = 2
+        for j in range(iterations):
+            for j in range(len(indexToTurnOn) - numberOfRows +1 ):
+                if canRunStrip == False:
+                    break            
+                for count in range(0,numberOfRows):
+                    RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j + count], strip)
+                    if canRunStrip == False:
+                        break            
+                if(j>0):
+                    RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j -1], strip)
+                    if canRunStrip == False:
+                        break            
+                strip.show() 
+            j = len(indexToTurnOn)
+            while j > numberOfRows and canRunStrip:
+                if canRunStrip == False:
+                    break     
+                count  = numberOfRows
+                while count > 0 :
+                    if canRunStrip == False:
+                        break     
+                    RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j - count], strip)
+                    count = count - 1
+                if(j>0 and j< len(indexToTurnOn)):
+                    if canRunStrip == False:
+                        break  
+                    RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j], strip)
+                strip.show()    
+                j = j - 1
+        global color
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, color)
+            if canRunStrip == False:
+                break  
+        strip.show()
+        
 
     
 class RaspBerryApp(App):
@@ -205,7 +255,16 @@ class RaspBerryApp(App):
         strip.show()    
         time.sleep(10/1000.0)
         
+    @staticmethod 
+    def turnOffForElemtOrList(elementLed, strip):
+        if (type(elementLed) == list):
+            for ledStrip in elementLed:
+                strip.setPixelColor(ledStrip, Color(0, 0, 0))
+        else:
+            strip.setPixelColor(elementLed, Color(0, 0, 0))
+        strip.show()    
     
+        
     @staticmethod 
     def setColorForElemtOrListWithOutWaitAndShow(elementLed, strip):
         if (type(elementLed) == list):
@@ -236,11 +295,9 @@ class RaspBerryApp(App):
         oscAPI.bind(oscid, self.turnOff, '/turnOffLogo')
         oscAPI.bind(oscid, self.flash, '/logoFlash')
         oscAPI.bind(oscid, self.incrementalTurnOnLogocolorWipe, '/incrementalTurnOnLogo')
+        oscAPI.bind(oscid, self.downUpDownTurnOn, '/downUpDownTurnOnLogo')
         oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
         oscAPI.bind(oscid, self.setColor, '/toSetLogoColor')
-        
-
-
         oscAPI.bind(oscid, self.setStatus, '/toSetMusk')
         oscAPI.bind(oscid, self.setStatusMask1, '/toSetMusk1')
         oscAPI.bind(oscid, self.setStatusMask2, '/toSetMusk2')
@@ -252,7 +309,6 @@ class RaspBerryApp(App):
         oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
-        
         oscAPI.bind(oscid, self.setBottomUpCurten, '/toBottomUpCurten')
         oscAPI.bind(oscid, self.setTopDownCurten, '/toTopDownCurten')
     
@@ -269,16 +325,39 @@ class RaspBerryApp(App):
         
         
         ######################################
-        
-        
+        indexToTurnOn = logo.get_bottom_up_border_leds_index()
+        numberOfRows = 40
+        for jj in range(1):
+            for j in range(len(indexToTurnOn) - numberOfRows +1 ):
+                for count in range(0,numberOfRows):
+                    RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j + count], strip)
+                if(j>0):
+                    RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j -1], strip)
+                strip.show() 
+            j = len(indexToTurnOn)
+            while j > numberOfRows:
+                print "ci passas 1 "
+                count  = numberOfRows
+                while count > 0 :
+                    print "ci passas 2 "
+                    RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j - count], strip)
+                    count = count - 1
+                if(j>0 and j< len(indexToTurnOn)):
+                    print "ci passas 3 "
+                    RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j], strip)
+                strip.show()    
+                j = j - 1
+            
+            
+        global color
         for elementLed in indexToTurnOn:
             if(type(elementLed) == list):
                 for ledStrip in elementLed:
-                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
+                    strip.setPixelColor(ledStrip, color)
                 strip.show()
                 time.sleep(0.05)
             else:
-                strip.setPixelColor(elementLed, Color(127, 127, 127))
+                strip.setPixelColor(elementLed, color)
                 strip.show()
         
         for i in range(strip.numPixels()):
@@ -288,19 +367,15 @@ class RaspBerryApp(App):
         for elementLed in reversed(indexToTurnOn):
             if(type(elementLed) == list):
                 for ledStrip in elementLed:
-                    strip.setPixelColor(ledStrip, Color(127, 127, 127))
+                    strip.setPixelColor(ledStrip, color)
                 strip.show()
                 time.sleep(0.05)
             else:
-                strip.setPixelColor(elementLed, Color(127, 127, 127))
+                strip.setPixelColor(elementLed, color)
                 strip.show()
-        
 
-        
-        
+    
 
-        #################################################
-        
     def setColor(self, message, *args):
         print "Tunn on"
         print 'color 1' , int(message[2])
@@ -312,7 +387,6 @@ class RaspBerryApp(App):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0,0,0))
         strip.show()
-        print "indexToTurnOn", indexToTurnOn
         for i in indexToTurnOn:
             #print "set Color in the for", color
             RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
@@ -427,6 +501,20 @@ class RaspBerryApp(App):
             indexToTurnOn = logo.get_allSripIndex()
         
         A = WipeStripsRunner();
+        At = Thread(target=A.run)
+        At.start()
+        print "Fine"
+    
+    def downUpDownTurnOn(self, message, *args):
+        print "top Up Down"
+        global canRunStrip 
+        canRunStrip = True
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
+        global indexToTurnOn
+        indexToTurnOn = logo.get_bottom_up_border_leds_index()
+        A = DownUpDownRunner();
         At = Thread(target=A.run)
         At.start()
         print "Fine"

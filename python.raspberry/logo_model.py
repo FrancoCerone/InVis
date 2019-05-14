@@ -927,10 +927,11 @@ class Logo(object):
 if __name__ == '__main__':
     logo = Logo();
     
-
+    for count in range(1,11):
+        print count
     
-    print "ogo.get_bottom_up_border_leds_index()"
-    print logo.get_bottom_up_border_leds_index()
+    #print "ogo.get_bottom_up_border_leds_index()"
+    #print logo.get_bottom_up_border_leds_index()
     
 
     

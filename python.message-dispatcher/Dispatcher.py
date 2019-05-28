@@ -142,7 +142,13 @@ class Dispatcher(App):
     def setEyesAndMouthLedOn(self, message, *args):
         print Network.piIp
         oscAPI.sendMsg('/toSetEyesAndMounthLedOn', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
-    
+    def setDownUpDownTurnOnLogo(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/downUpDownTurnOnLogo', dataArray=[message[0]], ipAddr=Network.piIp , port=57110) 
+        
+    def setToTopDownCurten(self, message, *args):
+        print Network.piIp
+        oscAPI.sendMsg('/toTopDownCurten', dataArray=[message[0]], ipAddr=Network.piIp , port=57110)     
     def set_logo_flash(self, message, *args):
         print message
         oscAPI.sendMsg('/logoFlash', dataArray=[message[2]], ipAddr=Network.piIp , port=57110)    
@@ -195,6 +201,9 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.setBorderEyesMouthLedOn, '/toSetBorderEyesMouthLedOn')
         oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
+        oscAPI.bind(oscid, self.setDownUpDownTurnOnLogo, '/downUpDownTurnOnLogo')
+        oscAPI.bind(oscid, self.setDownUpDownTurnOnLogo, '/toTopDownCurten')
+        
     
         
         
@@ -214,7 +223,7 @@ class Dispatcher(App):
         menuScreen.ids.id.add_widget(raspberryIpLAbel)
         
         for ip in Network.ipList:
-            invisIp = Label(text='InViS IP  ->' +ip, markup=True)
+            invisIp = Label(text='Visual Go  ->' +ip, markup=True)
             menuScreen.ids.id.add_widget(invisIp)
         
         

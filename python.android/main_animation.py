@@ -11,7 +11,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from ButtonDimension import ButtonDimension
 from main1 import Touchtracer
 from kivy.storage.jsonstore import JsonStore
-
+from AnimationList import AnimationList
 
 
 from kivy.lang import Builder
@@ -414,7 +414,7 @@ class ControllerApp(App):
         
 
         
-        for fn in self.gifMap:
+        for fn in AnimationList.animationListMap:
             print fn
             btn = GifImageButton(
                 filename=fn,
@@ -425,7 +425,7 @@ class ControllerApp(App):
 
         #userAnimation.ids.touchTracker.add_widget(touchtracer)
                 
-        for fn in self.gifMap:
+        for fn in AnimationList.animationListMap:
             btn = AnimationImageButton(
                 store= self.store,
                 filename=fn,

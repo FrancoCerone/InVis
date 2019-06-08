@@ -816,8 +816,10 @@ class ControllerApp(App):
         muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo( background_normal = "button_icons/snake.png" ,  size_hint=(1, 1)))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(DownUpDownTurnOnLogo( background_normal = "button_icons/downUpDown.png" ,  size_hint=(1, 1)))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(TheaterChaseEffectLogo(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))
         
         
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))
@@ -826,9 +828,7 @@ class ControllerApp(App):
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto7"))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto8"))
         
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(ButtonModalityHandler.changeStatus)
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
         
         for color in self.logocolorMap:
             color2= self.colorMap.get(color)

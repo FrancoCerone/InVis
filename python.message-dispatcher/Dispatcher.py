@@ -202,7 +202,7 @@ class Dispatcher(App):
         oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
         oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
         oscAPI.bind(oscid, self.setDownUpDownTurnOnLogo, '/downUpDownTurnOnLogo')
-        oscAPI.bind(oscid, self.setDownUpDownTurnOnLogo, '/toTopDownCurten')
+        oscAPI.bind(oscid, self.set_to_top_down_curten, '/toTopDownCurten')
         
     
         

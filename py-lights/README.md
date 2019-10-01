@@ -1,5 +1,6 @@
-
-
+To launch on Raspberry:
+1) go in folder: 	~/FrancoPowerGroove/py-lights 
+2) RUN: 			sudo PYTHONPAT:".:build/lib.linux-armv71-2.7" python main2.py
 
 # Py-Lights
 Py-Lights (name pending) is a program to bind MIDI inputs different effects (actions) that output to 5050 LEDs.

@@ -40,7 +40,7 @@ LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 11  # Set to 0 for darkest and 255 for brightest
+LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
@@ -66,7 +66,7 @@ from setup import initialize
 
 from midi_in.InputControl import InputControl
 from midi_in.InputLogger import InputLogger
-from Color import Color
+
 
 class RaspBerryApp(App):
     def addAction(self, action):
@@ -115,11 +115,16 @@ class RaspBerryApp(App):
 
         numpixel = strip.numPixels()
         for i in range(numpixel):
-            strip.setPixelColor(numpixel - i, 100)
+            strip.setPixelColor(numpixel - i, 255)
         strip.show()
         
         print("Ready...")
-        # Main loop
+        
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(strip.numPixels() - i, 0)
+        strip.show()
+        
+        
         while True:
             self.params["Counter"] += 1
 
@@ -154,21 +159,25 @@ class RaspBerryApp(App):
         message, deltatime = event
 
         print(message)
+        print "leym!"
         vel = message[0]
         key = message[1]
         state = message[2] * 2
-        print('key: ' , key)
-        if(vel == 152):
-            print('45')
+        if(vel == 144):
             for i in range(strip.numPixels()):
-                strip.setPixelColor(strip.numPixels() - i, 100)
+                
+                if(key == 42):
+                    ledColor = Color(255,0,0)
+                else:
+                    ledColor = Color(0,255,0)
+                strip.setPixelColor(strip.numPixels() - i, ledColor)
             strip.show()
             for i in range(strip.numPixels()):
                 strip.setPixelColor(strip.numPixels() - i, 0)
             strip.show()
 
 
-        for midiInput in self.inputs:
+        '''for midiInput in self.inputs:
             print ("primo for")
             if(midiInput.key == key):
                 print ("prima if")
@@ -188,6 +197,6 @@ class RaspBerryApp(App):
                 if(midiInput.type == "knob"):
                     print('tknob')
                     midiInput.knob(self.params, state)
-
+        '''
 if __name__ == '__main__':
     RaspBerryApp().run()

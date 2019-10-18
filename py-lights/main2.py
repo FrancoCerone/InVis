@@ -91,23 +91,12 @@ class RaspBerryApp(App):
             "PIN_G": 0,
             "PIN_B": 0
         }
-
         self.inputLogger = InputLogger()
-
         self.actions = []
         self.inputs = []
-
-        #initialize(self, self.params)
-
-
-
-        # initialize midi
         print("Initializing MIDI")
         midiin, port_name = midiutil.open_midiinput(1)
         midiin.set_callback(self)
-        
-        
-        
         parser = argparse.ArgumentParser()
         parser.add_argument('-c', '--clear', action='store_true', help='clear the display on exit')
         args = parser.parse_args()

@@ -8,6 +8,7 @@ from neopixel import *
 import argparse
 from kivy.app import App
 from kivy.lib.osc import oscAPI
+import enum
 
 from argparse import FileType
 import fcntl
@@ -16,7 +17,6 @@ from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
-from kivy.lib.osc import oscAPI
 from kivy.metrics import MetricsBase
 from kivy.properties import ObjectProperty
 from kivy.uix.image import Image
@@ -33,9 +33,16 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(8,GPIO.OUT)
 GPIO.setup(10,GPIO.OUT)
 
+def get_ip_address():
+    ip = '192.168.0.52'
+    return ip
+class Network():
+    ip = get_ip_address();
+    
+
 
 # LED strip configuration:
-LED_COUNT      = 731     # Number of LED pixels.
+LED_COUNT      = 416     # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -50,6 +57,38 @@ global indexToTurnOn
 #indexToTurnOn = logo.get_eyes_and_mounth_strips_index()
 #indexToTurnOn = logo.get_bottom_up_border_index()
 
+
+class PadEnum(enum.IntEnum):
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_ 
+    
+
+class Pad1(PadEnum):
+    border  = 37
+    skin = 38
+    
+    start = 0 
+    end  = 104
+
+class Pad2(PadEnum):
+    
+    border  = 50
+    skin = 48
+    
+    start = 105 
+    end  = 208
+
+class Pad3(PadEnum):
+    border  = 47
+    skin = 45
+
+
+class Pad4(PadEnum):
+    border  = 58
+    skin = 43
+    start = 209
+    end  = 312
 
 
 global blackout
@@ -66,6 +105,49 @@ from setup import initialize
 
 from midi_in.InputControl import InputControl
 from midi_in.InputLogger import InputLogger
+'''class OscRunner(Thread):
+    oscAPI.init()
+    oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
+    oscAPI.bind(oscid, theaterChaseEffect, '/theaterChase')
+    Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+    def theaterChaseEffect(message, *args):
+        global canRunStrip 
+        canRunStrip = True
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, Color(0, 0, 0))
+        strip.show()
+        
+        A = TheaterChaseRunner();
+        At = Thread(target=A.run)
+        At.start()
+        print "Fine"  '''
+
+class TheaterChaseRunner(Thread):
+    def __init__(self):
+        self.running = True
+    def teriminate(self):
+        self._running = False
+    def run(self):
+        iterations = 100
+        wait_ms=50
+        for j in range(iterations):
+            print "1"
+            for q in range(3):
+                print "2"
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, color)
+                    if canRunStrip == False:
+                        break
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                    strip.setPixelColor(i+q, 0)
+                    if canRunStrip == False:
+                        break
+                if canRunStrip == False:
+                    break                    
+            if canRunStrip == False:
+                break
 
 
 class RaspBerryApp(App):
@@ -106,6 +188,16 @@ class RaspBerryApp(App):
         for i in range(numpixel):
             strip.setPixelColor(numpixel - i, 255)
         strip.show()
+        
+        #Init OSC Server
+        #oscAPI.init()
+        #oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
+        #oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
+        #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
+        #A = OscRunner();
+        #At = Thread(target=A.run)
+        #At.start()
         
         print("Ready...")
         
@@ -149,26 +241,82 @@ class RaspBerryApp(App):
 
         print(message)
         print "leym!"
+        
         vel = message[0]
-        key = message[1]
+        pad = message[1]
         state = message[2] * 2
+        
         if(vel == 144):
+            print 'Pad1.has_value(pad)',Pad1.has_value(pad)
+            if(Pad1.has_value(pad)):
+                for i in range(0,104):
+                    ledColor = Color(255,255,255)
+                    strip.setPixelColor(i, ledColor)
+                strip.show()
+            
+            elif(Pad2.has_value(pad)):
+                for i in range(105,208):
+                    ledColor = Color(0,0,255)
+                    
+                    strip.setPixelColor(i, ledColor)
+                strip.show()
+            
+            elif(Pad3.has_value(pad)):
+                for i in range(209,312):
+                    ledColor = Color(0,255,0)
+                    strip.setPixelColor(i, ledColor)
+                strip.show()
+            
+            elif(Pad4.has_value(pad)):
+                for i in range(313, 416):
+                    ledColor = Color(255,0,0)
+                    strip.setPixelColor(i, ledColor)
+                strip.show()
+            
+            
+            for i in range(strip.numPixels()):
+                strip.setPixelColor(i, 0)
+            strip.show()
+                    
+                
+'''        if(vel == 144):
             for i in range(strip.numPixels()):
                 
-                if(key == 42):
-                    ledColor = Color(255,0,0)
-                else:
+                if(pad == 38):
+                    ledColor = Color(255,255,255)
+                    if(i>103):
+                        ledColor = 0
+                        
+                elif(pad == 48):
                     ledColor = Color(0,255,0)
-                strip.setPixelColor(strip.numPixels() - i, ledColor)
+                    if(i<104):
+                        ledColor = 0
+                    if(i> 207):
+                        ledColor = 0
+                        
+                elif(pad == 45):
+                    ledColor = Color(0,0,255)
+                    if(i<208):
+                        ledColor = 0
+                    if(i> 311):
+                        ledColor = 0
+                elif(pad == 43):
+                    ledColor = Color(255,0,0)
+                    if(i<312):
+                        ledColor = 0
+                        
+                strip.setPixelColor(i, ledColor)
             strip.show()
+            
             for i in range(strip.numPixels()):
-                strip.setPixelColor(strip.numPixels() - i, 0)
+                strip.setPixelColor(i, 0)
             strip.show()
+            '''
 
 
-        '''for midiInput in self.inputs:
+'''    for midiInput in self.inputs:
             print ("primo for")
-            if(midiInput.key == key):
+            if(midiInput.pad == pad):
                 print ("prima if")
                 
                 if(midiInput.type == "trigger" and state != 0 ):

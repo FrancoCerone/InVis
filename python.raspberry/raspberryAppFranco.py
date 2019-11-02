@@ -418,7 +418,7 @@ class RaspBerryApp(App):
     def setBorderLedOn(self, message, *args):
         print "setBorderLedOn"
         global indexToTurnOn
-        indexToTurnOn = logo.get_border_index()
+        indexToTurnOn = logo.get_half1()
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
@@ -431,7 +431,7 @@ class RaspBerryApp(App):
     def setBorderEyesMouthLedOn(self, message, *args):
         print "setBorderEyesMouthLedOn"
         global indexToTurnOn
-        indexToTurnOn = logo.get_border_eyes_mouth_index()
+        indexToTurnOn = logo.get_half2()
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
@@ -513,7 +513,7 @@ class RaspBerryApp(App):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
         global indexToTurnOn
-        indexToTurnOn = logo.get_bottom_up_border_leds_index()
+        indexToTurnOn = logo.get_cross_leds_index()
         A = DownUpDownRunner();
         At = Thread(target=A.run)
         At.start()

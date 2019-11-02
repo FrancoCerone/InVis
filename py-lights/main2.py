@@ -63,30 +63,35 @@ class PadEnum(enum.IntEnum):
     def has_value(cls, value):
         return value in cls._value2member_map_ 
     
+class Kick(PadEnum):
+    skin = 1
 
 class Pad1(PadEnum):
-    border  = 37
-    skin = 38
+    border  = 50
+    skin = 48
+    
     
     start = 0 
     end  = 104
 
 class Pad2(PadEnum):
+    border  = 37
+    skin = 38
     
-    border  = 50
-    skin = 48
     
     start = 105 
     end  = 208
 
 class Pad3(PadEnum):
-    border  = 47
-    skin = 45
+    border  = 58
+    skin = 43
 
 
 class Pad4(PadEnum):
-    border  = 58
-    skin = 43
+    
+    border  = 47
+    skin = 45
+    
     start = 209
     end  = 312
 
@@ -248,6 +253,11 @@ class RaspBerryApp(App):
         
         if(vel == 144):
             print 'Pad1.has_value(pad)',Pad1.has_value(pad)
+            if(Kick.has_value(pad)):
+                for i in range(0,416):
+                    ledColor = Color(0,0,255)
+                    strip.setPixelColor(i, ledColor)
+                strip.show()
             if(Pad1.has_value(pad)):
                 for i in range(0,104):
                     ledColor = Color(255,255,255)
@@ -256,6 +266,7 @@ class RaspBerryApp(App):
             
             elif(Pad2.has_value(pad)):
                 for i in range(105,208):
+                    #blue
                     ledColor = Color(0,0,255)
                     
                     strip.setPixelColor(i, ledColor)

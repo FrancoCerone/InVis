@@ -8,9 +8,12 @@ Created on Feb 12, 2019
 class LogoStrip(object):
     indexStart = 0 
     length = 0
+    
     def __init__(self, start, stripLength):
         self.indexStart = start
         self.length = stripLength
+    
+
     
     def get_indexStart(self):
         return self.indexStart
@@ -23,7 +26,7 @@ class LogoStrip(object):
     
     
     def get_indexEnd(self):
-        return self.indexStart + self.length -1;
+        return self.indexStart + self.length;
     
     def get_really_indexEnd(self):
         return self.indexStart + self.length -2;
@@ -31,63 +34,152 @@ class LogoStrip(object):
     
 class LogoFranco(object):
     stripList= []
+    ledStripSize = 52
+    
+    
     def __init__(self):
-        strip1 = LogoStrip(1,52)
+        strip1 = LogoStrip(0,self.ledStripSize -1)
         self.stripList.append(strip1)
         
-        strip2 = LogoStrip(strip1.get_indexEnd()+1,52)
+        strip2 = LogoStrip(strip1.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip2)
         
-        strip3 = LogoStrip(strip2.get_indexEnd()+1,52)
+        strip3 = LogoStrip(strip2.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip3)
         
-        strip4 = LogoStrip(strip3.get_indexEnd()+1,52)
+        strip4 = LogoStrip(strip3.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip4)
         
-        strip5 = LogoStrip(strip4.get_indexEnd()+1,52)
+        strip5 = LogoStrip(strip4.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip5)
         
-        strip6 = LogoStrip(strip5.get_indexEnd()+1,52)
+        strip6 = LogoStrip(strip5.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip6)
         
-        strip7 = LogoStrip(strip6.get_indexEnd()+1,52)
+        strip7 = LogoStrip(strip6.get_indexEnd()+1,self.ledStripSize-1)
         self.stripList.append(strip7)
         
-        strip8 = LogoStrip(strip7.get_indexEnd()+1,52)
+        strip8 = LogoStrip(strip7.get_indexEnd()+1,self.ledStripSize)
         self.stripList.append(strip8)
         
+    def get_stripList(self):
+        return self.stripList
+    
+                
+    def get_eyes_strips_index(self):
+        borderStrip = []
+        numberOfLed = 10;
+        deltaMinusOne = numberOfLed  -1
+        for index in range (0,numberOfLed):
+            borderStrip.append(self.stripList[1].get_indexEnd()  - deltaMinusOne + index - 10)
+            borderStrip.append(self.stripList[0].get_indexStart() + deltaMinusOne - index + 10)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + deltaMinusOne - index + 10)
+            borderStrip.append(self.stripList[3].get_indexEnd()  - deltaMinusOne + index  - 10)
+            
+            borderStrip.append(self.stripList[5].get_indexEnd()  - deltaMinusOne + index - 10)
+            borderStrip.append(self.stripList[4].get_indexStart() + deltaMinusOne - index +10)
+            
+            borderStrip.append(self.stripList[7].get_indexEnd()  - deltaMinusOne + index -10)
+            borderStrip.append(self.stripList[6].get_indexStart() + deltaMinusOne - index +10)
         
+        for index in range (0,numberOfLed):
+            borderStrip.append(self.stripList[1].get_indexEnd()  - deltaMinusOne + index - 30)
+            borderStrip.append(self.stripList[0].get_indexStart() + deltaMinusOne - index + 30)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + deltaMinusOne - index + 30)
+            borderStrip.append(self.stripList[3].get_indexEnd()  - deltaMinusOne + index  - 30)
+            
+            borderStrip.append(self.stripList[5].get_indexEnd()  - deltaMinusOne + index - 30)
+            borderStrip.append(self.stripList[4].get_indexStart() + deltaMinusOne - index +30)
+            
+            borderStrip.append(self.stripList[7].get_indexEnd()  - deltaMinusOne + index -30)
+            borderStrip.append(self.stripList[6].get_indexStart() + deltaMinusOne - index +30)
+            
+        return self.getIndex(borderStrip)
+        
+    def get_eyes_and_mounth_strips_index(self):
+        borderStrip = []
+        numberOfLed = 10;
+        deltaMinusOne = numberOfLed  -1
+        for index in range (0,numberOfLed):
+            borderStrip.append(self.stripList[1].get_indexEnd()  - deltaMinusOne + index)
+            borderStrip.append(self.stripList[0].get_indexStart() + deltaMinusOne - index)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + deltaMinusOne - index)
+            borderStrip.append(self.stripList[3].get_indexEnd()  - deltaMinusOne + index)
+            
+            borderStrip.append(self.stripList[5].get_indexEnd()  - deltaMinusOne + index)
+            borderStrip.append(self.stripList[4].get_indexStart() + deltaMinusOne - index)
+            
+            borderStrip.append(self.stripList[7].get_indexEnd()  - deltaMinusOne + index)
+            borderStrip.append(self.stripList[6].get_indexStart() + deltaMinusOne - index)
+            
+        for index in range (0,numberOfLed):
+            borderStrip.append(self.stripList[1].get_indexEnd()  - deltaMinusOne + index - 20)
+            borderStrip.append(self.stripList[0].get_indexStart() + deltaMinusOne - index + 20)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + deltaMinusOne - index + 20)
+            borderStrip.append(self.stripList[3].get_indexEnd()  - deltaMinusOne + index  - 20)
+            
+            borderStrip.append(self.stripList[5].get_indexEnd()  - deltaMinusOne + index - 20)
+            borderStrip.append(self.stripList[4].get_indexStart() + deltaMinusOne - index +20)
+            
+            borderStrip.append(self.stripList[7].get_indexEnd()  - deltaMinusOne + index -20)
+            borderStrip.append(self.stripList[6].get_indexStart() + deltaMinusOne - index +20)
+            
+        for index in range (0,numberOfLed):
+            borderStrip.append(self.stripList[1].get_indexEnd()  - deltaMinusOne + index - 40)
+            borderStrip.append(self.stripList[0].get_indexStart() + deltaMinusOne - index + 40)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + deltaMinusOne - index + 40)
+            borderStrip.append(self.stripList[3].get_indexEnd()  - deltaMinusOne + index  - 40)
+            
+            borderStrip.append(self.stripList[5].get_indexEnd()  - deltaMinusOne + index - 40)
+            borderStrip.append(self.stripList[4].get_indexStart() + deltaMinusOne - index +40)
+            
+            borderStrip.append(self.stripList[7].get_indexEnd()  - deltaMinusOne + index -40)
+            borderStrip.append(self.stripList[6].get_indexStart() + deltaMinusOne - index +40)
+        
+            
+        return self.getIndex(borderStrip)
         
 
-    def get_border_index(self):
+    def get_half1(self):
         borderStrip = []
-        borderStrip.append(self.stripList[0])
-        borderStrip.append(self.stripList[1])
-        borderStrip.append(self.stripList[2])
-        borderStrip.append(self.stripList[3])
-        borderStrip.append(self.stripList[4])
-        borderStrip.append(self.stripList[5])
-        borderStrip.append(self.stripList[6])
-        borderStrip.append(self.stripList[7])
-        borderStrip.append(self.stripList[8])
+        for index in range (0,27):
+            borderStrip.append(self.stripList[0].get_indexStart() + 26 - index)
+            borderStrip.append(self.stripList[1].get_indexStart()  + 25 + index)
+            
+            borderStrip.append(self.stripList[2].get_indexStart() + 25 + index)
+            borderStrip.append(self.stripList[3].get_indexStart() + 26  - index)
+            
+            borderStrip.append(self.stripList[4].get_indexStart() + 26 - index)
+            borderStrip.append(self.stripList[5].get_indexStart() + 25 + index)
+            
+            borderStrip.append(self.stripList[6].get_indexStart() + 25 + index)
+            borderStrip.append(self.stripList[7].get_indexStart() + 26 -index)
+            
         return self.getIndex(borderStrip)
 
-    def get_border_eyes_mouth_index(self):
-        strips = []
-        strips.append(self.stripList[0])
-        strips.append(self.stripList[1])
-        strips.append(self.stripList[2])
-        strips.append(self.stripList[3])
-        strips.append(self.stripList[4])
-        strips.append(self.stripList[5])
+    def get_half2(self):
+        borderStrip = []
+        for index in range (0,27):
+            borderStrip.append(self.stripList[1].get_indexStart() + 26 - index)
+            borderStrip.append(self.stripList[0].get_indexStart()  + 25 + index)
+            
+            borderStrip.append(self.stripList[3].get_indexStart() + 25 + index)
+            borderStrip.append(self.stripList[2].get_indexStart() + 26  - index)
+            
+            borderStrip.append(self.stripList[5].get_indexStart() + 26 - index)
+            borderStrip.append(self.stripList[4].get_indexStart() + 25 + index)
+            
+            borderStrip.append(self.stripList[7].get_indexStart() + 25 + index)
+            borderStrip.append(self.stripList[6].get_indexStart() + 26 -index)
+            
+        return self.getIndex(borderStrip)
+        
 
-        return self.getIndex(strips)
-    
-    def get_eyes_strips_index(self):
-        strips = []
-        strips.append(self.stripList[0])
-        strips.append(self.stripList[7])
-        return self.getIndex(strips)
 
     def get_bottom_up_border_index(self):
         strips = []
@@ -107,25 +199,36 @@ class LogoFranco(object):
     
     def get_bottom_up_border_leds_index(self):
         strips = []
-        strips.append(self.getIndex(self.stripList[0]))
-        mergedlist = []
-        for delta in range (0,51):
-            mergedlist.append(self.stripList[0].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[1].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[2].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[3].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[4].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[5].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[6].get_really_indexStart() + delta)
-            mergedlist.append(self.stripList[7].get_really_indexStart() + delta)
+        for delta in range (0,self.ledStripSize):
+            mergedlist = []
+            
+            mergedlist.append(self.stripList[0].get_indexStart() + delta)
+            mergedlist.append( self.stripList[1].get_indexEnd()  - delta)
+            
+            mergedlist.append(self.stripList[2].get_indexStart() + delta)
+            mergedlist.append(self.stripList[3].get_indexEnd()  - delta)
+            
+            mergedlist.append(self.stripList[4].get_indexStart() + delta)
+            mergedlist.append(self.stripList[5].get_indexEnd()  - delta)
+            
+            mergedlist.append(self.stripList[6].get_indexStart() + delta)
+            mergedlist.append(self.stripList[7].get_indexEnd()  - delta)
+                                  
             strips.append(mergedlist)
-
+        return self.getIndex(strips)
+    
+    def get_cross_leds_index(self):
+        strips = []
+        for delta in range (0,self.ledStripSize):
+            mergedlist = []
+            for stripIndex in range (0,8):
+                mergedlist.append(self.stripList[stripIndex].get_indexStart() + delta)
+            strips.append(mergedlist)
         return self.getIndex(strips)
             
-    def get_eyes_and_mounth_strips_index(self):
-        strips = []
-        strips.append(self.stripList[8])
-        return self.getIndex(strips)
+   
+
+
     
     def get_allSripIndex(self):
         return self.getIndex(self.stripList)
@@ -164,10 +267,12 @@ class LogoFranco(object):
 if __name__ == '__main__':
     logo = LogoFranco();
     
-    for count in range(1,11):
-        print count
+   # for count in range(0,7):
+    #s    print logo.get_allSrip()[count].get_indexStart() , " " , logo.get_allSrip()[count].get_indexEnd()
     
-    #print "ogo.get_bottom_up_border_leds_index()"
+    
+    
+    print logo.get_half1()
     #print logo.get_bottom_up_border_leds_index()
     
 

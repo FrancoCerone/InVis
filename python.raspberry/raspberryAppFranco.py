@@ -2,16 +2,17 @@ import time
 from neopixel import *
 import argparse
 from kivy.app import App
-from kivy.lib.osc import oscAPI
+
+from oscpy.server import OSCThreadServer
+from time import sleep
+
 
 from argparse import FileType
 import fcntl
-from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
-from kivy.lib.osc import oscAPI
 from kivy.metrics import MetricsBase
 from kivy.properties import ObjectProperty
 from kivy.uix.image import Image
@@ -43,10 +44,7 @@ LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 global color
 color = Color(255, 0, 0)
-global indexToTurnOn
-#indexToTurnOn = logo.get_eyes_and_mounth_strips_index()
-#indexToTurnOn = logo.get_bottom_up_border_index()
-indexToTurnOn = logo.get_bottom_up_border_leds_index()
+
 
 
 
@@ -63,7 +61,7 @@ canRunStrip = False
 
 
 def get_ip_address():
-    ip = '192.168.0.52'
+    ip = '192.168.0.36'
     return ip
 class Network():
     ip = get_ip_address();
@@ -126,15 +124,11 @@ class WipeStripsRunner(Thread):
     def teriminate(self):
         self._running = False
     def run(self):
-        print "accensione da thread Separato incrermentale"
-        print "canRunStrip fuori", canRunStrip
-        
         for i in indexToTurnOn:
             RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
             strip.show()
             time.sleep(10/1000.0)
             if canRunStrip == False:
-                print 'break'
                 break
 
 
@@ -146,10 +140,9 @@ class TheaterChaseRunner(Thread):
     def run(self):
         iterations = 100
         wait_ms=50
+        print ("theater chase")
         for j in range(iterations):
-            print "1"
             for q in range(3):
-                print "2"
                 for i in range(0, strip.numPixels(), 3):
                     strip.setPixelColor(i+q, color)
                     if canRunStrip == False:
@@ -172,10 +165,8 @@ class BottomUpCurtenRunner(Thread):
     def __init__(self):
         self.running = True
     def teriminate(self):
-        print "terminated bottomUp"
         self._running = False
     def run(self):
-        print "accensione BottomUpCurtenRunner"
         internalList = list(indexToTurnOn)
         for elementLed in internalList:
             if canRunStrip == False:
@@ -186,10 +177,8 @@ class TopDownCurtenRunner(Thread):
     def __init__(self):
         self.running = True
     def teriminate(self):
-        print "terminated topDown"
         self._running = False
     def run(self):
-        print "accensione TopDownCurtenRunner"
         internalList = list(indexToTurnOn)
         for elementLed in reversed(internalList):
             if canRunStrip == False:
@@ -201,7 +190,6 @@ class DownUpDownRunner(Thread):
     def __init__(self):
         self.running = True
     def teriminate(self):
-        print "terminated DownUpDownRunner"
         self._running = False
     def run(self):
         numberOfRows = 30
@@ -274,7 +262,8 @@ class RaspBerryApp(App):
             strip.setPixelColor(elementLed, color)
     
     def build(self):
-
+        global indexToTurnOn
+        indexToTurnOn = logo.get_bottom_up_border_leds_index()
 
         
         parser = argparse.ArgumentParser()
@@ -282,37 +271,34 @@ class RaspBerryApp(App):
         args = parser.parse_args()
         strip.begin()
 
-        print "Accensione in corso"
+        print ("Accensione in corso")
         
         numpixel = strip.numPixels()
         for i in range(numpixel):
             strip.setPixelColor(numpixel - i, Color(0, 0, 0))
             strip.show()
         
-        oscAPI.init()
-        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110) # per elektroWave WiFi: 192.168.0.12
-        oscAPI.bind(oscid, self.turnOn, '/turnOnLogo') 
-        oscAPI.bind(oscid, self.turnOff, '/turnOffLogo')
-        oscAPI.bind(oscid, self.flash, '/logoFlash')
-        oscAPI.bind(oscid, self.incrementalTurnOnLogocolorWipe, '/incrementalTurnOnLogo')
-        oscAPI.bind(oscid, self.downUpDownTurnOn, '/downUpDownTurnOnLogo')
-        oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
-        oscAPI.bind(oscid, self.setColor, '/toSetLogoColor')
-        oscAPI.bind(oscid, self.setStatus, '/toSetMusk')
-        oscAPI.bind(oscid, self.setStatusMask1, '/toSetMusk1')
-        oscAPI.bind(oscid, self.setStatusMask2, '/toSetMusk2')
-        oscAPI.bind(oscid, self.changeStatus, '/changeStatus')
+        oscAPI = OSCThreadServer()
+        sock = oscAPI.listen(address=Network.ip, port=57110, default=True)
+        oscAPI.bind(  b'/turnOnLogo', self.turnOn) 
+        oscAPI.bind( b'/turnOffLogo', self.turnOff)
+        oscAPI.bind( b'/logoFlash',self.flash)
+        oscAPI.bind(  b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe,)
+        oscAPI.bind(  b'/downUpDownTurnOnLogo',self.downUpDownTurnOn)
+        oscAPI.bind(  b'/theaterChase', self.theaterChaseEffect)
+        oscAPI.bind(  b'/toSetLogoColor', self.setColor)
+        oscAPI.bind(  b'/toSetMusk', self.setStatus)
         
-        oscAPI.bind(oscid, self.setAllLedsOn, '/toSetAllLedsOn')
-        oscAPI.bind(oscid, self.setBorderLedOn, '/toSetBorderLedOn')
-        oscAPI.bind(oscid, self.setBorderEyesMouthLedOn, '/toSetBorderEyesMouthLedOn')
-        oscAPI.bind(oscid, self.setEyesLedOn, '/toSetEyesLedOn')
-        oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
-        oscAPI.bind(oscid, self.setEyesAndMouthLedOn, '/toSetEyesAndMounthLedOn')
-        oscAPI.bind(oscid, self.setBottomUpCurten, '/toBottomUpCurten')
-        oscAPI.bind(oscid, self.setTopDownCurten, '/toTopDownCurten')
+        oscAPI.bind(  b'/toSetAllLedsOn', self.setAllLedsOn)
+        oscAPI.bind( b'/toSetBorderLedOn', self.setBorderLedOn )
+        oscAPI.bind(  b'/toSetBorderEyesMouthLedOn', self.setBorderEyesMouthLedOn)
+        oscAPI.bind(  b'/toSetEyesLedOn',self.setEyesLedOn)
+        oscAPI.bind( b'/toSetEyesAndMounthLedOn',self.setEyesAndMouthLedOn )
+        oscAPI.bind(  b'/toSetEyesAndMounthLedOn', self.setEyesAndMouthLedOn)
+        oscAPI.bind(  b'/toBottomUpCurten',self.setBottomUpCurten)
+        oscAPI.bind(  b'/toTopDownCurten', self.setTopDownCurten)
     
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        
 
         #################################################
         #Show case accensione ###########################
@@ -336,14 +322,14 @@ class RaspBerryApp(App):
                 strip.show() 
             j = len(indexToTurnOn)
             while j > numberOfRows:
-                print "ci passas 1 "
+                print ("ci passas 1 ")
                 count  = numberOfRows
                 while count > 0 :
-                    print "ci passas 2 "
+                    print ("ci passas 2 ")
                     RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j - count], strip)
                     count = count - 1
                 if(j>0 and j< len(indexToTurnOn)):
-                    print "ci passas 3 "
+                    print ("ci passas 3 ")
                     RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j], strip)
                 strip.show()    
                 j = j - 1
@@ -377,10 +363,7 @@ class RaspBerryApp(App):
     
 
     def setColor(self, message, *args):
-        print "Tunn on"
-        print 'color 1' , int(message[2])
-        print 'color 2' , int(message[3])
-        print 'color 3' , int(message[4])
+        print ("Tunn on")
         global color
         color = Color(int(message[2]), int(message[3]), int(message[4]))
         canRunStrip = True
@@ -392,7 +375,6 @@ class RaspBerryApp(App):
             RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
         strip.show()
     def turnOn(self, message, *args):
-        print "Tunn on"
         canRunStrip = True
 
         for i in range(strip.numPixels()):
@@ -404,7 +386,6 @@ class RaspBerryApp(App):
         strip.show()
         
     def setAllLedsOn(self, message, *args):
-        print "setAllLedsOn"
         global indexToTurnOn
         indexToTurnOn = logo.get_allSripIndex()
         for i in range(strip.numPixels()):
@@ -416,7 +397,6 @@ class RaspBerryApp(App):
         strip.show()
     
     def setBorderLedOn(self, message, *args):
-        print "setBorderLedOn"
         global indexToTurnOn
         indexToTurnOn = logo.get_half1()
         for i in range(strip.numPixels()):
@@ -429,7 +409,6 @@ class RaspBerryApp(App):
         
     
     def setBorderEyesMouthLedOn(self, message, *args):
-        print "setBorderEyesMouthLedOn"
         global indexToTurnOn
         indexToTurnOn = logo.get_half2()
         for i in range(strip.numPixels()):
@@ -441,7 +420,6 @@ class RaspBerryApp(App):
         strip.show()
         
     def setEyesLedOn(self, message, *args):
-        print "setBorderEyesMouthLedOn"
         global indexToTurnOn
         indexToTurnOn = logo.get_eyes_strips_index()
         for i in range(strip.numPixels()):
@@ -453,7 +431,6 @@ class RaspBerryApp(App):
         strip.show()
     
     def setEyesAndMouthLedOn(self, message, *args):
-        print "setBorderEyesMouthLedOn"
         global indexToTurnOn
         indexToTurnOn = logo.get_eyes_and_mounth_strips_index()
         for i in range(strip.numPixels()):
@@ -468,20 +445,16 @@ class RaspBerryApp(App):
     def flash(self, message, *args):
         global canRunStrip
         canRunStrip = False
-        print "flash"
         for i in indexToTurnOn:
             strip.setPixelColor(i, color)
         strip.show()
         time.sleep(flashSleepTime)
-        print "acceso"
         global blackout
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
-        print "spento"
     
     def turnOff(self, message, *args):
-        print "Turn off"
         global canRunStrip
         canRunStrip = False
         for i in range(strip.numPixels()):
@@ -490,23 +463,19 @@ class RaspBerryApp(App):
 
 
     def incrementalTurnOnLogocolorWipe(self, message, *args):
-        print "accensione incrermentale"
         global canRunStrip 
         canRunStrip = True
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
         if(len(indexToTurnOn)== 52):
-            global indexToTurnOn
             indexToTurnOn = logo.get_allSripIndex()
         
         A = WipeStripsRunner();
         At = Thread(target=A.run)
         At.start()
-        print "Fine"
     
     def downUpDownTurnOn(self, message, *args):
-        print "top Up Down"
         global canRunStrip 
         canRunStrip = True
         for i in range(strip.numPixels()):
@@ -517,7 +486,6 @@ class RaspBerryApp(App):
         A = DownUpDownRunner();
         At = Thread(target=A.run)
         At.start()
-        print "Fine"
 
     
 
@@ -531,7 +499,6 @@ class RaspBerryApp(App):
         A = TheaterChaseRunner();
         At = Thread(target=A.run)
         At.start()
-        print "Fine"
     
     def setBottomUpCurten(self, message, *args):
         global canRunStrip 
@@ -561,7 +528,6 @@ class RaspBerryApp(App):
     
       
     def setStatus(self, message, *args):
-        print 'arrivato il messaggio' , message[2]
         if message[2] == 0 :
             #print 'accendo'
             GPIO.output(10,(message[2])%2)
@@ -581,11 +547,9 @@ class RaspBerryApp(App):
 
             
     def setStatusMask1(self, message, *args):
-        print 'arrivato il messaggio' , message[2]
         GPIO.output(8,(message[2]+1)%2)
         
     def setStatusMask2(self, message, *args):
-        print 'arrivato il messaggio' , message[2]
         GPIO.output(10, (message[2]+1)%2)
 
 

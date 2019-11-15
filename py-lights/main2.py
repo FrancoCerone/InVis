@@ -7,9 +7,8 @@ import time
 from neopixel import *
 import argparse
 from kivy.app import App
-from kivy.lib.osc import oscAPI
 import enum
-
+from oscpy.server import OSCThreadServer
 from argparse import FileType
 import fcntl
 from kivy.app import App
@@ -27,11 +26,9 @@ import time
 import RPi.GPIO as GPIO
 import time
 from threading import Thread
+from kivy.clock import Clock
 
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(8,GPIO.OUT)
-GPIO.setup(10,GPIO.OUT)
 
 def get_ip_address():
     ip = '192.168.0.52'
@@ -43,7 +40,7 @@ class Network():
 
 # LED strip configuration:
 LED_COUNT      = 416     # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 13     # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
@@ -106,53 +103,7 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, 
 global canRunStrip
 canRunStrip = False  
 
-from setup import initialize
 
-from midi_in.InputControl import InputControl
-from midi_in.InputLogger import InputLogger
-'''class OscRunner(Thread):
-    oscAPI.init()
-    oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
-    oscAPI.bind(oscid, theaterChaseEffect, '/theaterChase')
-    Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-    def theaterChaseEffect(message, *args):
-        global canRunStrip 
-        canRunStrip = True
-        for i in range(strip.numPixels()):
-            strip.setPixelColor(i, Color(0, 0, 0))
-        strip.show()
-        
-        A = TheaterChaseRunner();
-        At = Thread(target=A.run)
-        At.start()
-        print "Fine"  '''
-
-class TheaterChaseRunner(Thread):
-    def __init__(self):
-        self.running = True
-    def teriminate(self):
-        self._running = False
-    def run(self):
-        iterations = 100
-        wait_ms=50
-        for j in range(iterations):
-            print "1"
-            for q in range(3):
-                print "2"
-                for i in range(0, strip.numPixels(), 3):
-                    strip.setPixelColor(i+q, color)
-                    if canRunStrip == False:
-                        break
-                strip.show()
-                time.sleep(wait_ms/1000.0)
-                for i in range(0, strip.numPixels(), 3):
-                    strip.setPixelColor(i+q, 0)
-                    if canRunStrip == False:
-                        break
-                if canRunStrip == False:
-                    break                    
-            if canRunStrip == False:
-                break
 
 
 class RaspBerryApp(App):
@@ -160,12 +111,10 @@ class RaspBerryApp(App):
         self.actions.append(action)
         return action
 
-    def addInput(self, action, type, key, setting):
-        midiInput = InputControl(action, type, key, setting)
-        self.inputs.append(midiInput)
-        self.inputLogger.addInput(midiInput)
+
 
     def build(self):
+        
         print("Starting py-lights...")
 
         self.params = {
@@ -178,7 +127,6 @@ class RaspBerryApp(App):
             "PIN_G": 0,
             "PIN_B": 0
         }
-        self.inputLogger = InputLogger()
         self.actions = []
         self.inputs = []
         print("Initializing MIDI")
@@ -233,26 +181,22 @@ class RaspBerryApp(App):
             self.params["G"] = min(self.params["G"], self.params["MAX"])
             self.params["B"] = min(self.params["B"], self.params["MAX"])
 
-            #pi.set_PWM_dutycycle(self.params["PIN_R"], self.params["R"] * self.params["VISIBILITY"])
-            #pi.set_PWM_dutycycle(self.params["PIN_G"], self.params["G"] * self.params["VISIBILITY"])
-            #pi.set_PWM_dutycycle(self.params["PIN_B"], self.params["B"] * self.params["VISIBILITY"])
-
             time.sleep(0.01)
 
         print("Goodbye!")
 
     def __call__(self, event, data=None):
+
+        
         message, deltatime = event
 
         print(message)
-        print "leym!"
         
         vel = message[0]
         pad = message[1]
         state = message[2] * 2
         
         if(vel == 144):
-            print 'Pad1.has_value(pad)',Pad1.has_value(pad)
             if(Kick.has_value(pad)):
                 for i in range(0,416):
                     ledColor = Color(0,0,255)
@@ -284,67 +228,11 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            
+            ledColor = Color(0,1,1)
             for i in range(strip.numPixels()):
-                strip.setPixelColor(i, 0)
+                strip.setPixelColor(i, ledColor)
             strip.show()
                     
                 
-'''        if(vel == 144):
-            for i in range(strip.numPixels()):
-                
-                if(pad == 38):
-                    ledColor = Color(255,255,255)
-                    if(i>103):
-                        ledColor = 0
-                        
-                elif(pad == 48):
-                    ledColor = Color(0,255,0)
-                    if(i<104):
-                        ledColor = 0
-                    if(i> 207):
-                        ledColor = 0
-                        
-                elif(pad == 45):
-                    ledColor = Color(0,0,255)
-                    if(i<208):
-                        ledColor = 0
-                    if(i> 311):
-                        ledColor = 0
-                elif(pad == 43):
-                    ledColor = Color(255,0,0)
-                    if(i<312):
-                        ledColor = 0
-                        
-                strip.setPixelColor(i, ledColor)
-            strip.show()
-            
-            for i in range(strip.numPixels()):
-                strip.setPixelColor(i, 0)
-            strip.show()
-            '''
-
-
-'''    for midiInput in self.inputs:
-            print ("primo for")
-            if(midiInput.pad == pad):
-                print ("prima if")
-                
-                if(midiInput.type == "trigger" and state != 0 ):
-                    print('trigger')
-                    midiInput.trigger(self.params, state)
-                if(midiInput.type == "trigger_hold"):
-                    print('trigger hold')
-                    midiInput.triggerHold(self.params, state)
-                if(midiInput.type == "toggle" and state != 0):
-                    print('toogle')
-                    midiInput.otoggle(self.params)
-                if(midiInput.type == "hold"):
-                    print(' hold')
-                    midiInput.hold(self.params, 255 if state > 0 else 0)
-                if(midiInput.type == "knob"):
-                    print('tknob')
-                    midiInput.knob(self.params, state)
-        '''
 if __name__ == '__main__':
     RaspBerryApp().run()

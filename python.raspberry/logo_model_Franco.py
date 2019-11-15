@@ -267,13 +267,6 @@ class LogoFranco(object):
 if __name__ == '__main__':
     logo = LogoFranco();
     
-   # for count in range(0,7):
-    #s    print logo.get_allSrip()[count].get_indexStart() , " " , logo.get_allSrip()[count].get_indexEnd()
-    
-    
-    
-    print logo.get_half1()
-    #print logo.get_bottom_up_border_leds_index()
     
 
     

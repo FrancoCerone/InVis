@@ -16,8 +16,6 @@ from threading import Thread
 
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(8,GPIO.OUT)
-GPIO.setup(10,GPIO.OUT)
 
 
 logo = LogoFranco()
@@ -116,7 +114,7 @@ class WipeStripsRunner(Thread):
         for i in indexToTurnOn:
             RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(i, strip)
             strip.show()
-            time.sleep(10/1000.0)
+            time.sleep(100/1000.0)
             if canRunStrip == False:
                 break
 
@@ -272,12 +270,11 @@ class RaspBerryApp():
         oscAPI.bind(  b'/turnOnLogo', self.turnOn) 
         oscAPI.bind( b'/turnOffLogo', self.turnOff)
         oscAPI.bind( b'/logoFlash',self.flash)
-        oscAPI.bind(  b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe,)
+        oscAPI.bind(  b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe)
         oscAPI.bind(  b'/downUpDownTurnOnLogo',self.downUpDownTurnOn)
         oscAPI.bind(  b'/theaterChase', self.theaterChaseEffect)
         
         oscAPI.bind(  b'/toSetLogoColor', self.setColor)
-        oscAPI.bind(  b'/toSetMusk', self.setStatus)
         
         oscAPI.bind(  b'/toSetAllLedsOn', self.setAllLedsOn)
         oscAPI.bind( b'/toSetBorderLedOn', self.setBorderLedOn )
@@ -312,14 +309,11 @@ class RaspBerryApp():
                 strip.show() 
             j = len(indexToTurnOn)
             while j > numberOfRows:
-                print ("ci passas 1 ")
                 count  = numberOfRows
                 while count > 0 :
-                    print ("ci passas 2 ")
                     RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j - count], strip)
                     count = count - 1
                 if(j>0 and j< len(indexToTurnOn)):
-                    print ("ci passas 3 ")
                     RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j], strip)
                 strip.show()    
                 j = j - 1
@@ -467,7 +461,7 @@ class RaspBerryApp():
         strip.show()
         global indexToTurnOn
         if(len(indexToTurnOn)== 52):
-            indexToTurnOn = logo.get_allSripIndex()
+            indexToTurnOn = logo.get_left2rightSripIndex()
         
         A = WipeStripsRunner();
         At = Thread(target=A.run)
@@ -525,39 +519,6 @@ class RaspBerryApp():
     
     
       
-    def setStatus(self, message, *args):
-        if message[2] == 0 :
-            #print 'accendo'
-            GPIO.output(10,(message[2])%2)
-            time.sleep(0.1)
-            GPIO.output(8,(message[2])%2)
-        else:
-            #print 'spengo'
-            GPIO.output(10,(message[2])%2)
-            GPIO.output(8,(message[2])%2)        
-
-    def changeStatus(self, message, *args):
-        GPIO.output(8,1)    
-        time.sleep(0.1)
-        GPIO.output(8,0)
-
-
-
-            
-    def setStatusMask1(self, message, *args):
-        GPIO.output(8,(message[2]+1)%2)
-        
-    def setStatusMask2(self, message, *args):
-        GPIO.output(10, (message[2]+1)%2)
-
-
-
-                    
-
-
-
-
-                    
 
 
     def wheel(pos):

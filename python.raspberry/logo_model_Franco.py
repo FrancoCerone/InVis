@@ -233,6 +233,22 @@ class LogoFranco(object):
     def get_allSripIndex(self):
         return self.getIndex(self.stripList)
     
+    def get_left2rightSripIndex(self):
+        print ("ci passa")
+        borderStrip = []
+        borderStrip.append(self.getIndex(self.stripList[1]))
+        borderStrip.append(self.getIndex(self.stripList[0]))
+            
+        borderStrip.append(self.getIndex(self.stripList[3]))
+        borderStrip.append(self.getIndex(self.stripList[2]))
+            
+        borderStrip.append(self.getIndex(self.stripList[4]))
+        borderStrip.append(self.getIndex(self.stripList[5]))
+            
+        borderStrip.append(self.getIndex(self.stripList[6]))
+        borderStrip.append(self.getIndex(self.stripList[7]))
+            
+        return self.getIndex(borderStrip)
     
     
               

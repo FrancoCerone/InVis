@@ -436,7 +436,7 @@ class ColorLogoButton(Button):
         g = int((Decimal(ControllerApp.get_Green(self.btncolor))* 255))
         b = int((Decimal(ControllerApp.get_Blue(self.btncolor))* 255))
         print r,g,b
-        oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b, r], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 
 
@@ -448,7 +448,7 @@ class FlasLogoButton(Button):
         g = int((Decimal(ControllerApp.get_Green(self.btncolor))* 255))
         b = int((Decimal(ControllerApp.get_Blue(self.btncolor))* 255))
         print r,g,b
-        oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
+        oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b,r], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
 class ResistModality(Button):
@@ -548,7 +548,10 @@ class ToBottomUpCurten(Button):
         
 class FlashLogo(Button):
     text="Flash"
+    i =0 
     def on_press(self):
+        i = i+1
+        print "ci passo ", i
         oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 

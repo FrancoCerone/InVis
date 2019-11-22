@@ -40,7 +40,7 @@ class Network():
 
 # LED strip configuration:
 LED_COUNT      = 416     # Number of LED pixels.
-LED_PIN        = 13     # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
@@ -198,9 +198,12 @@ class RaspBerryApp(App):
         
         if(vel == 144):
             if(Kick.has_value(pad)):
-                for i in range(0,416):
-                    ledColor = Color(0,0,255)
+                for i in range(0,20):
+                    ledColor = Color(0,255,0)
                     strip.setPixelColor(i, ledColor)
+                    strip.setPixelColor(i +104, ledColor)
+                    strip.setPixelColor(i +104 + 104, ledColor)
+                    strip.setPixelColor(i +104 + 104+ 104, ledColor)
                 strip.show()
             if(Pad1.has_value(pad)):
                 for i in range(0,104):
@@ -208,7 +211,7 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            elif(Pad2.has_value(pad)):
+            if(Pad2.has_value(pad)):
                 for i in range(105,208):
                     #blue
                     ledColor = Color(0,0,255)
@@ -216,19 +219,20 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            elif(Pad3.has_value(pad)):
+            if(Pad3.has_value(pad)):
                 for i in range(209,312):
                     ledColor = Color(0,255,0)
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            elif(Pad4.has_value(pad)):
+            if(Pad4.has_value(pad)):
                 for i in range(313, 416):
                     ledColor = Color(255,0,0)
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            ledColor = Color(0,1,1)
+            ledColor = Color(1,1,1)
+            time.sleep(0.01)
             for i in range(strip.numPixels()):
                 strip.setPixelColor(i, ledColor)
             strip.show()

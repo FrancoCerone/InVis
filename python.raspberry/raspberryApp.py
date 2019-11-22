@@ -1,29 +1,14 @@
 import time
 from neopixel import *
-import argparse
-from kivy.app import App
 from kivy.lib.osc import oscAPI
 
-from argparse import FileType
-import fcntl
-from kivy.app import App
 from kivy.clock import Clock
-from kivy.config import Config
-from kivy.core.window import Window
-from kivy.graphics.instructions import InstructionGroup
 from kivy.lib.osc import oscAPI
-from kivy.metrics import MetricsBase
-from kivy.properties import ObjectProperty
-from kivy.uix.image import Image
-from kivy.uix.videoplayer import VideoPlayer
-import os
-import struct
-import time
 import RPi.GPIO as GPIO
-import time
 from logo_model import Logo 
 from threading import Thread
-
+from kivy.app import App
+from kivy.core.window import Window
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(8,GPIO.OUT)
@@ -63,7 +48,7 @@ canRunStrip = False
 
 
 def get_ip_address():
-    ip = '192.168.0.52'
+    ip = '192.168.1.103'
     return ip
 class Network():
     ip = get_ip_address();
@@ -274,16 +259,8 @@ class RaspBerryApp(App):
             strip.setPixelColor(elementLed, color)
     
     def build(self):
-
-
-        
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-c', '--clear', action='store_true', help='clear the display on exit')
-        args = parser.parse_args()
         strip.begin()
-
         print "Accensione in corso"
-        
         numpixel = strip.numPixels()
         for i in range(numpixel):
             strip.setPixelColor(numpixel - i, Color(0, 0, 0))
@@ -336,14 +313,11 @@ class RaspBerryApp(App):
                 strip.show() 
             j = len(indexToTurnOn)
             while j > numberOfRows:
-                print "ci passas 1 "
                 count  = numberOfRows
                 while count > 0 :
-                    print "ci passas 2 "
                     RaspBerryApp.setColorForElemtOrListWithOutWaitAndShow(indexToTurnOn[j - count], strip)
                     count = count - 1
                 if(j>0 and j< len(indexToTurnOn)):
-                    print "ci passas 3 "
                     RaspBerryApp.turnOffForElemtOrList(indexToTurnOn[j], strip)
                 strip.show()    
                 j = j - 1
@@ -373,7 +347,8 @@ class RaspBerryApp(App):
             else:
                 strip.setPixelColor(elementLed, color)
                 strip.show()
-
+        #while True:
+        #    time.sleep(0.01)
     
 
     def setColor(self, message, *args):

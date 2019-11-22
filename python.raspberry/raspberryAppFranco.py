@@ -7,23 +7,12 @@ from oscpy.server import OSCThreadServer
 from time import sleep
 
 
-from argparse import FileType
-import fcntl
-from kivy.clock import Clock
-from kivy.config import Config
-from kivy.core.window import Window
 from kivy.graphics.instructions import InstructionGroup
-from kivy.metrics import MetricsBase
-from kivy.properties import ObjectProperty
-from kivy.uix.image import Image
-from kivy.uix.videoplayer import VideoPlayer
-import os
-import struct
-import time
 import RPi.GPIO as GPIO
 import time
 from logo_model_Franco import LogoFranco 
 from threading import Thread
+#from argh.decorators import arg
 
 
 GPIO.setmode(GPIO.BOARD)
@@ -61,7 +50,7 @@ canRunStrip = False
 
 
 def get_ip_address():
-    ip = '192.168.0.36'
+    ip = '192.168.1.100'
     return ip
 class Network():
     ip = get_ip_address();
@@ -232,7 +221,7 @@ class DownUpDownRunner(Thread):
         
 
     
-class RaspBerryApp(App):
+class RaspBerryApp():
     @staticmethod 
     def setColorForElemtOrList(elementLed, strip):
         if (type(elementLed) == list):
@@ -286,6 +275,7 @@ class RaspBerryApp(App):
         oscAPI.bind(  b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe,)
         oscAPI.bind(  b'/downUpDownTurnOnLogo',self.downUpDownTurnOn)
         oscAPI.bind(  b'/theaterChase', self.theaterChaseEffect)
+        
         oscAPI.bind(  b'/toSetLogoColor', self.setColor)
         oscAPI.bind(  b'/toSetMusk', self.setStatus)
         
@@ -361,11 +351,17 @@ class RaspBerryApp(App):
                 strip.show()
 
     
-
+        while True:
+            time.sleep(0.01)
+            
     def setColor(self, message, *args):
         print ("Tunn on")
         global color
-        color = Color(int(message[2]), int(message[3]), int(message[4]))
+        print ( "message", message)
+        print ("args", args)
+
+        color = Color(int(args[2]) ,int(args[0]),int(args[1]))
+        print ("color da setColor", color)
         canRunStrip = True
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0,0,0))
@@ -445,8 +441,9 @@ class RaspBerryApp(App):
     def flash(self, message, *args):
         global canRunStrip
         canRunStrip = False
+        global color
         for i in indexToTurnOn:
-            strip.setPixelColor(i, color)
+            self.setColorForElemtOrListWithOutWaitAndShow(i, strip)
         strip.show()
         time.sleep(flashSleepTime)
         global blackout
@@ -468,6 +465,7 @@ class RaspBerryApp(App):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0))
         strip.show()
+        global indexToTurnOn
         if(len(indexToTurnOn)== 52):
             indexToTurnOn = logo.get_allSripIndex()
         
@@ -601,5 +599,5 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i+q, 0)
         
 if __name__ == '__main__':
-    RaspBerryApp().run()
+    RaspBerryApp().build()
 

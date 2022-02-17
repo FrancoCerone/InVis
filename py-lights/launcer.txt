@@ -1,0 +1,1 @@
+sudo -E PYTHONPAT=".:build/lib.linux-armv7l-2.7" /usr/bin/python3.7 /home/pi/git/py-lights/midiTapTubes.py

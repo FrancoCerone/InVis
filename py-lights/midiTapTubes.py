@@ -39,7 +39,7 @@ class Network():
 
 
 # LED strip configuration:
-LED_COUNT      = 416     # Number of LED pixels.
+LED_COUNT      = 416 + 790     # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -64,7 +64,7 @@ class Kick(PadEnum):
     skin = 1
 
 class Pad1(PadEnum):
-    border  = 50
+    border = 50
     skin = 48
     
     
@@ -72,6 +72,7 @@ class Pad1(PadEnum):
     end  = 104
 
 class Pad2(PadEnum):
+    border2 = 40
     border  = 37
     skin = 38
     
@@ -80,14 +81,14 @@ class Pad2(PadEnum):
     end  = 208
 
 class Pad3(PadEnum):
-    border  = 58
-    skin = 43
+    border  = 47
+    skin = 45
 
 
 class Pad4(PadEnum):
     
-    border  = 47
-    skin = 45
+    border  = 58
+    skin = 43
     
     start = 209
     end  = 312
@@ -138,25 +139,28 @@ class RaspBerryApp(App):
         strip.begin()
 
         numpixel = strip.numPixels()
-        for i in range(numpixel):
-            strip.setPixelColor(numpixel - i, 255)
+        
+        for i in range(LED_COUNT):
+            strip.setPixelColor(numpixel - i, 50)
         strip.show()
+        
+                
         
         #Init OSC Server
-        #oscAPI.init()
-        #oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
-        #oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
-        #Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
+        oscAPI.init()
+        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
+        oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
+        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
         
-        #A = OscRunner();
-        #At = Thread(target=A.run)
-        #At.start()
-        
+        A = OscRunner();
+        At = Thread(target=A.run)
+        At.start()
+
         print("Ready...")
         
-        for i in range(strip.numPixels()):
-            strip.setPixelColor(strip.numPixels() - i, 0)
-        strip.show()
+        #for i in range(strip.numPixels()):
+        #    strip.setPixelColor(strip.numPixels() - i, 0)
+        #strip.show()
         
         
         while True:
@@ -196,7 +200,7 @@ class RaspBerryApp(App):
         pad = message[1]
         state = message[2] * 2
         
-        if(vel == 144):
+        if(vel == 153):
             if(Kick.has_value(pad)):
                 for i in range(0,20):
                     ledColor = Color(0,255,0)
@@ -231,9 +235,9 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            ledColor = Color(1,1,1)
+            ledColor = Color(0,1,0)
             time.sleep(0.01)
-            for i in range(strip.numPixels()):
+            for i in range(416):
                 strip.setPixelColor(i, ledColor)
             strip.show()
                     

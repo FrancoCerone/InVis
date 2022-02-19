@@ -26,12 +26,17 @@ import time
 import RPi.GPIO as GPIO
 import time
 from threading import Thread
+#from kivy.lib.osc import oscAPI
 from kivy.clock import Clock
+from pythonosc import udp_client
+from pythonosc import dispatcher
+from pythonosc import osc_server
+
 
 
 
 def get_ip_address():
-    ip = '192.168.0.52'
+    ip = '192.168.0.110'
     return ip
 class Network():
     ip = get_ip_address();
@@ -39,7 +44,7 @@ class Network():
 
 
 # LED strip configuration:
-LED_COUNT      = 416 + 790     # Number of LED pixels.
+LED_COUNT      = 416 #+ 790     # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -64,17 +69,16 @@ class Kick(PadEnum):
     skin = 1
 
 class Pad1(PadEnum):
-    border = 50
-    skin = 48
-    
-    
+    border  = 37
+    border1  = 38
+    border2 = 40
+
     start = 0 
     end  = 104
 
 class Pad2(PadEnum):
-    border2 = 40
-    border  = 37
-    skin = 38
+    border = 50
+    skin = 48
     
     
     start = 105 
@@ -92,6 +96,15 @@ class Pad4(PadEnum):
     
     start = 209
     end  = 312
+
+class Crash(PadEnum):
+    border  = 49
+    skin = 55
+
+class Ride(PadEnum):
+    border  = 51
+    skin = 59
+
 
 
 global blackout
@@ -143,25 +156,8 @@ class RaspBerryApp(App):
         for i in range(LED_COUNT):
             strip.setPixelColor(numpixel - i, 50)
         strip.show()
-        
-                
-        
-        #Init OSC Server
-        oscAPI.init()
-        oscid = oscAPI.listen(ipAddr=Network.ip, port=57110)
-        oscAPI.bind(oscid, self.theaterChaseEffect, '/theaterChase')
-        Clock.schedule_interval(lambda *x: oscAPI.readQueue(oscid), 0)
-        
-        A = OscRunner();
-        At = Thread(target=A.run)
-        At.start()
 
-        print("Ready...")
-        
-        #for i in range(strip.numPixels()):
-        #    strip.setPixelColor(strip.numPixels() - i, 0)
-        #strip.show()
-        
+        print("Ready... dfg")
         
         while True:
             self.params["Counter"] += 1
@@ -200,15 +196,59 @@ class RaspBerryApp(App):
         pad = message[1]
         state = message[2] * 2
         
-        if(vel == 153):
+        if(vel == 153 or vel == 144 ):
             if(Kick.has_value(pad)):
                 for i in range(0,20):
+                    
                     ledColor = Color(0,255,0)
                     strip.setPixelColor(i, ledColor)
+                    strip.setPixelColor(i+ (52 + 32), ledColor)
+                    
                     strip.setPixelColor(i +104, ledColor)
+                    strip.setPixelColor(i +104 + (52 + 32), ledColor)
+                    
                     strip.setPixelColor(i +104 + 104, ledColor)
+                    strip.setPixelColor(i +104 + 104 + (52 + 32), ledColor)
+                    
                     strip.setPixelColor(i +104 + 104+ 104, ledColor)
+                    strip.setPixelColor(i +104 + 104+ 104 + (52 + 32), ledColor)
+                    
                 strip.show()
+                
+            if(Crash.has_value(pad)):
+                for i in range(0,20):
+                    strip.setPixelColor(i + 52 -20, Color(255 - i,0,255))
+                    strip.setPixelColor(i + 52, Color(255 - i -i ,0,255))
+                    
+                    strip.setPixelColor(i +156, Color(255 - i,255,0))
+                    strip.setPixelColor(i +156 - 20, Color(255 - i -i ,255,0))
+                    
+                    strip.setPixelColor(i +260, Color(255 - i,255,0))
+                    strip.setPixelColor(i +260 - 20, Color(255 - i -i ,255,0))
+                    
+                    strip.setPixelColor(i + 364, Color(255 - i,255,255))
+                    strip.setPixelColor(i + 364 - 20, Color(255 - i -i ,255,0))
+                strip.show()
+            
+            if(Ride.has_value(pad)):
+                for i in range(0,20):
+                    strip.setPixelColor(i + 52 -20 -10 , Color(255 - i,0,255))
+                    strip.setPixelColor((i + 52) + 10, Color(255 - i -i ,0,255))
+                    
+                    strip.setPixelColor(i +156 - 20 - 10, Color(255 - i -i ,255,0))
+                    strip.setPixelColor(i +156 +10 , Color(255 - i,255,0))
+                    
+                    strip.setPixelColor(i +260 - 20 - 10, Color(255 - i -i ,255,0))
+                    strip.setPixelColor(i +260 + 10, Color(255 - i,255,0))
+                    
+                    strip.setPixelColor(i + 364 - 20 -10, Color(255 - i -i ,255,0))
+                    strip.setPixelColor(i + 364 +10 , Color(255 - i,255,255))
+                strip.show()
+            
+            
+            
+            
+            
             if(Pad1.has_value(pad)):
                 for i in range(0,104):
                     ledColor = Color(255,255,255)
@@ -235,10 +275,30 @@ class RaspBerryApp(App):
                     strip.setPixelColor(i, ledColor)
                 strip.show()
             
-            ledColor = Color(0,1,0)
+            
             time.sleep(0.01)
+            #( G , R , B)
+            ledColor =  Color(0,0,255)
             for i in range(416):
-                strip.setPixelColor(i, ledColor)
+                strip.setPixelColor(i, 25)
+            
+            # for i in range(416):
+            #     if(i % 52) < 7:
+            #         #( G , R , B)
+            #         ledColor =  Color(0,255,0)
+            #     elif(i % 52) < 14:
+            #         ledColor = Color(127,255,0)
+            #     elif(i % 52) < 21:
+            #         ledColor = Color(255,255,0)
+            #     elif(i % 52) < 28:    
+            #         ledColor = Color(255,0, 0)
+            #     elif(i % 52) < 34:   tou        #         ledColor = Color(0,0,255)
+            #     elif(i % 52) < 41:    
+            #         ledColor = Color(46, 43, 95)
+            #     else:
+            #         ledColor = Color( 0, 139, 255)
+            #     strip.setPixelColor(i, ledColor)
+                
             strip.show()
                     
                 

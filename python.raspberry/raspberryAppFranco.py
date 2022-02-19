@@ -4,6 +4,7 @@ import argparse
 from kivy.app import App
 
 from oscpy.server import OSCThreadServer
+
 from time import sleep
 
 
@@ -48,7 +49,7 @@ canRunStrip = False
 
 
 def get_ip_address():
-    ip = '192.168.1.100'
+    ip = '192.168.0.110'
     return ip
 class Network():
     ip = get_ip_address();
@@ -220,6 +221,8 @@ class DownUpDownRunner(Thread):
 
     
 class RaspBerryApp():
+    
+    
     @staticmethod 
     def setColorForElemtOrList(elementLed, strip):
         if (type(elementLed) == list):
@@ -265,37 +268,36 @@ class RaspBerryApp():
             strip.setPixelColor(numpixel - i, Color(0, 0, 0))
             strip.show()
         
-        oscAPI = OSCThreadServer()
-        sock = oscAPI.listen(address=Network.ip, port=57110, default=True)
-        oscAPI.bind(  b'/turnOnLogo', self.turnOn) 
-        oscAPI.bind( b'/turnOffLogo', self.turnOff)
-        oscAPI.bind( b'/logoFlash',self.flash)
-        oscAPI.bind(  b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe)
-        oscAPI.bind(  b'/downUpDownTurnOnLogo',self.downUpDownTurnOn)
-        oscAPI.bind(  b'/theaterChase', self.theaterChaseEffect)
         
-        oscAPI.bind(  b'/toSetLogoColor', self.setColor)
+        osc = OSCThreadServer()  # See sources for all the arguments
+        sock = osc.listen(address=Network.ip, port=57110, default=True)
+        osc.bind(b'/turnOnLogo', self.turnOn) 
+        osc.bind(b'/turnOffLogo', self.turnOff)
+        osc.bind(b'/logoFlash',self.flash)
+        osc.bind(b'/incrementalTurnOnLogo', self.incrementalTurnOnLogocolorWipe)
+        osc.bind(b'/downUpDownTurnOnLogo',self.downUpDownTurnOn)
+        osc.bind(b'/theaterChase', self.theaterChaseEffect)
         
-        oscAPI.bind(  b'/toSetAllLedsOn', self.setAllLedsOn)
-        oscAPI.bind( b'/toSetBorderLedOn', self.setBorderLedOn )
-        oscAPI.bind(  b'/toSetBorderEyesMouthLedOn', self.setBorderEyesMouthLedOn)
-        oscAPI.bind(  b'/toSetEyesLedOn',self.setEyesLedOn)
-        oscAPI.bind( b'/toSetEyesAndMounthLedOn',self.setEyesAndMouthLedOn )
-        oscAPI.bind(  b'/toSetEyesAndMounthLedOn', self.setEyesAndMouthLedOn)
-        oscAPI.bind(  b'/toBottomUpCurten',self.setBottomUpCurten)
-        oscAPI.bind(  b'/toTopDownCurten', self.setTopDownCurten)
+        osc.bind(b'/toSetLogoColor', self.setColor)
+        
+        osc.bind(b'/toSetAllLedsOn', self.setAllLedsOn)
+        osc.bind(b'/toSetBorderLedOn', self.setBorderLedOn )
+        osc.bind(b'/toSetBorderEyesMouthLedOn', self.setBorderEyesMouthLedOn)
+        osc.bind(b'/toSetEyesLedOn',self.setEyesLedOn)
+        osc.bind(b'/toSetEyesAndMounthLedOn',self.setEyesAndMouthLedOn )
+        osc.bind(b'/toSetEyesAndMounthLedOn', self.setEyesAndMouthLedOn)
+        osc.bind(b'/toBottomUpCurten',self.setBottomUpCurten)
+        osc.bind(b'/toTopDownCurten', self.setTopDownCurten)
+        #sleep(1000)
+        
+        #print("Serving on {}".format(server.server_address))
+        #server.serve_forever()
+        
+        print ("fatti i bind")
     
         
 
-        #################################################
-        #Show case accensione ###########################
-        
-        '''for indexLed in indexToTurnOn:
-            print "indice**************: ",i
-            strip.setPixelColor(indexLed, Color(127, 127, 127))
-            strip.show()
-        '''
-        
+
         
         ######################################
         indexToTurnOn = logo.get_bottom_up_border_leds_index()

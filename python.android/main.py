@@ -547,11 +547,7 @@ class ToBottomUpCurten(Button):
         oscAPI.sendMsg('/toBottomUpCurten', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
 class FlashLogo(Button):
-    text="Flash"
-    i =0 
     def on_press(self):
-        i = i+1
-        print "ci passo ", i
         oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 

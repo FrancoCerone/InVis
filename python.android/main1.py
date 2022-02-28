@@ -126,7 +126,6 @@ class Touchtracer(FloatLayout):
         gdb = GestureDatabase()
         gdb.add_gesture(gesture)
         self.store.store_put('userPath', gesture.strokes)
-        print gesture.strokes
         #self.store.put('userPath', gesture.strokes)
                 
 

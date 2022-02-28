@@ -6,9 +6,8 @@ kivy.require('1.0.8')
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.properties import StringProperty, ObjectProperty
-from kivy.lib.osc import oscAPI
+from pythonosc import udp_client
 import os
-oscAPI.init()
 from kivy.uix.screenmanager import ScreenManager, Screen
 from ButtonDimension import ButtonDimension
 from main1 import Touchtracer
@@ -77,7 +76,6 @@ Builder.load_string("""
                         Rectangle:
                             pos: self.pos
                             size: self.size
-                    orientation:'horizontal'
                     id: modalityContainer
             BoxLayout:
                 orientation: 'horizontal'
@@ -112,7 +110,6 @@ Builder.load_string("""
                     Rectangle:
                         pos: self.pos
                         size: self.size
-                orientation:'horizontal'
                 id: modalityAnimationContainer
         ScrollView:
             size_hint: 1, 1
@@ -387,8 +384,8 @@ class AnimationImageButton(Button):
     store = ObjectProperty(None)
     filename = StringProperty(None)
     def on_press(self):
-        print "map:" , userAnimation.map
-        print "send to " + SettingsScreen.getIp(settingScreen), ", Animation Modality: ",  ControllerApp._animation_modality,  ", image: ", os.path.basename(self.filename)
+        print ("map:" , userAnimation.map)
+        print ("send to " , SettingsScreen.getIp(settingScreen), ", Animation Modality: ",  ControllerApp._animation_modality,  ", image: ", os.path.basename(self.filename))
         oscAPI.sendMsg('/toStartUserAnimation', dataArray=[os.path.basename(self.filename), ControllerApp._animation_modality ], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
 
@@ -405,7 +402,7 @@ class VelocityFader(Slider):
 class GifImageButton(Button):
     filename = StringProperty(None)
     def on_press(self):
-        print "send to " + SettingsScreen.getIp(settingScreen)
+        print ("send to " , SettingsScreen.getIp(settingScreen))
         if ControllerApp._modality== ModalityList.gif:
             oscAPI.sendMsg('/toSetGif', dataArray=[os.path.basename(self.filename)], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         elif ((ControllerApp._modality == ModalityList.manual) | (ControllerApp._modality == ModalityList.resist)): 
@@ -419,14 +416,14 @@ class ColorButton(Button):
         r = ControllerApp.get_Red(self.btncolor)
         g = ControllerApp.get_Green(self.btncolor)
         b = ControllerApp.get_Blue(self.btncolor)
-        print r,g,b
+        print (r,g,b)
         if ((ControllerApp._modality== ModalityList.midi) ):
             oscAPI.sendMsg('/toSetObjectToShow', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         elif ((ControllerApp._modality== ModalityList.manual) | (ControllerApp._modality== ModalityList.resist)):
-            print SettingsScreen.getIp(settingScreen) 
+            print (SettingsScreen.getIp(settingScreen)) 
             oscAPI.sendMsg('/toOneShotFlash', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         elif (ControllerApp._modality== ModalityList.gif):
-            print SettingsScreen.getIp(settingScreen) 
+            print (SettingsScreen.getIp(settingScreen)) 
             oscAPI.sendMsg('/toSetColor', dataArray=[r,g,b], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 class ColorLogoButton(Button):
@@ -435,7 +432,7 @@ class ColorLogoButton(Button):
         r = int((Decimal(ControllerApp.get_Red(self.btncolor)) * 255))
         g = int((Decimal(ControllerApp.get_Green(self.btncolor))* 255))
         b = int((Decimal(ControllerApp.get_Blue(self.btncolor))* 255))
-        print r,g,b
+        print (r,g,b)
         oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b, r], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
 
 
@@ -447,7 +444,7 @@ class FlasLogoButton(Button):
         r = int((Decimal(ControllerApp.get_Red(self.btncolor)) * 255))
         g = int((Decimal(ControllerApp.get_Green(self.btncolor))* 255))
         b = int((Decimal(ControllerApp.get_Blue(self.btncolor))* 255))
-        print r,g,b
+        print (r,g,b)
         oscAPI.sendMsg('/toSetLogoColor', dataArray=[r,g,b,r], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         oscAPI.sendMsg('/logoFlash', dataArray=[0], ipAddr=SettingsScreen.getIp(settingScreen), port=57110)
         
@@ -735,7 +732,7 @@ class ControllerApp(App):
         
         textfile = open('properties.txt', 'r') 
         ipFromTxt = textfile.read()
-        print ipFromTxt
+        print (ipFromTxt)
         SettingsScreen.setIp(settingScreen, ipFromTxt)
 
         
@@ -743,8 +740,8 @@ class ControllerApp(App):
         keylist = Visualist.visualListMap.keys()
         
         for fn in keylist:
-            print fn
-            print "valore " , Visualist.visualListMap[fn]
+            print (fn)
+            print ("valore " , Visualist.visualListMap[fn])
             if(Visualist.visualListMap[fn] ==True):
                 btn = GifImageButton(
                     filename=fn,
@@ -755,7 +752,7 @@ class ControllerApp(App):
             
         keylist = Visualist.visualListMap.keys()
         for fn in keylist:
-            print fn
+            print (fn)
             btn = GifImageButton(
                 filename=fn,
                 background_normal = "resources/" + fn + ".png",
@@ -814,11 +811,11 @@ class ControllerApp(App):
         muskControlScreen.ids.musksControlButtonContainer.add_widget(ToBottomUpCurten(background_normal = "button_icons/bottomUp.png" , text="",size_hint=(1, 1),))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(IncrementalTurnOnLogo( background_normal = "button_icons/snake.png" ,  size_hint=(1, 1)))
         muskControlScreen.ids.musksControlButtonContainer.add_widget(DownUpDownTurnOnLogo( background_normal = "button_icons/downUpDown.png" ,  size_hint=(1, 1)))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(TheaterChaseEffectLogo(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff(text="",size_hint=(1, 1),))
-        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo(text="",))
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TheaterChaseEffectLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(TurnOffLogo())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOn())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(MuskButtonOff())
+        muskControlScreen.ids.musksControlButtonContainer.add_widget(FlashLogo())
         
         
         muskControlScreen.ids.musksControlButtonContainer.add_widget(Label(text = "effetto4"))

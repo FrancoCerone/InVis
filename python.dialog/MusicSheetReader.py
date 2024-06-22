@@ -14,18 +14,13 @@ from kivy.loader import Loader
 from kivy.lang import Builder
 from oscpy.server import OSCThreadServer
 from kivy.resources import resource_find
-from kivy.properties import (
-    NumericProperty, StringProperty, AliasProperty, ReferenceListProperty,
-    ObjectProperty, ListProperty, DictProperty, BooleanProperty)
+from kivy.properties import ( ObjectProperty)
 from kivy.uix.boxlayout import BoxLayout
-import time
-# Config.set('graphics', 'fullscreen', 'auto')
 
 screenResolution = ScreenResolution()
 levels = []
 
 class Network():
-    # myIp = "192.168.1.100"
     myIp = "127.0.0.1"
 
 class ImageWidget(Widget):
@@ -68,20 +63,16 @@ class ImageWidget(Widget):
 
 class InViS(App):
     screenResolution = ScreenResolution()
-
     def build(self):
         osc = OSCThreadServer()
         sock = osc.listen(address=Network.myIp, port=8000, default=True)
-
         self._parent = BoxLayout(orientation='vertical')  # Usa BoxLayout per il layout principale
-
         self.imageWidget = ImageWidget(size_hint=(1, 1))
         self._parent.add_widget(self.imageWidget)
 
         @osc.address(b'/Note1')
         def open_sheet_music(*args):
             self.imageWidget.add_musicSheet( args[0], self.imageWidget)
-            
 
         return self._parent
 

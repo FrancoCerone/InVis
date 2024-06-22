@@ -18,7 +18,7 @@ from kivy.properties import (
     NumericProperty, StringProperty, AliasProperty, ReferenceListProperty,
     ObjectProperty, ListProperty, DictProperty, BooleanProperty)
 from kivy.uix.boxlayout import BoxLayout
-
+import time
 # Config.set('graphics', 'fullscreen', 'auto')
 
 screenResolution = ScreenResolution()
@@ -31,35 +31,40 @@ class Network():
 class ImageWidget(Widget):
     texture = ObjectProperty(None)
     rect = None
+    _im = None  # Manteniamo il riferimento all'oggetto Image caricato
 
     def setRatio(self, imageFileName, _im):
         if KeepRatioOverwriter.ratioOverwriterMap.get(imageFileName) is not None:
             _im.keep_ratio = KeepRatioOverwriter.ratioOverwriterMap.get(imageFileName)
         else:
             _im.keep_ratio = False
-
-    def add_musicSheet(self, note):
-        # Carica l'immagine
-        def on_load(image):
-            self.texture = image.texture
-            with self.canvas:
-                self.rect = Rectangle(texture=self.texture, pos=self.pos, size=self.size)
-            self.update_rect()  # Aggiorna immediatamente la posizione e le dimensioni del rettangolo
-        # Utilizza il loader per caricare l'immagine
-        self.remove_Image()
-        _im = Loader.image("resources/music_sheet/"+ str(note))
-        _im.allow_stretch = False
-        _im.keep_ratio = True  # Mantiene il rapporto di aspetto
-        _im.bind(on_load=on_load)
+            
+    def add_musicSheet(self, note, imageWidget):
+        if self._im:
+           self._im.unbind(on_load=self.on_load)
+           imageWidget._im = None
+           imageWidget.texture =  ObjectProperty(None)
+        
+        self._im = Loader.image("resources/music_sheet/" + str(note), nocache=True)  # Force no cache
+        self._im.allow_stretch = False
+        self._im.keep_ratio = True  # Mantiene il rapporto di aspetto
+        self._im.bind(on_load=self.on_load)
         self.bind(size=self.update_rect, pos=self.update_rect)
+
+    def on_load(self, image):
+        self.texture = image.texture
+        self.canvas.clear()  # Pulisce la canvas prima di disegnare l'immagine
+        with self.canvas:
+            self.rect = Rectangle(texture=self.texture, pos=self.pos, size=self.size)
+        self.update_rect()
 
     def update_rect(self, *args):
         if self.rect:
             self.rect.pos = self.pos
             self.rect.size = self.size
 
-    def remove_Image(self):
-        self.canvas.clear()
+
+
 
 class InViS(App):
     screenResolution = ScreenResolution()
@@ -75,13 +80,11 @@ class InViS(App):
 
         @osc.address(b'/Note1')
         def open_sheet_music(*args):
-            self.imageWidget.add_musicSheet( args[0])
+            self.imageWidget.add_musicSheet( args[0], self.imageWidget)
             
 
         return self._parent
 
-    def remove_Image(self, message, *args):
-        self.imageWidget.remove_Image()
 
 if __name__ == '__main__':
     InViS().run()
